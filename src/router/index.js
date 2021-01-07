@@ -1,20 +1,26 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
-import Home from '../views/Home.vue'
+import store from '../store'
+
+//components
+//import Home from '../views/Home.vue'
 import Login from '../views/Login.vue'
 
 Vue.use(VueRouter)
 
 const routes = [
   {
-    path: '/',
-    name: 'Home',
-    component: Home
-  },
-  {
     path: '/login',
     name: 'Login',
     component: Login
+  },
+  {
+    path: '/',
+    name: 'Home',
+    component: Login,
+    meta: {
+      requiresAuth: true
+    }
   },
   {
     path: '/about',
@@ -34,7 +40,8 @@ const router = new VueRouter({
 
 //validate routes and check sessions
 router.beforeEach((to, from, next) => {
-  if (to.name !== 'Login' /*&& !isAuthenticated*/) next({ name: 'Login' })
+  //console.log(store.state.isAuthenticated)
+  if (to.name !== 'Login' && !store.getters.isAuthenticated) next({ name: 'Login' })
   else next()
 })
 

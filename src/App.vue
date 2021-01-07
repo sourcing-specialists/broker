@@ -1,11 +1,14 @@
 <template>
   <!-- App.vue -->
   <v-app>
-    <v-navigation-drawer app>
+
+    <Loader />
+
+    <v-navigation-drawer app v-if="isAuthenticated">
       <!-- -->
     </v-navigation-drawer>
 
-    <v-app-bar app>
+    <v-app-bar app v-if="isAuthenticated">
       <!-- -->
     </v-app-bar>
 
@@ -27,5 +30,16 @@
 </template>
 
 <script>
-
+  import Loader from './components/loader'
+  export default {
+    name: 'Layout',
+    components: {
+      Loader
+    },
+    computed: {
+      isAuthenticated() {
+        return this.$store.getters.isAuthenticated
+      }
+    }
+  }
 </script>
