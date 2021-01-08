@@ -12,7 +12,7 @@ Vue.config.productionTip = false
 
 //register axios globally & set header of user token
 Vue.prototype.$http = Axios;
-Vue.prototype.$http.defaults.headers.common['apiKey'] = 'c5dea9e73f756766773e06f264f1a9a9'
+Vue.prototype.$http.defaults.headers.common['apiKey'] = process.env.VUE_APP_API_KEY
 Vue.prototype.$http.defaults.headers.common['userToken'] = store.getters.token
 
 //load toastr globally
