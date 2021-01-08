@@ -18,9 +18,6 @@ export default {
     isLoading() {
       return this.$store.getters.isLoading
     }
-  },
-  mounted() {
-    console.log(this.isLoading)
   }
 }
 </script>

@@ -4,12 +4,10 @@
 
     <Loader />
 
-    <v-navigation-drawer app v-if="isAuthenticated">
-      <!-- -->
-    </v-navigation-drawer>
+    <SideNav v-if="isAuthenticated" />
 
     <v-app-bar app v-if="isAuthenticated">
-      <!-- -->
+      <TopNavBar />
     </v-app-bar>
 
     <!-- Sizes your content based upon application components -->
@@ -31,10 +29,15 @@
 
 <script>
   import Loader from './components/loader'
+  import TopNavBar from './components/TopNavBar'
+  import SideNav from './components/SideNav'
+
   export default {
     name: 'Layout',
     components: {
-      Loader
+      Loader,
+      TopNavBar,
+      SideNav
     },
     computed: {
       isAuthenticated() {
