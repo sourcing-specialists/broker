@@ -2,17 +2,17 @@
   <v-navigation-drawer
     dark
     app
-    :mini-variant="drawer"
+    permanent
+    :mini-variant="$store.state.appSettings.menuOpen"
     mini-variant-width="60"
+    :color="$store.getters.vColor"
     >
     <v-list-item>
       <v-list-item-content>
-        <v-list-item-title class="title">
-          Marcopolo API
-        </v-list-item-title>
-        <v-list-item-subtitle>
-          List of end points to our API
-        </v-list-item-subtitle>
+        <v-img
+          contain
+          :src="logo"
+        ></v-img>
       </v-list-item-content>
     </v-list-item>
 
@@ -44,13 +44,21 @@
 
 <script>
 import SideMenu from '../constants/SideMenu.js'
+import logo from '@/assets/images/logo.png'
+import logoIcon from '@/assets/images/logo-icon.png'
 
 export default {
   name: 'SideNav',
   data: () => {
     return {
-      items: SideMenu,
-      drawer: true
+      logotipo: logo,
+      logoIcon: logoIcon,
+      items: SideMenu
+    }
+  },
+  computed: {
+    logo() {
+      return this.$store.state.appSettings.menuOpen ? logoIcon : this.logotipo
     }
   }
 }

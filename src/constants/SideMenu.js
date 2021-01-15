@@ -6,21 +6,21 @@ const SideMenu = [
     children: [] 
   },
   { 
-    title: 'Clients', 
-    to: '/companies', 
-    icon: 'fa-users', 
+    title: 'Catalogue', 
+    to: '/catalogue', 
+    icon: 'fa-list', 
     children: []
   },
   { 
     title: 'Orders', 
     to: '/orders', 
-    icon: 'fa-tasks', 
+    icon: 'fa-boxes', 
     children: []
   },
   { 
-    title: 'Account', 
-    to: '/account', 
-    icon: 'fa-cogs', 
+    title: 'Clients', 
+    to: '/companies', 
+    icon: 'fa-users', 
     children: []
   }
 ]

@@ -26,7 +26,7 @@
         </v-container>
         <v-container>
           <v-btn
-            color="primary"
+            :color="$store.getters.vColor"
             elevation="2"
             x-large
             type="submit"
@@ -69,7 +69,7 @@
          this.$store.commit('isLoading', false) //OFF loading
        })
        .catch(() => {
-         this.$toastr.e('This credentials do not match our records.')
+         this.$toasted.error('This credentials do not match our records.')
          this.$store.commit('isLoading', false) //OFF loading
        })
       }
@@ -89,7 +89,7 @@
     height: calc(100vh - 60px);
     justify-content: center;
     .v-card {
-      min-width: 720px;
+      min-width: 480px;
     }
   }
 </style>

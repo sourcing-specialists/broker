@@ -1,0 +1,27 @@
+//CSS to be share across all platform.
+
+ul {
+  list-style-type: none;
+  padding-left: 0px !important;
+}
+
+li, p {
+  font-size: 12px;
+}
+
+div.toasted-message {
+  font-size: 14px !important;
+  font-weight: 400 !important;
+  line-height: 2.5rem !important;
+  letter-spacing: 0.0073529412em !important;
+  font-family: "Roboto", sans-serif !important;
+}
+
+.container {
+  position: relative;
+  .add_button {
+    position: absolute;
+    top: 25px;
+    right: 25px;
+  }
+}

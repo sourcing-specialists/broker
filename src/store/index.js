@@ -12,17 +12,17 @@ const authentication = {
     auth: false,
     status: '',
     token: '',
-    user : {}
+    user : 123
   }),
   mutations: {
     auth_request(state){
       state.status = 'loading'
     },
-    auth_success(state, token, user){
+    auth_success(state, data) {
       state.auth = true
       state.status = 'success'
-      state.token = token
-      state.user = user
+      state.token = data.token
+      state.user = data.user
     },
     auth_error(state){
       state.status = 'error'
@@ -44,7 +44,7 @@ const authentication = {
             const token = resp.data.data.token
             const user = resp.data.data.user
             Vue.prototype.$http.defaults.headers.common['userToken'] = token
-            commit('auth_success', token, user)
+            commit('auth_success', { token, user })
             resolve(resp)
           } else {
             commit('auth_error')
@@ -75,25 +75,39 @@ const authentication = {
   }
 }
 
-//loading module
-const loading = {
+//app general settings
+const appSettings = {
   state: () => ({
-    loading: false
+    menuOpen: true,
+    loading: false,
+    vuetifyColor: 'red darken-4',
+    hexColor: '#B71C1C', 
+    catalogueView: 'list',
   }),
   mutations: {
+    menuToggle(state) {
+      state.menuOpen = !state.menuOpen
+    },
     isLoading(state, bool) {
       state.loading = bool
+    },
+    setCatalogueView(state, display) {
+      state.catalogueView = display
     }
   },
   getters: {
-    isLoading: state => state.loading
+    menuOpen: state => state.menuOpen,
+    isLoading: state => state.loading,
+    vColor: state => state.vuetifyColor,
+    hexColor: state => state.hexColor,
+    catView: state => state.catalogueView
   }
 }
 
 const store = new Vuex.Store({
   modules: {
     auth: authentication,
-    loading: loading
+    appSettings: appSettings
   },
   plugins: [createPersistedState()],
 })

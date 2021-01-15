@@ -3,10 +3,14 @@ import router from './router'
 import vuetify from './plugins/vuetify'
 import store from './store'
 import Axios from 'axios'
-import toastr from 'vue-toastr'
+import toasted from 'vue-toasted'
+import mixins from './mixins'
 
 //mounting in
 import App from './App.vue'
+
+//app scss
+import './assets/scss/app.scss'
 
 Vue.config.productionTip = false
 
@@ -16,11 +20,16 @@ Vue.prototype.$http.defaults.headers.common['apiKey'] = process.env.VUE_APP_API_
 Vue.prototype.$http.defaults.headers.common['userToken'] = store.getters.token
 
 //load toastr globally
-Vue.use(toastr,{
-  defaultClassNames: ["animated", "zoomInUp"],
-  defaultTimeout: 2000,
-  defaultProgressBar: false
+Vue.use(toasted, {
+  position: 'bottom-center',
+  keepOnOver: true,
+  className: 'toasted-message', 
+  theme: "bubble", 
+  duration : 5000
 })
+
+//load mixins
+Vue.mixin(mixins)
 
 //start app
 new Vue({

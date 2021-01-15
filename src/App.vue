@@ -15,9 +15,10 @@
 
       <!-- Provides the application the proper gutter -->
       <v-container fluid>
-
+        <vue-page-transition name="fade-in-right">
         <!-- If using vue-router -->
-        <router-view></router-view>
+          <router-view></router-view>
+        </vue-page-transition>
       </v-container>
     </v-main>
 

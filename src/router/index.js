@@ -1,15 +1,19 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
 import store from '../store'
+import VuePageTransition from 'vue-page-transition'
 
 //components
 import Login from '../views/Login.vue'
 import Dashboard from '../views/Dashboard.vue'
-import Companies from '../views/Companies.vue'
+import Companies from '../views/Companies/Companies.vue'
+import crudCompany from '../views/Companies/Crud.vue'
+import Catalogue from '../views/Catalogue.vue'
 import Orders from '../views/Orders.vue'
 import Account from '../views/Account.vue'
 
 Vue.use(VueRouter)
+Vue.use(VuePageTransition)
 
 const routes = [
   {
@@ -37,6 +41,31 @@ const routes = [
     path: '/companies',
     name: 'Companies',
     component: Companies,
+    meta: {
+      requiresAuth: true
+    }
+  },
+  {
+    path: '/companies/create',
+    name: 'createCompany',
+    component: crudCompany,
+    meta: {
+      requiresAuth: true
+    }
+  },
+  {
+    path: '/companies/:id/edit',
+    name: 'editCompany',
+    component: crudCompany,
+    props: true,
+    meta: {
+      requiresAuth: true
+    }
+  },
+  {
+    path: '/catalogue',
+    name: 'Catalogue',
+    component: Catalogue,
     meta: {
       requiresAuth: true
     }
