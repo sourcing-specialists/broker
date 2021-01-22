@@ -1,14 +1,33 @@
 <template>
-  <v-select
+  <v-autocomplete
     v-model="categoriesSelected"
-    label="Filter by Category"
     :items="categories"
-    :loading="loading"
-    @change="$emit('categoriesChanged', categoriesSelected)"
-    clearable
+    chips
+    label="Categories"
+    item-text="name"
+    item-value="id"
     multiple
   >
-  </v-select>
+    <template v-slot:selection="data">
+      <v-chip
+        v-bind="data.attrs"
+        :input-value="data.selected"
+        close
+        @click="data.select"
+        @click:close="remove(data.item)"
+      >
+        {{ data.item.name }}
+      </v-chip>
+    </template>
+    <template v-slot:item="data">
+      <template>
+        <v-list-item-content>
+          <v-list-item-title v-html="data.item.name"></v-list-item-title>
+          <v-list-item-subtitle v-html="data.item.parent_name"></v-list-item-subtitle>
+        </v-list-item-content>
+      </template>
+    </template>
+  </v-autocomplete>
 </template>
 <script>
 export default {
@@ -21,6 +40,10 @@ export default {
     }
   },
   methods: {
+    remove (item) {
+      const index = this.categoriesSelected.indexOf(item.id)
+      if (index >= 0) this.categoriesSelected.splice(index, 1)
+    },
     loadCategories() {
       return new Promise((resolve/*, reject*/) => {
         this.$http.get(this.endpoint(`category/get`))
@@ -35,6 +58,11 @@ export default {
             }
           })
       })
+    }
+  },
+  watch: {
+    categoriesSelected: function(val) {
+      this.$emit('categoriesChanged', val)
     }
   },
   beforeMount() {

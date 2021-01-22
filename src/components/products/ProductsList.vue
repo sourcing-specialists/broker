@@ -13,11 +13,12 @@
             append-icon="mdi-magnify"
             v-model="search"
             label="Search"
+            @keyup="filterSearch"
           ></v-text-field>
         </v-col>
         <v-col lg="4" md="4">
           <categories-selection
-            @cargoChanged="cargoChanged"
+            @categoriesChanged="categoriesChanged"
            />
         </v-col>
         <v-col lg="2" md="2">
@@ -76,7 +77,18 @@
       fluid
       v-if="products.length > 0 && $store.getters.catView == 'tiles'"
     >
-      <product-as-tile />
+      <v-row
+        class="d-flex align-stretch"
+      >
+        <v-col
+          v-for="(product, index) in products"
+          :key="index" 
+          lg="3"
+          md="4"
+        >
+          <product-as-tile :product="product" />
+        </v-col>
+      </v-row>
     </v-container>
   </div>
 </template>
@@ -86,6 +98,7 @@ import ProductAsList from './ProductAsList.vue'
 import ProductAsTile from './ProductAsTile.vue'
 import CargosSelection from '../CargosSelection.vue'
 import CategoriesSelection from '../CategoriesSelection.vue'
+import _ from 'lodash'
 
 export default {
   name: 'ProductsList',
@@ -93,14 +106,14 @@ export default {
     return {
       search: '',
       selectedCargo: '',
+      selectedCategories: [],
       products: [],
       listHeader: [
         { text: '', col: 1 },
         { text: 'Name', col: 4 },
+        { text: 'Categories', col: 1 },
         { text: 'Packing', col: 2 },
-        { text: 'Min. Order', col: 1 },
-        { text: 'Price', col: 3 },
-        { text: '', col: 1 },
+        { text: 'Price', col: 3 }
       ]
     }
   },
@@ -110,9 +123,37 @@ export default {
     CargosSelection,
     CategoriesSelection
   },
+  watch: {
+    currency: function(val, old) {
+      if(val != old) {
+        this.loadProducts()
+      }
+    }
+  },
   methods: {
+    filterSearch: _.debounce(function() {
+      console.log(123)
+      this.loadProducts()
+    }, 300),
     loadProducts() {
-      this.$http.post(this.endpoint(`catalogue/get`), { cargo_id: this.selectedCargo })
+      this.products = []
+      this.$http.post(this.endpoint(`catalogue/get`), { 
+        cargo_id: this.selectedCargo,
+        currency: this.$store.getters.getCurrency,
+        pageSize: '25',
+        pageNumber: 1,
+        filter: [
+          {
+            categories: this.selectedCategories
+          },
+          {
+            keywords: this.search
+          },
+          {
+            ref: ''
+          },
+        ]
+      })
       .then( resp => {
         if(resp.data.result == true) {
           console.log(resp.data.data)
@@ -124,8 +165,17 @@ export default {
       this.selectedCargo = e
       this.loadProducts()
     },
+    categoriesChanged(e) {
+      this.selectedCategories = e
+      this.loadProducts()
+    },
     changeView(display) {
       this.$store.commit('setCatalogueView', display)
+    }
+  },
+  computed: {
+    currency() {
+      return this.$store.getters.getCurrency
     }
   },
   beforeMount() {

@@ -47,3 +47,8 @@
     }
   }
 </script>
+<style scoped>
+.container {
+  overflow-x: hidden;
+}
+</style>

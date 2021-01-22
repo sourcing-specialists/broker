@@ -10,6 +10,7 @@
           class="ma-2"
           x-small
           fab
+          @click="openDatasheet()"
         >
           <v-icon>fa-download</v-icon>
         </v-btn>
@@ -30,6 +31,11 @@
 <script>
 export default {
   name: 'ProductHiddenOptions',
-  props: ['id'],
+  props: ['id', 'datasheet'],
+  methods: {
+    openDatasheet() {
+      window.open(this.datasheet, '_blank')
+    }
+  }
 }
 </script>

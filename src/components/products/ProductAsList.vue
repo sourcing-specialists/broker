@@ -33,49 +33,74 @@
               </span>
             </h4>
             <p><span class="font-weight-bold">Ref Number:</span> {{ mainOption.ref }}</p>
-            <p><span class="font-weight-bold">Carton Size:</span> {{ meas(mainOption) }}</p>
+            <p><span class="font-weight-bold">Carton Size:</span> {{ mxMeas(mainOption) }}</p>
             <p>{{ productData.description.length >= 100 ? `${productData.description.substring(0,100)}...` : productData.description }}</p>
           </div>
+        </v-col>
+        <v-col
+          lg="1"
+          md="1"
+          class="d-flex align-center"
+          v-if="!canOrder"
+        >
+          <p>{{ categories }}</p>
         </v-col>
         <v-col
           lg="2"
           md="2"
           class="d-flex align-center"
         >
-          <ul v-html="packing(mainOption)"></ul>
+          <ul v-html="mxPacking(mainOption)"></ul>
+        </v-col>
+        <v-col
+          :lg="canOrder ? 4 : 4"
+          :md="canOrder ? 4 : 4"
+          class="d-flex align-center"
+        >
+          <ul class="pa-2 price-tiers" v-html="mxPriceTiers(mainOption)"></ul>
         </v-col>
         <v-col
           lg="1"
           md="1"
           class="d-flex align-center"
+          v-if="canOrder"
         >
-          <p>{{ mainOption.min_order }} Cartons</p>
+          <v-btn
+            class="ma-2"
+            x-small
+            fab
+            elevation="2"
+            :color="$store.getters.vColor"
+            @click="$emit('orderProductModal', productData)"
+          >
+            <span class="white--text"><v-icon>mdi-plus</v-icon></span>
+          </v-btn>
         </v-col>
-        <v-col
-          lg="3"
-          md="3"
-          class="d-flex align-center"
-        >
-          <ul class="pa-2" v-html="prices(mainOption)"></ul>
-        </v-col>
-        <v-col
-          lg="1"
-          md="1"
-          class="d-flex align-center"
+        <div
+          class="options-toggle"
+          v-if="productData.options.length > 1 && !canOrder"
         >
           <v-btn
             :class="['ma-2 show-options', { opened: showOptions }]"
             x-small
             fab
-            v-if="productData.options.length > 1"
             @click="toggleOptions()"
           >
             <v-icon>fa-chevron-down</v-icon>
           </v-btn>
-        </v-col>
+        </div>
+        <div class="options-trigger">
+          <v-btn
+            @click="swipe('left')"
+          >
+            <v-icon v-if="!swiped">fa-long-arrow-alt-left</v-icon>
+            <v-icon v-if="swiped">fa-long-arrow-alt-right</v-icon>
+          </v-btn>
+        </div>
       </v-row>
       <product-hidden-options
         :id="productData.id"
+        :datasheet="productData.datasheet_url"
         @showToggle="fullDetailsToggle"
       />
     </div>
@@ -89,7 +114,6 @@
     <v-dialog
       v-model="showFullDetails"
       transition="dialog-bottom-transition"
-      max-width="720"
     >
       <product-details-modal
         :product="productData"
@@ -123,6 +147,9 @@ export default {
     },
     displayType: {
       default: 'list'
+    },
+    addCart: {
+      default: false
     }
   },
   components: {
@@ -143,24 +170,6 @@ export default {
     fullDetailsToggle(val) {
       this.showFullDetails = val
     },
-    packing(option) {
-      var string = `
-        <li><span class="font-weight-bold">${option.inner_unit_text}:</span> ${option.inner_units}</li>
-        <li><span class="font-weight-bold">${option.outer_unit_text}:</span> ${option.outer_units}</li>
-      `
-      return string
-    },
-    meas(option) {
-      var string = `${option.length}cm x ${option.width}cm x ${option.height}cm`
-      return string
-    },
-    prices(option) {
-      var string = ''
-      option.tiers.map(function(t) {
-        string+= `<li><span class="font-weight-bold">${t.cost_per_carton}</span> (${t.from} to ${t.to})</li>`
-      })
-      return string
-    },
     swipe(direction) {
       if(direction == 'right') {
         this.swiped = false
@@ -173,18 +182,26 @@ export default {
     }
   },
   computed: {
+    canOrder() {
+      if(this.addCart === false) return false
+      return true
+    },
     mainOption() {
       if(this.productData.options[0] !== undefined) {
         return this.productData.options[0]
       }
-      return false
+      return {}
     },
     image() {
       return this.productData.images[0].thumb ? this.productData.images[0].thumb : ''
+    },
+    categories() {
+      var str = ''
+      this.productData.categories.map(function(c) {
+        str+= c.name+', ' 
+      })
+      return str
     }
-  },
-  beforeMount() {
-
   }
 }
 </script>
@@ -193,6 +210,20 @@ export default {
     overflow: hidden;
     position: relative;
     transition: all ease-in-out 0.5s;
+    .options-trigger {
+      position: absolute;
+      top: 0px;
+      right: 0px;
+      z-index: 2;
+      i {
+        color: #E2E2E2 !important;
+      }
+    }
+    .options-toggle {
+      position: absolute;
+      right: 10px;
+      top: calc(50% - 20px);
+    }
     .product-hidden-options {
       background-color: #F2F2F2;
       position: absolute;

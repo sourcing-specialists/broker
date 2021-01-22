@@ -9,7 +9,8 @@ import Dashboard from '../views/Dashboard.vue'
 import Companies from '../views/Companies/Companies.vue'
 import crudCompany from '../views/Companies/Crud.vue'
 import Catalogue from '../views/Catalogue.vue'
-import Orders from '../views/Orders.vue'
+import Orders from '../views/orders/Orders.vue'
+import OrdersNew from '../views/orders/OrdersNew.vue'
 import Account from '../views/Account.vue'
 
 Vue.use(VueRouter)
@@ -74,6 +75,14 @@ const routes = [
     path: '/orders',
     name: 'Orders',
     component: Orders,
+    meta: {
+      requiresAuth: true
+    }
+  },
+  {
+    path: '/orders/new',
+    name: 'OrdersNew',
+    component: OrdersNew,
     meta: {
       requiresAuth: true
     }

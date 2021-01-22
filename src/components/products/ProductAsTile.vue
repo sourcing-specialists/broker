@@ -1,55 +1,39 @@
 <template>
-  <v-row
-  >
-    <v-col
-      lg="1"
-      class="pa-6"
+  <v-card>
+    <v-img
+      height="250"
+      :src="product.images[0].small"
+    ></v-img>
+    <div
+      class="pa-4"
     >
-    <ProductImage :src="productData.img" />
-    </v-col>
-    <v-col
-      lg="1"
-      class="d-flex align-center"
-    >
-      {{ productData.ref }}
-    </v-col>
-    <v-col
-      lg="4"
-      class="d-flex align-center"
-    >
-      <div>
-        <h4>{{ productData.name }}</h4>
-        <p>{{ productData.description }}</p>
-      </div>
-    </v-col>
-    <v-col
-      lg="2"
-      class="d-flex align-center"
-    >
-      {{ productData.packing }}
-    </v-col>
-    <v-col
-      lg="2"
-      class="d-flex align-center"
-    >
-      {{ productData.carton }}
-    </v-col>
-    <v-col
-      lg="2"
-      class="d-flex align-center"
-    >
-      {{ productData.price }}
-    </v-col>
-    <v-divider></v-divider>
-  </v-row>
+      <h4>
+        <span :style="`color: ${$store.getters.hexColor}`">{{ product.name }}</span> 
+        <span
+          v-if="mainOption"
+        >
+          {{ mainOption.group_name }}: {{ mainOption.group_value }}
+        </span>
+      </h4>
+      <v-divider></v-divider>
+      <p>{{ product.description.length >= 100 ? `${product.description.substring(0,100)}...` : product.description }}</p>
+      <ul>
+        <li><span class="font-weight-bold">Ref Number:</span> {{ mainOption.ref }}</li>
+        <li><span class="font-weight-bold">Carton Size:</span> {{ mxMeas(mainOption) }}</li>
+        <li><span class="font-weight-bold">MOQ:</span> {{ mainOption.min_order }} Cartons</li>
+      </ul>
+      <ul v-html="mxPacking(mainOption)"></ul>
+      <h5>Price Tiers</h5>
+      <ul class="price-tiers" v-html="mxPriceTiers(mainOption)"></ul>
+    </div>
+  </v-card>
 </template>
 
 <script> 
-import ProductImage from './ProductImage.vue'
 export default {
-  name: 'Product',
+  name: 'ProductAsTile',
   props: {
-    productData: {
+    product: {
       type: Object,
       default: () => {
         return {
@@ -62,21 +46,20 @@ export default {
           price: ''
         }
       }
-    },
-    displayType: {
-      default: 'list'
     }
-  },
-  components: {
-    ProductImage,
   },
   data() {
     return {
 
     }
   },
-  beforeMount() {
-
+  computed: {
+    mainOption() {
+      if(this.product.options[0] !== undefined) {
+        return this.product.options[0]
+      }
+      return {}
+    },
   }
 }
 </script>

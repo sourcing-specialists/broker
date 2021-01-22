@@ -18,6 +18,9 @@
     </ul>
     <ul class="d-flex justify-end">
       <li>
+        <currency-select />
+      </li>
+      <li>
         <router-link to="/account">
           <v-btn
             dark
@@ -46,6 +49,8 @@
 </template>
 
 <script>
+import currencySelect from './currencySelect'
+
 export default {
   name: 'TopNavBar',
   data: () => {
@@ -57,6 +62,9 @@ export default {
     logout() {
       this.$store.dispatch('logout')
     }
+  },
+  components: {
+    currencySelect
   }
 }
 </script>
