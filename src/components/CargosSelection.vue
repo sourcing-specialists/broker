@@ -16,8 +16,21 @@ export default {
   data() {
     return {
       cargos: [],
-      cargo: '',
+      cargo: this.$store.getters.cargo.id,
       loading: true
+    }
+  },
+  computed: {
+    inOrders() {
+      return (this.$router.currentRoute.name == 'OrdersNew') ? true : false
+    }
+  },
+  watch: {
+    cargo(val) {
+      const cargo = this.cargos.find(cargo => cargo.id == val)
+      if(this.inOrders == true) {
+        this.$store.dispatch('cargoSelection', cargo)
+      }
     }
   },
   methods: {
@@ -31,6 +44,10 @@ export default {
                 c.text = c.departure_date != '' ? c.departure_date : c.cutoff_date
               })
               this.cargos = resp.data.data
+              //set cargo globally if it is the first time
+              if(this.$store.getters.cargo.id == undefined) {
+                this.$store.dispatch('cargoSelection', resp.data.data[0])
+              }
               resolve()
             }
           })
@@ -38,13 +55,11 @@ export default {
     }
   },
   beforeMount() {
-    if(this.cargo == '') {
-      this.loadCargos()
-      .then( () => {
-        this.cargo = this.cargos[0].id
-        this.loading = false
-      })
-    }
+    this.loadCargos()
+    .then( () => {
+      this.cargo = this.$store.getters.cargo.id
+      this.loading = false
+    })
   }
 }
 </script>

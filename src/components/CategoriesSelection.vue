@@ -2,7 +2,6 @@
   <v-autocomplete
     v-model="categoriesSelected"
     :items="categories"
-    chips
     label="Categories"
     item-text="name"
     item-value="id"
@@ -10,6 +9,7 @@
   >
     <template v-slot:selection="data">
       <v-chip
+        style="padding: 10px;"
         v-bind="data.attrs"
         :input-value="data.selected"
         close

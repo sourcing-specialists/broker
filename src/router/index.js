@@ -12,6 +12,9 @@ import Catalogue from '../views/Catalogue.vue'
 import Orders from '../views/orders/Orders.vue'
 import OrdersNew from '../views/orders/OrdersNew.vue'
 import Account from '../views/Account.vue'
+import OrderView from '../views/orders/OrderView'
+import CustomLists from '../views/CustomLists'
+import CustomCatalogue from '../views/public/customCatalogue'
 
 Vue.use(VueRouter)
 Vue.use(VuePageTransition)
@@ -21,6 +24,15 @@ const routes = [
     path: '/login',
     name: 'Login',
     component: Login
+  },
+  {
+    path: '/public/catalogue/:id',
+    name: 'showPublicCatalogue',
+    props: true,
+    component: CustomCatalogue,
+    meta: {
+      requiresAuth: false
+    }
   },
   {
     path: '/',
@@ -72,9 +84,26 @@ const routes = [
     }
   },
   {
+    path: '/catalogue/custom-lists',
+    name: 'CatalogueCustomLists',
+    component: CustomLists,
+    meta: {
+      requiresAuth: true
+    }
+  },
+  {
     path: '/orders',
     name: 'Orders',
     component: Orders,
+    meta: {
+      requiresAuth: true
+    }
+  },
+  {
+    path: '/orders/view/:id',
+    name: 'viewOrder',
+    component: OrderView,
+    props: true,
     meta: {
       requiresAuth: true
     }
@@ -113,6 +142,10 @@ const router = new VueRouter({
 
 //validate routes and check sessions
 router.beforeEach( function(to, from, next) {
+  if(to.meta.requiresAuth === false) {
+    next()
+    return
+  }
   if (to.name !== 'Login' && !store.getters.isAuthenticated) next({ name: 'Login' })
   else next()
 })

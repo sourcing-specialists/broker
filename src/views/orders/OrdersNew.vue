@@ -2,6 +2,7 @@
   <v-container fluid>
     <PageHeader :title="title" :subheader="subheader" />
     <v-btn
+      v-if="step != 3"
       class="ma-2 add_button"
       :color="$store.getters.vColor"
       elevation="2"
@@ -29,7 +30,6 @@
             :editable="company_id != ''"
             :complete="step > 2"
             edit-icon="mdi-pencil"
-            @click="pickProducts()"
           >
             Add items to cart
           </v-stepper-step>
@@ -57,49 +57,15 @@
           </v-stepper-content>
 
           <v-stepper-content step="2">
-            <v-skeleton-loader
-              class="mx-auto"
-              type="table"
-              v-if="productsLoading"
-            />
-            <v-container
-              fluid
-              v-if="!productsLoading"
-            >
-              <v-row>
-                <v-btn
-                  :color="$store.getters.vColor"
-                  elevation="2"
-                  @click="debug()"
-                >
-                  <span class="white--text">Dump Cart</span>
-                </v-btn>
-              </v-row>
-              <v-row
-                class="list-header"
-              >
-                <v-col
-                  :lg="h.col"
-                  :md="h.col"
-                  v-for="(h, index) in listHeader"
-                  :key="index"
-                >
-                <p>{{ h.text }}</p>
-                </v-col>
-              </v-row>
-              <v-divider></v-divider>
-              <product-as-list
-                v-for="(product,index) in products"
-                :key="index" 
-                :productData="product"
-                addCart
-                @orderProductModal="productModal(product)"
-              />
-            </v-container>
+            <products-list
+              v-if="step == 2"
+              forOrders
+              @addModal="productModal"
+            ></products-list>
           </v-stepper-content>
 
           <v-stepper-content step="3">
-            <cart-content></cart-content>
+            <cart-checkout v-if="step == 3"></cart-checkout>
           </v-stepper-content>
         </v-stepper-items>
       </v-stepper>
@@ -109,16 +75,20 @@
       v-if="showProductModal"
       @toggleDialogStatus="toggleDialog()"
     />
-    <cart-float v-model="showCart" @clearCart="clear()" />
+    <cart-float 
+      v-model="showCart" 
+      @checkout="step = 3" 
+      @clearCart="clear()"
+    />
   </v-container>
 </template>
 
 <script>
 import PageHeader from '../../components/PageHeader'
-import ProductAsList from '../../components/products/ProductAsList.vue'
+import ProductsList from '../../components/products/ProductsList.vue'
 import ProductModal from '../../components/orders/productModal'
-import CartFloat from './cartFloat'
-import CartContent from './cartContent'
+import CartFloat from '../../components/orders/cartFloat'
+import CartCheckout from '../../components/orders/CartCheckout'
 import { mapGetters } from 'vuex'
 
 export default {
@@ -129,7 +99,6 @@ export default {
       subheader: '',
       company_id: this.$store.getters.company.id ? this.$store.getters.company.id : '',
       loading: true,
-      productsLoading: true,
       step: 1,
       showCart: false,
       listHeader: [
@@ -146,10 +115,10 @@ export default {
   },
   components: {
     PageHeader,
-    ProductAsList,
+    ProductsList,
     ProductModal,
     CartFloat,
-    CartContent
+    CartCheckout,
   },
   computed: {
     ...mapGetters([
@@ -160,21 +129,6 @@ export default {
       'origin_zone',
       'destination_zone'
     ])
-  },
-  watch: {
-    step(val) {
-      if(val == 3 && this.cbm > 0) {
-        this.$http.get(this.endpoint('distribution/get'), {
-          params: {
-            origin_zone: this.origin_zone,
-            destination_zone: this.destination_zone,
-            cbm: this.cbm
-          }
-        }).then(dist => {
-          console.log(dist)
-        })
-      }
-    }
   },
   beforeMount() {
     //load customers
@@ -189,9 +143,6 @@ export default {
     })
   },
   methods: {
-    pickProducts() {
-      console.log(this.products)
-    },
     toggleCart() {
       this.showCart = !this.showCart
     },
@@ -203,42 +154,10 @@ export default {
       //pass client to the cart store
       const company = this.companies.filter(c => c.id == this.company_id)
       this.$store.dispatch('setCompany', company[0])
-      this.loadProducts()
     },
     productModal(product) {
       this.productInModal = product
       this.showProductModal = true
-    },
-    loadProducts() {
-      this.productsLoading = true
-      this.products = []
-      this.$http.post(this.endpoint(`catalogue/get`), { 
-        cargo_id: this.selectedCargo,
-        currency: this.$store.getters.getCurrency,
-        pageSize: '25',
-        pageNumber: 1,
-        filter: [
-          {
-            categories: this.selectedCategories
-          },
-          {
-            keywords: this.search
-          },
-          {
-            ref: ''
-          },
-        ]
-      })
-      .then( resp => {
-        if(resp.data.result == true) {
-          console.log(resp.data.data)
-          this.products = resp.data.data
-          this.productsLoading = false
-        }
-      })
-    },
-    debug() {
-      console.log(this.$store.getters.company)
     },
     clear() {
       this.company_id = ''
@@ -248,11 +167,6 @@ export default {
     remove(id) {
       this.$store.dispatch('removeFromCart', id)
     }
-  },
-  mounted() {
-    if(this.company_id != '') {
-      this.loadProducts()
-    }
-  },
+  }
 }
 </script>

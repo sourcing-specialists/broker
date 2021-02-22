@@ -4,6 +4,7 @@ import createPersistedState from "vuex-persistedstate";
 import Auth from './auth.js'
 import Settings from './settings.js'
 import Cart from './cart.js'
+import Catalogue from './catalogue'
 
 Vue.use(Vuex)
 
@@ -17,7 +18,8 @@ const store = new Vuex.Store({
   modules: {
     auth: authentication,
     appSettings: appSettings,
-    cart: cart
+    cart: cart,
+    catalogue: Catalogue
   },
   plugins: [createPersistedState()],
 })

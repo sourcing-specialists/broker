@@ -4,10 +4,10 @@
 
     <Loader />
 
-    <SideNav v-if="isAuthenticated" />
+    <SideNav v-if="isAuthenticated" v-model="side" />
 
     <v-app-bar app v-if="isAuthenticated">
-      <TopNavBar />
+      <TopNavBar @toggleSideNav="side = !side" />
     </v-app-bar>
 
     <!-- Sizes your content based upon application components -->
@@ -35,6 +35,11 @@
 
   export default {
     name: 'Layout',
+    data() {
+      return {
+        side: false,
+      }
+    },
     components: {
       Loader,
       TopNavBar,
@@ -49,6 +54,6 @@
 </script>
 <style scoped>
 .container {
-  overflow-x: hidden;
+  position: inherit;
 }
 </style>

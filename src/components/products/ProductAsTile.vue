@@ -1,5 +1,5 @@
 <template>
-  <v-card>
+  <v-card class="tile-content">
     <v-img
       height="250"
       :src="product.images[0].small"
@@ -16,7 +16,7 @@
         </span>
       </h4>
       <v-divider></v-divider>
-      <p>{{ product.description.length >= 100 ? `${product.description.substring(0,100)}...` : product.description }}</p>
+      <p>{{ product.description.length >= 30 ? `${product.description.substring(0,30)}...` : product.description }}</p>
       <ul>
         <li><span class="font-weight-bold">Ref Number:</span> {{ mainOption.ref }}</li>
         <li><span class="font-weight-bold">Carton Size:</span> {{ mxMeas(mainOption) }}</li>
@@ -26,12 +26,39 @@
       <h5>Price Tiers</h5>
       <ul class="price-tiers" v-html="mxPriceTiers(mainOption)"></ul>
     </div>
+    <v-card-actions
+      :class="['asTile']"
+    >
+      <product-hidden-options
+        tile
+        :id="product.id"
+        :datasheet="product.datasheet_url"
+        :addCartButton="addToCart"
+        @showToggle="fullDetailsToggle"
+        v-on="$listeners"
+      ></product-hidden-options>
+    </v-card-actions>
+    <v-dialog
+      v-model="showFullDetails"
+      transition="dialog-bottom-transition"
+    >
+      <product-details-modal
+        :product="product"
+      />
+    </v-dialog>
   </v-card>
 </template>
 
 <script> 
+import ProductHiddenOptions from './ProductHiddenOptions.vue'
+import ProductDetailsModal from './ProductDetailsModal'
+
 export default {
   name: 'ProductAsTile',
+  components: {
+    ProductHiddenOptions,
+    ProductDetailsModal
+  },
   props: {
     product: {
       type: Object,
@@ -46,11 +73,14 @@ export default {
           price: ''
         }
       }
+    },
+    addCart: {
+      default: false
     }
   },
   data() {
     return {
-
+      showFullDetails: false
     }
   },
   computed: {
@@ -60,6 +90,27 @@ export default {
       }
       return {}
     },
+    addToCart() {
+      return this.addCart ? true : false
+    }
+  },
+  methods:{
+    fullDetailsToggle(val) {
+      this.showFullDetails = val
+    },
   }
 }
 </script>
+<style lang="scss" scoped>
+.tile-content {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+}
+.asTile {
+  background-color: #F2F2F2;
+  border-bottom-left-radius: 5px;
+  border-bottom-right-radius: 5px;
+  padding: 0px !important;
+}
+</style>

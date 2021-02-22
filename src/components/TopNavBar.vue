@@ -8,7 +8,7 @@
           dark
           small
           color="secondary"
-          @click="$store.commit('menuToggle')"
+          @click="$emit('toggleSideNav')"
           >
           <v-icon dark>
             fa-bars
@@ -17,6 +17,9 @@
       </li>
     </ul>
     <ul class="d-flex justify-end">
+      <li>
+        <language-selection />
+      </li>
       <li>
         <currency-select />
       </li>
@@ -50,21 +53,18 @@
 
 <script>
 import currencySelect from './currencySelect'
+import languageSelection from './langSelection'
 
 export default {
   name: 'TopNavBar',
-  data: () => {
-    return {
-
-    }
-  },
   methods: {
     logout() {
       this.$store.dispatch('logout')
     }
   },
   components: {
-    currencySelect
+    currencySelect,
+    languageSelection
   }
 }
 </script>

@@ -1,8 +1,15 @@
 //CSS to be share across all platform.
 
+$mainColor: #B71C1C;
+
 ul {
   list-style-type: none;
   padding-left: 0px !important;
+}
+
+.i-exist {
+  color: $mainColor;
+  font-size: 12px;
 }
 
 .price-tiers {
@@ -21,6 +28,15 @@ ul {
       background-color: #CCC;
       top: 10px;
       left: -5px;
+    }
+    &.highlight {
+      &:before {
+        width: 5px;
+        background-color: $mainColor;
+      }
+      span {
+        color: $mainColor;
+      }
     }
   }
   p {

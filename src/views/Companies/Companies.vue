@@ -31,7 +31,10 @@
           label="Search"
         ></v-text-field>
       </template>
-      <template v-slot:item.actions="{ item }">
+      <template v-slot:[`item.zone`]="{ item }">
+        {{ item.zone.name }}
+      </template>
+      <template v-slot:[`item.actions`]="{ item }">
         <v-btn
           class="ma-2"
           x-small

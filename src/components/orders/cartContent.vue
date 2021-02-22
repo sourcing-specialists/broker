@@ -1,15 +1,21 @@
 <template>
   <div>
-    <v-container>
+    <v-container
+      v-if="company.id"
+      fluid
+    >
       <h4 :style="`color: ${$store.getters.hexColor}`">{{ company.name }}</h4>
       <p><span class="font-weight-bold">BR:</span> {{ company.br_number }}
-      <br><span class="font-weight-bold">Zone:</span> {{ company.zone.name }}</p>
+      <br><span class="font-weight-bold">Zone:</span> {{ company.zone ? company.zone.name : '' }}</p>
     </v-container>
+    <v-divider></v-divider>
+    <cargo-bar></cargo-bar>
+    <v-divider></v-divider>
     <v-list
-      v-if="cartProducts.length > 0"
+      v-if="products.length > 0"
     >
       <v-list-item
-        v-for="p in cartProducts"
+        v-for="p in products"
         :key="p.id"
       >
         <v-list-item-content
@@ -25,21 +31,39 @@
           <v-list-item-subtitle>
             <span class="font-weight-bold">{{ p.option_group_name }}: </span>{{ p.option_group_value }}
           </v-list-item-subtitle>
+          <p><strong>Cbm per carton:</strong> {{ p.cbm_per_carton }}</p>
+          <p><strong>MEAS:</strong> {{ p.meas }}</p>
           <ul
             class="product_details"
           >
             <li>
               <v-text-field
+                class="text-center"
                 v-model="p.quantity"
-                @blur="$store.dispatch('updateQuantity', { id: p.id, quantity: p.quantity })"
+                @blur="updateQuantity({ id: p.id, quantity: p.quantity })"
               >
-                <v-icon
-                  slot="append"
-                  color="red"
-                  @click="updateQuantity(p.id, p.quantity)"
+                <v-btn
+                  :title="p.quantity === p.min_order ? '2 is the minimum order' : 'Reduce quantity'"
+                  slot="prepend"
+                  fab
+                  small
+                  :disabled="p.quantity === p.min_order"
+                  color="red darken-4"
+                  @click="p.quantity-- && updateQuantity({ id: p.id, quantity: p.quantity })"
                 >
-                  mdi-plus
-                </v-icon>
+                  <v-icon>mdi-minus</v-icon>
+                </v-btn>
+                <v-btn
+                  :title="!cargoHasSpace(cargoAvCbm, { cbm_per_carton: p.cbm_per_carton, quantity: 1 }) ? 'Container is full' : 'Add quantity'"
+                  slot="append-outer"
+                  fab
+                  small
+                  color="red darken-4"
+                  :disabled="!cargoHasSpace(cargoAvCbm, { cbm_per_carton: p.cbm_per_carton, quantity: 1 })"
+                  @click="p.quantity++ && updateQuantity({ id: p.id, quantity: p.quantity })"
+                >
+                  <v-icon>mdi-plus</v-icon>
+                </v-btn>
               </v-text-field>
             </li>
             <li class="price"><span class="font-weight-bold">{{ $store.getters.getCurrencyText }}{{ p.formatted_subtotal }}</span></li>
@@ -56,12 +80,12 @@
           <v-divider></v-divider>
         </v-list-item-content>
       </v-list-item>
-      <v-list-item>
+      <v-list-item v-if="!isCheckout">
         <v-list-item-content>
           <ul class="cart_total">
             <li></li>
-            <li class="price"><span class="font-weight-bold">CBM: {{ cbm }}</span></li>
-            <li class="price"><span class="font-weight-bold">Subtotal: {{ getCurrencyText }}{{ subtotal }}</span></li>
+            <li><span class="font-weight-bold">CBM: {{ round(cbm) }}</span></li>
+            <li class="price"><span class="font-weight-bold">Subtotal: {{ getCurrencyText }} {{ subtotal }}</span></li>
           </ul>
         </v-list-item-content>
       </v-list-item>
@@ -73,27 +97,34 @@
 </template>
 
 <script>
-import { mapGetters } from 'vuex'
+import { mapActions, mapGetters } from 'vuex'
+import cargoBar from '../cargoBar'
+
 export default {
   name: 'cartContent',
+  props: ['checkout'],
+  components: {
+    cargoBar
+  },
   computed: {
-    cartProducts() {
-      return this.$store.getters.products
+    isCheckout() {
+      return this.checkout == '' ? true : false
     },
     ...mapGetters([
+      'products',
       'company',
       'subtotal',
       'getCurrencyText',
       'cbm',
-      'origin_zone',
-      'destination_zone'
+      'distribution',
+      'cargoAvCbm'
     ])
   },
   methods: {
-    updateQuantity(id, qty) {
-      qty++
-      this.$store.dispatch('updateQuantity', { id: id, quantity: qty })
-    }
+    ...mapActions([
+      'updateQuantity',
+      'confirmOrder'
+    ])
   }
 }
 </script>

@@ -1,29 +1,45 @@
 <template>
   <div 
-    class="product-hidden-options d-flex align-center justify-end"
+    :class="['product-hidden-options', 'd-flex', 'align-center', 'justify-end', { asTile: isTile }, { isForOrders: addCartButton }]"
   >
     <ul
-      class="d-flex align-center justify-end"
+      :class="['d-flex', 'align-center', 'justify-end']"
     >
       <li>
         <v-btn
           class="ma-2"
           x-small
-          fab
+          :fab="!isTile"
           @click="openDatasheet()"
         >
           <v-icon>fa-download</v-icon>
         </v-btn>
       </li>
-      <li>
+      <li
+        @click="$emit('showToggle', true)"
+      >
         <v-btn
           class="ma-2"
           x-small
-          fab
+          :fab="!isTile"
           @click="$emit('showToggle', true)"
         >
           <v-icon>fa-eye</v-icon>
         </v-btn>
+      </li>
+      <li
+        v-if="addCartButton"
+        class="addCartButton"
+        @click="$emit('productAdd')"
+      >
+        <v-btn
+            class="ma-2"
+            x-small
+            :color="$store.getters.vColor"
+            @click="$emit('productAdd')"
+          >
+            <span class="white--text"><v-icon>mdi-plus</v-icon></span>
+          </v-btn>
       </li>
     </ul>
   </div>
@@ -31,7 +47,12 @@
 <script>
 export default {
   name: 'ProductHiddenOptions',
-  props: ['id', 'datasheet'],
+  props: ['id', 'datasheet', 'tile', 'addCartButton'],
+  computed: {
+    isTile() {
+      return this.tile == '' ? true : false
+    }
+  },
   methods: {
     openDatasheet() {
       window.open(this.datasheet, '_blank')
@@ -39,3 +60,32 @@ export default {
   }
 }
 </script>
+<style scoped lang="scss">
+.asTile {
+  width: 100%;
+  ul {
+    width: 100%;
+    justify-content: center !important;
+    li {
+      text-align: center;
+      width: 50%;
+      padding: 10px;
+      &:hover {
+        background-color: #CCC;
+      }
+    }
+  }
+  &.isForOrders {
+    li {
+      width: 33%;
+      &.addCartButton {
+        background-color: #B71C1C;
+        border-bottom-right-radius: 5px;
+        &:hover {
+          opacity: 0.9;
+        }
+      }
+    }
+  }
+}
+</style>

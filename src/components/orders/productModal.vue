@@ -44,7 +44,7 @@
             </div>
           </v-col>
           <v-col lg="2" md="2" class="d-flex align-center">
-            <ul>
+            <div>
               <v-select
                 v-for="(attrs, index) in option.attributes_grouped"
                 :key="index"
@@ -55,10 +55,11 @@
                 :label="attrs[0].group_name"
                 v-model="attrs.selected"
               ></v-select>
-            </ul>
+              <div class="i-exist" v-if="inCart(option)">Product in cart: {{ inCartQuantity(option) }} Cartons</div>
+            </div>
           </v-col>
           <v-col lg="4" md="4" class="d-flex align-center">
-            <ul class="price-tiers" v-html="mxPriceTiers(option)"></ul>
+            <ul class="price-tiers" v-html="mxPriceTiers(option, true)"></ul>
           </v-col>
           <v-col lg="2" md="2" class="d-flex align-center">
             <vue-number-input v-model="option.quantity" :min="0" center controls />
@@ -82,7 +83,7 @@
 <script>
 import ProductImage from '../products/ProductImage'
 import VueNumberInput from '@chenfengyuan/vue-number-input'
-import { mapActions } from 'vuex'
+import { mapActions, mapGetters } from 'vuex'
 
 export default {
   name: 'productModal',
@@ -119,21 +120,33 @@ export default {
     addOption(index) {
       if(this.$refs.opt[index].validate()) {
 
-        var attrs = this.options[index].attributes_grouped.map(function(a) {
-          return a['selected']
-        })
+        var attrs = this.getSelectedAttributes(this.options[index])
         
         var cartProduct = this.buildCartProduct(this.product, this.options[index], attrs)
 
         this.addToCart(cartProduct)
-        this.$toasted.success('Product Added')
       }
+    },
+    inCart(option) {
+      var attrs = this.getSelectedAttributes(option)
+      var idd =  `${option.id}-${attrs.join('-')}`
+      return this.products.some( p => p.id == idd )
+    },
+    inCartQuantity(option) {
+      var attrs = this.getSelectedAttributes(option)
+      var idd =  `${option.id}-${attrs.join('-')}`
+      var p = this.products.find( p => p.id == idd )
+      return p.quantity
     },
     ...mapActions([
       'addToCart'
     ])
   },
   computed: {
+    ...mapGetters([
+      'products',
+      'cargoAvCbm'
+    ]),
     image() {
       return this.product.images[0].thumb ? this.product.images[0].thumb : ''
     },

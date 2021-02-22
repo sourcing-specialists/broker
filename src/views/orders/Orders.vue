@@ -11,9 +11,47 @@
         <span class="white--text"><v-icon>mdi-plus</v-icon></span>
       </v-btn>
     </router-link>
-    <v-card>
-      
-    </v-card>
+    <v-data-table
+      :loading="loading"
+      :search="table.search"
+      :headers="table.headers"
+      :items="table.orders"
+      :items-per-page="10"
+      class="elevation-1 pa-8"
+    >
+      <template v-slot:top>
+        <v-row>
+          <v-col>
+            <v-select
+              :items="[{text: 'All Orders', value: 'all' }, { text: 'Active Orders', value: '' }]"
+              label="Orders"
+              v-model="ordersType"
+              @change="loadOrders()"
+            >
+            </v-select>
+          </v-col>
+          <v-col>
+            <v-text-field
+              append-icon="mdi-magnify"
+              v-model="table.search"
+              label="Search"
+            ></v-text-field>
+          </v-col>
+        </v-row>
+      </template>
+      <template v-slot:[`item.actions`]="{ item }">
+        <v-btn
+          class="ma-2"
+          x-small
+          fab
+          elevation="2"
+          :color="$store.getters.vColor"
+          @click="$router.push({ name: 'viewOrder', params: { id: item.id }})"
+        >
+          <span class="white--text"><v-icon>mdi-pencil</v-icon></span>
+        </v-btn>
+      </template>
+    </v-data-table>
   </v-container>
 </template>
 
@@ -25,11 +63,41 @@ export default {
   data() {
     return {
       title: 'Orders',
-      subheader: 'List of all orders'
+      subheader: 'List of all orders',
+      ordersType: '',
+      loading: true,
+      table: {
+        search: '',
+        headers: [
+          { text: 'ID', align: 'start', sortable: true, value: 'orderNumber' },
+          { text: 'Company', align: 'start', sortable: true, value: 'company' },
+          { text: 'Date', align: 'start', sortable: true, value: 'date' },
+          { text: 'Amount', align: 'start', sortable: true, value: 'total_string' },
+          { text: '', align: 'end', value: 'actions' }
+        ],
+        orders: []
+      }
     }
   },
   components: {
     PageHeader
+  },
+  methods: {
+    loadOrders() {
+      this.loading = true
+      this.$http.get(this.endpoint('order/get'), {
+        params: {
+          order_type: this.ordersType
+        }
+      })
+      .then((resp) => {
+        this.table.orders = resp.data.data
+        this.loading = false
+      })
+    }
+  },
+  mounted() {
+    this.loadOrders()
   }
 }
 </script>

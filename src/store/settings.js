@@ -6,7 +6,8 @@ const appSettings = {
     vuetifyColor: 'red darken-4',
     hexColor: '#B71C1C', 
     catalogueView: 'list',
-    currency: 'USD'
+    currency: 'USD',
+    language: 'en'
   }),
   mutations: {
     menuToggle(state) {
@@ -20,6 +21,9 @@ const appSettings = {
     },
     currencyChange(state, currency) {
       state.currency = currency
+    },
+    languageChange(state, language) {
+      state.language = language
     }
   },
   getters: {
@@ -44,7 +48,8 @@ const appSettings = {
         str+= ' £'
       }
       return str
-    }
+    },
+    getLanguage: state => state.language
   }
 }
 

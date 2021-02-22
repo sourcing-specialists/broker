@@ -1,24 +1,36 @@
 const SideMenu = [
   { 
-    title: 'Dashboard',
+    title: 'dashboard',
     to: '/dashboard',
     icon: 'fa-chart-pie',
     children: [] 
   },
   { 
-    title: 'Catalogue', 
-    to: '/catalogue', 
+    title: 'catalogue', 
+    to: '', 
     icon: 'fa-list', 
-    children: []
+    children: [
+      {
+        title: 'catalogue',
+        to: '/catalogue',
+        icon: 'fa-list',
+        exact: true
+      },
+      {
+        title: 'custom_lists',
+        to: '/catalogue/custom-lists',
+        icon: ''
+      }
+    ]
   },
   { 
-    title: 'Orders', 
+    title: 'order', 
     to: '/orders', 
     icon: 'fa-boxes', 
     children: []
   },
   { 
-    title: 'Clients', 
+    title: 'client', 
     to: '/companies', 
     icon: 'fa-users', 
     children: []

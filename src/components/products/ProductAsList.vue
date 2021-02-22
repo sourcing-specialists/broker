@@ -2,10 +2,11 @@
   <div
   >
     <div
-      class="product-row"
+      :class="['product-row']"
+      @click="select(productData.id)"
     >
       <v-row
-        :class="{swiped: swiped}"
+        :class="[{swiped: swiped}, { selected: isSelected }]"
         v-touch="{
           left: () => swipe('left'),
           right: () => swipe('right'),
@@ -71,14 +72,14 @@
             fab
             elevation="2"
             :color="$store.getters.vColor"
-            @click="$emit('orderProductModal', productData)"
+            @click="$emit('productAdd')"
           >
             <span class="white--text"><v-icon>mdi-plus</v-icon></span>
           </v-btn>
         </v-col>
         <div
           class="options-toggle"
-          v-if="productData.options.length > 1 && !canOrder"
+          v-if="productData.options.length > 1 && !canOrder && !canSelect"
         >
           <v-btn
             :class="['ma-2 show-options', { opened: showOptions }]"
@@ -89,7 +90,7 @@
             <v-icon>fa-chevron-down</v-icon>
           </v-btn>
         </div>
-        <div class="options-trigger">
+        <div class="options-trigger" v-if="!canSelect">
           <v-btn
             @click="swipe('left')"
           >
@@ -127,6 +128,7 @@ import ProductImage from './ProductImage.vue'
 import ProductAsListOptions from './ProductAsListOptions.vue'
 import ProductHiddenOptions from './ProductHiddenOptions'
 import ProductDetailsModal from './ProductDetailsModal'
+import { mapMutations, mapGetters } from 'vuex'
 
 export default {
   name: 'Product',
@@ -150,6 +152,9 @@ export default {
     },
     addCart: {
       default: false
+    },
+    canSelect: {
+      default: false
     }
   },
   components: {
@@ -167,10 +172,16 @@ export default {
     }
   },
   methods: {
+    ...mapMutations([
+      'addToSelection'
+    ]),
     fullDetailsToggle(val) {
       this.showFullDetails = val
     },
     swipe(direction) {
+      if(this.canSelect) {
+        return
+      }
       if(direction == 'right') {
         this.swiped = false
         return
@@ -179,9 +190,21 @@ export default {
     },
     toggleOptions() {
       this.showOptions = !this.showOptions
+    },
+    select(id) {
+      if(!this.canSelect) {
+        return
+      }
+      this.addToSelection(id)
     }
   },
   computed: {
+    ...mapGetters([
+      'selected'
+    ]),
+    isSelected() {
+      return this.canSelect ? this.selected.some(s => s === this.productData.id) : false
+    },
     canOrder() {
       if(this.addCart === false) return false
       return true
@@ -240,6 +263,9 @@ export default {
       background-color: #FFF;
       transform: translateX(0px);
       transition: all ease-in-out 0.5s;
+      &.selected {
+        background-color: #BBDEFB !important;
+      }
       &.swiped {
         transform: translateX(-100px);
       }

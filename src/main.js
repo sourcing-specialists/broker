@@ -1,11 +1,16 @@
 import Vue from 'vue'
 import router from './router'
 import vuetify from './plugins/vuetify'
+import VueI18n from 'vue-i18n'
+import en from './translations/en'
+import es from './translations/es'
 import store from './store'
 import Axios from 'axios'
 import toasted from 'vue-toasted'
 import mixins from './mixins'
-
+import firebaseConfig from './configs/firebase.js'
+import firebase from 'firebase/app'
+import 'firebase/firestore'
 
 //mounting in
 import App from './App.vue'
@@ -32,11 +37,29 @@ Vue.use(toasted, {
 //load mixins
 Vue.mixin(mixins)
 
+// Initialize Firebase
+firebase.initializeApp(firebaseConfig);
+Vue.prototype.$db = firebase.firestore()
+
+//language
+Vue.use(VueI18n)
+
+const messages = { en, es }
+
+// Create VueI18n instance with options
+const i18n = new VueI18n({
+  locale: store.getters.getLanguage, // set locale
+  fallbackLocale: 'en',
+  silentFallbackWarn: true,
+  messages
+})
+
 //start app
 new Vue({
   router,
   vuetify,
   store,
+  i18n,
   created: function () {
     //check the status of the session on the server before doing any request
     this.$http.interceptors.response.use(undefined, (err) => {

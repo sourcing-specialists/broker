@@ -57,6 +57,7 @@ const authentication = {
     //log him out
     logout({commit}){
       return new Promise((resolve/*, reject*/) => {
+        this.dispatch('clearCart')
         commit('logout')
         router.push('/login')
         resolve()

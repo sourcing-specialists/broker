@@ -1,6 +1,6 @@
 <template>
   <v-card class="pa-8">
-    <v-card-title class="ps-0">Company details</v-card-title>
+    <v-card-title class="ps-0">{{ $t('components.companies.company_details') }}</v-card-title>
     <v-skeleton-loader
       class="mx-auto"
       type="table, actions"
@@ -13,21 +13,21 @@
       <v-text-field
         v-model="form.company_name"
         name="name"
-        label="Company Name"
+        :label="$t('components.companies.company_name')"
         required
         :rules="requiredRules"
       ></v-text-field>
       <v-text-field
         v-model="form.br"
         name="br_number"
-        label="Business Registration number"
+        :label="$t('components.companies.business_registration_number')"
         required
         :rules="requiredRules"
       ></v-text-field>
       <v-textarea
         v-model="form.address"
         name="address"
-        label="Company Address"
+        :label="$t('address')"
         required
         :rules="requiredRules"
       ></v-textarea>
@@ -39,9 +39,9 @@
           <v-select
             v-model="form.zone"
             :items="zones"
-            label="Zone"
+            :label="$tc('zone', 1)"
             name="zone"
-            no-data-text="Please wait while we load the zones"
+            :no-data-text="$t('components.companies.please_white_while_we_load_the_zones')"
             @click="loadZones"
             required
             :rules="requiredRules"
@@ -54,9 +54,9 @@
           <v-select
             v-model="form.warehouse"
             :items="warehouses"
-            label="Warehouse"
+            :label="$tc('warehouse', 1)"
             name="warehouse"
-            no-data-text="Please wait while we load the warehouses"
+            :no-data-text="$t('components.companies.please_wait_while_we_load_the_warehouses')"
             @click="loadWarehouses"
             :rules="requiredRules"
             required
@@ -77,7 +77,7 @@
               {text: '40%', value: 40 },
               {text: '50%', value: 50 }
             ]"
-            label="Required Deposit"
+            :label="$t('required_deposit')"
             name="deposit"
             required
             :rules="requiredRules"
@@ -96,7 +96,7 @@
             {text: '20', value: 20 },
             {text: '30', value: 30 }
           ]"
-          label="Credit Days"
+          :label="$t('credit_days')"
           name="credit_days"
           required
         ></v-select>
@@ -110,9 +110,9 @@
           <v-select
             v-model="form.pref_currency"
             :items="currencies"
-            label="Preferred Currency"
+            :label="$t('components.companies.preferred_currency')"
             name="currency"
-            no-data-text="Please wait while we load the currencies"
+            :no-data-text="$t('components.companies.please_wait_while_we_load_the_currencies')"
             @click="loadCurrencies"
             :rules="requiredRules"
             required
@@ -123,7 +123,7 @@
         v-if="!id"
         v-model="form.user_name"
         name="user_name"
-        label="User Name"
+        :label="$t('components.companies.user_name')"
         required
         :rules="requiredRules"
       ></v-text-field>
@@ -131,7 +131,7 @@
         v-if="!id"
         v-model="form.user_email"
         name="user_email"
-        label="User Email"
+        :label="$t('components.companies.user_email')"
         required
         :rules="emailRules"
       ></v-text-field>
@@ -139,7 +139,7 @@
         v-if="!id"
         v-model="form.notify_user"
         inset
-        label="Notify User?"
+        :label="$t('components.companies.notify_user')"
       ></v-switch>
       <v-btn
         color="red darken-4"
@@ -148,7 +148,7 @@
         type="submit"
         @click.prevent="validate()"
       >
-        <span class="white--text">{{ !this.id ? 'Create Company' : 'Save Changes' }}</span>
+        <span class="white--text">{{ !this.id ? $t('components.companies.create_company') : $t('save_changes') }}</span>
       </v-btn>
     </v-form>
   </v-card>
@@ -177,12 +177,14 @@ export default {
         user_email: '',
         notify_user: false
       },
+      emailTaken: false,
       requiredRules: [
-        v => !!v || 'This field required',
+        v => !!v || '',
       ],
       emailRules: [
-        v => !!v || 'E-mail is required',
-        v => /.+@.+\..+/.test(v) || 'Please input a valid E-mail',
+        v => !!v || '',
+        v => /.+@.+\..+/.test(v) || '',
+        () => !this.emailTaken || '',
       ],
       currencies: ['USD'],
       zones: [],
@@ -233,16 +235,22 @@ export default {
         //define if editing or creating
         var endp = 'customer/create'
         if(this.id) endp = `customer/${this.id}/update`
-        this.$http.post(this.endpoint(endp), this.form)
+          this.$http.post(this.endpoint(endp), this.form)
           .then( resp => {
-            if(resp.data.result == true) {
-              this.$toasted.success(!this.id ? 'Company created successfully' : 'Company updated')
-              if(!this.id) this.$router.push({ name: 'Companies' })
-              this.$store.commit('isLoading', false) //OFF loading
+            if(resp.data.result == false) {
+              this.emailTaken = true
+              this.$refs.form.validate()
+              this.emailTaken = false
+              this.$toasted.error(resp.data.message.message)
             }
+            if(resp.data.result == true) {
+              this.$toasted.success(!this.id ? '' : '')
+              if(!this.id) this.$router.push({ name: 'Companies' })
+            }
+            this.$store.commit('isLoading', false) //OFF loading
           })
-          .catch( () => {
-            this.$toasted.error('Sorry, something when wrong.')
+          .catch( (error) => {
+            this.$toasted.error('ERROR: ' + error.response.data.message.message)
             this.$store.commit('isLoading', false) //OFF loading
           })
       }

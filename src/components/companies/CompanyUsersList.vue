@@ -1,7 +1,7 @@
 <template>
   <div>
     <v-card class="pa-8">
-      <v-card-title class="ps-0">Users</v-card-title>
+      <v-card-title class="ps-0">{{ $tc('users', 0) }}</v-card-title>
       <v-btn
         class="ma-2 add_button"
         :color="$store.getters.vColor"
@@ -23,7 +23,7 @@
         :items="table.users"
         hide-default-footer
       >
-        <template v-slot:item.actions="{ item }">
+        <template v-slot:[`item.actions`]="{ item }">
           <v-btn
             class="ma-2"
             x-small
@@ -85,6 +85,7 @@
             elevation="2"
             x-large
             type="submit"
+            :loading="loading"
             @click.prevent="validate()"
           >
             <span class="white--text">{{ !editing ? 'Add User' : 'Update User' }}</span>
@@ -115,12 +116,14 @@ export default {
         user_password_confirmation: '',
         notify_user: false
       },
+      emailTaken: false,
       requiredRules: [
         v => !!v || 'This field required',
       ],
       emailRules: [
         v => !!v || 'E-mail is required',
         v => /.+@.+\..+/.test(v) || 'Please input a valid E-mail',
+        () => !this.emailTaken || 'This email is not available'
       ],
       table: {
         headers: [
@@ -169,23 +172,27 @@ export default {
     validate() {
       if(this.$refs.form.validate()) {
         this.loading = true
-        this.$store.commit('isLoading', true) //ON loading
         //define if editing or creating
         var endp = `customer/${this.id}/user/create`
         if(this.editing) endp = `customer/${this.id}/user/${this.editing_id}/update`
         if(this.form.user_password != '')  this.form.user_password_confirmation = this.form.user_password
-        this.$http.post(this.endpoint(endp), this.form)
+          this.$http.post(this.endpoint(endp), this.form)
           .then( resp => {
+            if(resp.data.result == false) {
+              this.emailTaken = true
+              this.$refs.form.validate()
+              this.emailTaken = false
+              this.$toasted.error(resp.data.message.message)
+            }
             if(resp.data.result == true) {
               this.$toasted.success('User Added / Updated')
               this.loadUsers()
               if(!this.editing) this.overlay = false
-              this.$store.commit('isLoading', false) //OFF loading
             }
+            this.loading = false
           })
-          .catch( () => {
-            this.$toasted.error('Sorry, something when wrong.')
-            this.$store.commit('isLoading', false) //OFF loading
+          .catch( (error) => {
+            this.$toasted.error('Sorry, ' + error.response.data.message.message)
             this.loading = false
           })
       }

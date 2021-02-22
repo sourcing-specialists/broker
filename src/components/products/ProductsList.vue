@@ -3,12 +3,13 @@
     <v-card-title>Products</v-card-title>
     <v-container fluid>
       <v-row>
-        <v-col lg="2" md="2">
+        <v-col>
           <cargos-selection
+            :inOrders="true"
             @cargoChanged="cargoChanged"
-           />
+          />
         </v-col>
-        <v-col lg="4" md="4">
+        <v-col>
           <v-text-field
             append-icon="mdi-magnify"
             v-model="search"
@@ -16,12 +17,17 @@
             @keyup="filterSearch"
           ></v-text-field>
         </v-col>
-        <v-col lg="4" md="4">
+        <v-col>
           <categories-selection
             @categoriesChanged="categoriesChanged"
            />
         </v-col>
-        <v-col lg="2" md="2">
+        <v-col>
+          <custom-catalogue-selection
+            v-model="catalogue"
+          ></custom-catalogue-selection>
+        </v-col>
+        <v-col>
           <ul class="d-flex d-justify-end">
             <li>
               <v-btn
@@ -63,7 +69,12 @@
           v-for="(h, index) in listHeader"
           :key="index"
         >
-         <p>{{ h.text }}</p>
+          <p v-if="h.text != 'input'"><strong>{{ h.text }}</strong></p>
+          <v-checkbox v-if="h.text == 'input' && !isForOrders" v-model="activateSelection">
+            <template v-slot:label>
+              Select
+            </template>
+          </v-checkbox>
         </v-col>
       </v-row>
       <v-divider></v-divider>
@@ -71,6 +82,9 @@
         v-for="(product,index) in products"
         :key="index" 
         :productData="product"
+        :addCart="isForOrders"
+        :canSelect="activateSelection"
+        @productAdd="$emit('addModal', product)"
       />
     </v-container>
     <v-container
@@ -78,18 +92,24 @@
       v-if="products.length > 0 && $store.getters.catView == 'tiles'"
     >
       <v-row
-        class="d-flex align-stretch"
+        :class="['product-tile-row', $vuetify.breakpoint.name]"
       >
-        <v-col
+        <div
+          class="tile-item"
           v-for="(product, index) in products"
           :key="index" 
           lg="3"
           md="4"
         >
-          <product-as-tile :product="product" />
-        </v-col>
+          <product-as-tile 
+            :product="product"
+            :addCart="isForOrders"
+            @productAdd="$emit('addModal', product)"
+          />
+        </div>
       </v-row>
     </v-container>
+    <selection-options v-model="activateSelection"></selection-options>
   </div>
 </template>
 
@@ -98,41 +118,50 @@ import ProductAsList from './ProductAsList.vue'
 import ProductAsTile from './ProductAsTile.vue'
 import CargosSelection from '../CargosSelection.vue'
 import CategoriesSelection from '../CategoriesSelection.vue'
+import CustomCatalogueSelection from '../CustomCatalogueSelection'
+import SelectionOptions from './selectionOptions'
 import _ from 'lodash'
 
 export default {
   name: 'ProductsList',
+  props: ['forOrders'],
   data() {
     return {
       search: '',
-      selectedCargo: '',
+      selectedCargo: this.$store.getters.cargo.id,
       selectedCategories: [],
       products: [],
+      activateSelection: false,
       listHeader: [
-        { text: '', col: 1 },
+        { text: 'input', col: 1 },
         { text: 'Name', col: 4 },
         { text: 'Categories', col: 1 },
         { text: 'Packing', col: 2 },
         { text: 'Price', col: 3 }
-      ]
+      ],
+      catalogue: ''
     }
   },
   components: {
     ProductAsList,
     ProductAsTile,
     CargosSelection,
-    CategoriesSelection
+    CategoriesSelection,
+    CustomCatalogueSelection,
+    SelectionOptions
   },
   watch: {
     currency: function(val, old) {
       if(val != old) {
         this.loadProducts()
       }
+    },
+    catalogue: function() {
+      this.loadProducts()
     }
   },
   methods: {
     filterSearch: _.debounce(function() {
-      console.log(123)
       this.loadProducts()
     }, 300),
     loadProducts() {
@@ -143,6 +172,9 @@ export default {
         pageSize: '25',
         pageNumber: 1,
         filter: [
+          {
+            custom_catalogue: this.catalogue
+          },
           {
             categories: this.selectedCategories
           },
@@ -156,7 +188,8 @@ export default {
       })
       .then( resp => {
         if(resp.data.result == true) {
-          console.log(resp.data.data)
+          //console.log(resp.data.data)
+          this.$emit('loaded')
           this.products = resp.data.data
         }
       })
@@ -170,12 +203,16 @@ export default {
       this.loadProducts()
     },
     changeView(display) {
+      this.activateSelection = false
       this.$store.commit('setCatalogueView', display)
     }
   },
   computed: {
     currency() {
       return this.$store.getters.getCurrency
+    },
+    isForOrders() {
+      return this.forOrders == '' ? true : false
     }
   },
   beforeMount() {
@@ -183,8 +220,31 @@ export default {
   }
 }
 </script>
-<style scoped>
+<style scoped lang="scss">
 .activated {
   background-color: #CCC;
+}
+.product-tile-row {
+  padding: 25px;
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  grid-column-gap: 15px;
+  grid-row-gap: 15px;
+  &.lg {
+    grid-template-columns: repeat(4, 1fr);
+  }
+  &.md {
+    grid-template-columns: repeat(3, 1fr);
+  }
+  &.sm {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  &.xs {
+    grid-template-columns: repeat(1, 1fr);
+  }
+  .tile-item {
+    width: 100%;
+    display: flex;
+  }
 }
 </style>
