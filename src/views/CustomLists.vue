@@ -96,7 +96,7 @@
                     <v-list>
                       <v-list-item>
                         <v-btn
-                          :href="ffunctions(`generateListPdf?list=${list.id}`)"
+                          :href="`/public/catalogue/download/${list.id}`"
                           target="_blank"
                         >{{ $t('views.lists.download_list') }}</v-btn>
                       </v-list-item>
@@ -222,7 +222,6 @@ export default {
           getCurrent.isLoading = false
         })
       }
-
     },
     getList(id) {
       return new Promise((resolve) => {

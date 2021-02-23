@@ -118,9 +118,6 @@
         </div>
       </v-container>
     </div>
-    <v-btn
-      @click="download"
-    >Download</v-btn>
   </div>
 </template>
 

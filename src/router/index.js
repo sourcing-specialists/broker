@@ -15,6 +15,7 @@ import Account from '../views/Account.vue'
 import OrderView from '../views/orders/OrderView'
 import CustomLists from '../views/CustomLists'
 import CustomCatalogue from '../views/public/customCatalogue'
+import viewCataloguePdf from '../views/public/viewCataloguePdf'
 
 Vue.use(VueRouter)
 Vue.use(VuePageTransition)
@@ -30,6 +31,15 @@ const routes = [
     name: 'showPublicCatalogue',
     props: true,
     component: CustomCatalogue,
+    meta: {
+      requiresAuth: false
+    }
+  },
+  {
+    path: '/public/catalogue/download/:id',
+    name: 'showPublicCataloguePdf',
+    props: true,
+    component: viewCataloguePdf,
     meta: {
       requiresAuth: false
     }
