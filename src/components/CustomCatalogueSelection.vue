@@ -1,7 +1,7 @@
 <template>
   <v-autocomplete
     v-model="catalogue"
-    label="Custom Lists"
+    :label="$t('custom_lists')"
     :items="catalogues"
     :loading="loading"
     item-text="name"

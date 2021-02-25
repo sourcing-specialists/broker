@@ -33,6 +33,8 @@
 </template>
 
 <script>
+import { getLanguages } from '../endpoints'
+
 export default {
   name: 'Currencies',
   data() {
@@ -45,13 +47,14 @@ export default {
   methods: {
     changeLocale(lang) {
       this.$store.commit('languageChange', lang)
+      this.$emit('languageChange')
       this.$i18n.locale = lang
     }
   },
   mounted() {
-    this.$http.get(this.endpoint('languages'))
+    getLanguages()
     .then( languages => {
-      this.languages = languages.data.data
+      this.languages = languages
       this.loading = false
     })
   }

@@ -10,6 +10,13 @@ const mixins = {
     })
   },
   methods: {
+    objectToUrlString(object) {
+      let str = ''
+      Object.keys(object).map( (key) => {
+        str += `&${key}=${object[key]}`
+      })
+      return str
+    },
     endpoint: function (task, noAuth = false) {
       const is_public = noAuth ? 'public/' : ''
       return url+is_public+task

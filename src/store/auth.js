@@ -68,7 +68,8 @@ const authentication = {
     isLoggedIn: state => !!state.token,
     authStatus: state => state.status,
     isAuthenticated: state => state.auth,
-    token: state => state.token
+    token: state => state.token,
+    user: state => state.user
   }
 }
 

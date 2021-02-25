@@ -29,6 +29,13 @@ const messages = {
   hs_code: 'Código HS',
   carton: 'Cartón | Cartones',
   day: 'Día | Días',
+  products: 'Productos',
+  mandatory_field: 'Este campo es oligatorio',
+  search: 'Buscar',
+  select: 'Seleccionar',
+  categories: 'Categorias',
+  product_name: 'Nombre del producto',
+  download: 'Descargar',
   validation: {
     this_field_required: 'Este campo es obligatorio',
     email_is_required: 'Email es obligatorio',
@@ -36,6 +43,7 @@ const messages = {
     this_email_is_not_available: 'Este email no esta disponible'
   },
   components: {
+    delivery_date: 'Fecha de entrega',
     companies: {
       company_details: 'Detalles de la compañia',
       company_name: 'Nombre de la compañia',
@@ -61,8 +69,11 @@ const messages = {
       list_updated: 'Lista actualizada',
       list_removed: 'Lista removida',
       delete_list: 'Borrar lista',
+    },
+    catalogue: {
+      catalogue_subheader: 'Lista completa de productos disponibles de acuerdo a la fecha de entrega.'
     }
-  }
+  },
 }
 
 export default messages

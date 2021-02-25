@@ -33,6 +33,8 @@
 </template>
 
 <script>
+import { getCurrencies } from '../endpoints'
+
 export default {
   name: 'Currencies',
   data() {
@@ -43,9 +45,9 @@ export default {
     }
   },
   mounted() {
-    this.$http.get(this.endpoint('currencies'))
+    getCurrencies()
     .then( currencies => {
-      this.currencies = currencies.data.data
+      this.currencies = currencies
       this.loading = false
     })
   }

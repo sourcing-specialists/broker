@@ -32,91 +32,95 @@
           </tr>
         </tbody>
       </table>
-      <v-container>
-        <v-row>
-          <h1 class="title">{{ list.name }}</h1> 
-        </v-row>
-      </v-container>
-      <v-container>
-        <div
-          class="product_row"
-          v-for="product in list.products"
-          :key="`product_${product.id}`"
-        >
+      <div
+        class="product-list"
+      >
+        <v-container>
           <v-row>
-            <div
-              :style="{
-                width: '25%',
-                border: '3px solid #CCC',
-                borderRadius: '15px',
-                display: 'inline-table',
-                marginTop: '15px'
-              }"
-            >
-              <img
-                :src="getImage(product)"
-                :style="{
-                  borderRadius: '11px',
-                  display: 'block'
-                }"
-              >
-            </div>
-            <div
-              :style="{
-                width: '75%',
-                padding: '15px'
-              }"
-            >
-              <h3>{{ product.name }}</h3>
-              <p>{{ product.description }}</p>
-              <ul
-                :style="{
-                  display: 'flex',
-                  justifyContent: 'space-between',
-                  marginBottom: '15px'
-                }"
-              >
-                <li>
-                  <span style="font-weight: 700;">{{ $t('ref') }}: </span>{{ product.ref }}
-                </li>
-                <li>
-                  <span style="font-weight: 700;">{{ $t('origin') }}: </span>{{ product.origin }}
-                </li>
-                <li>
-                  <span style="font-weight: 700;">{{ $t('production_time') }}: </span>{{ product.production_time }} {{ $tc('day', product.production_time)}}
-                </li>
-                <li>
-                  <span style="font-weight: 700;">{{ $t('hs_code') }}: </span>{{ product.hscode.number }}
-                </li>
-              </ul>
-              <table class="options-table">
-                <thead>
-                  <tr>
-                    <th>{{ $t('ref_ab') }}</th>
-                    <th>{{ $tc('option', 1) }}</th>
-                    <th>{{ $t('packing') }}</th>
-                    <th>{{ $t('moq') }}</th>
-                    <th v-if="list.display_price === 1">{{ $t('price') }} FOB</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr
-                    v-for="option in product.options"
-                    :key="`option_${option.id}`"
-                  >
-                    <td>{{ option.ref }}</td>
-                    <td>{{ option.group_name }}: {{ option.group_value }}</td>
-                    <td v-html="mxPacking(option)"></td>
-                    <td>{{ option.min_order }} {{ $tc('carton', option.min_order) }}</td>
-                    <td v-if="list.display_price === 1">{{ getCurrencyText }} {{ option.sale_price }}</td>
-                  </tr>
-                </tbody>
-              </table>
-            </div>
+            <h1 class="title">{{ list.name }}</h1> 
           </v-row>
-          <v-divider></v-divider>
-        </div>
-      </v-container>
+        </v-container>
+        <v-container>
+          <div
+            class="product_row"
+            v-for="product in list.products"
+            :key="`product_${product.id}`"
+          >
+            <v-row>
+              <div
+                :style="{
+                  width: '25%',
+                  border: '3px solid #CCC',
+                  borderRadius: '15px',
+                  display: 'inline-table',
+                  marginTop: '15px'
+                }"
+              >
+                <img
+                  :src="getImage(product)"
+                  :style="{
+                    borderRadius: '11px',
+                    display: 'block'
+                  }"
+                >
+              </div>
+              <div
+                :style="{
+                  width: '75%',
+                  padding: '15px'
+                }"
+              >
+                <h3>{{ product.name }}</h3>
+                <p>{{ product.description }}</p>
+                <ul
+                  :style="{
+                    display: 'flex',
+                    justifyContent: 'space-between',
+                    marginBottom: '15px'
+                  }"
+                >
+                  <li>
+                    <span style="font-weight: 700;">{{ $t('ref') }}: </span>{{ product.ref }}
+                  </li>
+                  <li>
+                    <span style="font-weight: 700;">{{ $t('origin') }}: </span>{{ product.origin }}
+                  </li>
+                  <li>
+                    <span style="font-weight: 700;">{{ $t('production_time') }}: </span>{{ product.production_time }} {{ $tc('day', product.production_time)}}
+                  </li>
+                  <li>
+                    <span style="font-weight: 700;">{{ $t('hs_code') }}: </span>{{ product.hscode.number }}
+                  </li>
+                </ul>
+                <table class="options-table">
+                  <thead>
+                    <tr>
+                      <th>{{ $t('ref_ab') }}</th>
+                      <th>{{ $tc('option', 1) }}</th>
+                      <th>{{ $t('packing') }}</th>
+                      <th>{{ $t('moq') }}</th>
+                      <th v-if="list.display_price === 1">{{ $t('price') }} FOB</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr
+                      v-for="option in product.options"
+                      :key="`option_${option.id}`"
+                    >
+                      <td>{{ option.ref }}</td>
+                      <td>{{ option.group_name }}: {{ option.group_value }}</td>
+                      <td v-html="mxPacking(option)"></td>
+                      <td>{{ option.min_order }} {{ $tc('carton', option.min_order) }}</td>
+                      <td v-if="list.display_price === 1"><div v-html="getPrice(option)"></div></td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </v-row>
+            <v-divider></v-divider>
+          </div>
+        </v-container>
+      </div>
     </div>
   </div>
 </template>
@@ -134,13 +138,27 @@ export default {
       list: {}
     }
   },
-  methods: {
+  computed: {
     ...mapGetters([
-      'getCurrencyText'
+      'getCurrencyText',
+      'getCurrency'
     ]),
+  },
+  methods: {
     getImage(product) {
       if(product.images.length > 0) {
         return product.images[0].small
+      }
+    },
+    getPrice(option) {
+      if(this.$route.query.incoterm === 'FOB') {
+        return option.fob_sale_price_string
+      }
+      if(this.$route.query.incoterm === 'DDP') {
+        return option.ddp_unit_sale_price_string
+      }
+      if(this.$route.query.incoterm === 'REVOOLOOP') {
+        return this.mxPriceTiers(option)
       }
     },
     download() {
@@ -148,8 +166,20 @@ export default {
       html2pdf().from(element).save();
     }
   },
-  beforeMount() {
-    axios.get(this.endpoint(`my_catalogues/${this.id}`, true))
+  mounted() {
+    axios.get(this.endpoint(`my_catalogues/${this.id}`, true), {
+      headers: {
+        lang: this.$route.query.lang
+      },
+      params: {
+        user_id: this.$route.query.user_id,
+        currency: this.$route.query.currency,
+        incoterm: this.$route.query.incoterm,
+        cargo_id: this.$route.query.cargo_id,
+        cargo_price: this.$route.query.cargo_price,
+        skip_office_rate: 0
+      }
+    })
     .then( resp => {
       this.list = resp.data.data.catalogue
       console.log(this.list)

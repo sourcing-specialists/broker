@@ -1,10 +1,10 @@
 <template>
   <v-select
     v-model="cargo"
-    label="Delivery Date"
+    :label="$t('components.delivery_date')"
     :items="cargos"
     :loading="loading"
-    hint="This field is mandatory"
+    :hint="$t('mandatory_field')"
     persistent-hint
     @change="$emit('cargoChanged', cargo)"
   >

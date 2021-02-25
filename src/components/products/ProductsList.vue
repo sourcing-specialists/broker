@@ -1,6 +1,6 @@
 <template>
   <div>
-    <v-card-title>Products</v-card-title>
+    <v-card-title>{{ $t('products') }}</v-card-title>
     <v-container fluid>
       <v-row>
         <v-col>
@@ -13,7 +13,7 @@
           <v-text-field
             append-icon="mdi-magnify"
             v-model="search"
-            label="Search"
+            :label="$t('search')"
             @keyup="filterSearch"
           ></v-text-field>
         </v-col>
@@ -72,7 +72,7 @@
           <p v-if="h.text != 'input'"><strong>{{ h.text }}</strong></p>
           <v-checkbox v-if="h.text == 'input' && !isForOrders" v-model="activateSelection">
             <template v-slot:label>
-              Select
+              {{ $t('select') }}
             </template>
           </v-checkbox>
         </v-col>
@@ -120,6 +120,7 @@ import CargosSelection from '../CargosSelection.vue'
 import CategoriesSelection from '../CategoriesSelection.vue'
 import CustomCatalogueSelection from '../CustomCatalogueSelection'
 import SelectionOptions from './selectionOptions'
+import { mapGetters } from 'vuex'
 import _ from 'lodash'
 
 export default {
@@ -134,10 +135,10 @@ export default {
       activateSelection: false,
       listHeader: [
         { text: 'input', col: 1 },
-        { text: 'Name', col: 4 },
-        { text: 'Categories', col: 1 },
-        { text: 'Packing', col: 2 },
-        { text: 'Price', col: 3 }
+        { text: this.$t('product_name'), col: 4 },
+        { text: this.$t('categories'), col: 1 },
+        { text: this.$t('packing'), col: 2 },
+        { text: this.$t('price'), col: 3 }
       ],
       catalogue: ''
     }
@@ -157,6 +158,9 @@ export default {
       }
     },
     catalogue: function() {
+      this.loadProducts()
+    },
+    getLanguage: function() {
       this.loadProducts()
     }
   },
@@ -185,7 +189,7 @@ export default {
             ref: ''
           },
         ]
-      })
+      }, { headers: { lang: this.getLanguage }})
       .then( resp => {
         if(resp.data.result == true) {
           //console.log(resp.data.data)
@@ -208,6 +212,9 @@ export default {
     }
   },
   computed: {
+    ...mapGetters([
+      'getLanguage'
+    ]),
     currency() {
       return this.$store.getters.getCurrency
     },

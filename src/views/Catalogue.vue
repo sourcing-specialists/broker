@@ -13,10 +13,10 @@ import ProductsList from '@/components/products/ProductsList.vue'
 
 export default {
   name: 'Catalogue',
-  data() {
+  data: function() {
     return {
-      title: 'Catalogue',
-      subheader: 'Full list of products available. Please note that prices are filterd according to the delivery date.'
+      title: this.$t('catalogue'),
+      subheader: this.$t('views.catalogue.catalogue_subheader')
     }
   },
   components: {

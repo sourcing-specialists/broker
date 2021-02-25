@@ -2,7 +2,7 @@
   <v-autocomplete
     v-model="categoriesSelected"
     :items="categories"
-    label="Categories"
+    :label="$t('categories')"
     item-text="name"
     item-value="id"
     multiple

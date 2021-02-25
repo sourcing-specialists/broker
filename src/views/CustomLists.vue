@@ -96,8 +96,7 @@
                     <v-list>
                       <v-list-item>
                         <v-btn
-                          :href="`/public/catalogue/download/${list.id}`"
-                          target="_blank"
+                          @click="loadExportDialog(list.id)"
                         >{{ $t('views.lists.download_list') }}</v-btn>
                       </v-list-item>
                       <v-list-item>
@@ -133,21 +132,36 @@
                       v-for="product in list.products"
                       :key="`product_${product.id}`"
                     >
-                      <v-list-item-action>
+                      <v-col
+                        md="1"
+                      >
                         <v-checkbox v-model="list.checked" :value="product.id"></v-checkbox>
-                      </v-list-item-action>
-                      <v-list-item-content>
-                        <v-list-item-title>{{ product.name }}</v-list-item-title>
-                        <v-list-item-subtitle>{{ product.options.length }} {{ $tc('option', product.options.length) }}</v-list-item-subtitle>
-                      </v-list-item-content>
-                      <v-list-item-action>
-                        <v-btn
-                          x-small
-                          fab
-                          :disabled="list.checked.length > 0"
-                          inline-block
-                        ><v-icon class="mover">fa-arrows-alt</v-icon></v-btn>
-                      </v-list-item-action>
+                      </v-col>
+                      <v-col
+                        md="1"
+                      >
+                        <ProductImage :src="product.images[0].small" />
+                      </v-col>
+                      <v-col
+                        md="9"
+                      >
+                        <v-list-item-content>
+                          <v-list-item-title>{{ product.name }}</v-list-item-title>
+                          <v-list-item-subtitle>{{ product.options.length }} {{ $tc('option', product.options.length) }}</v-list-item-subtitle>
+                        </v-list-item-content>
+                      </v-col>
+                      <v-col
+                        md="1"
+                      >
+                        <v-list-item-action>
+                          <v-btn
+                            x-small
+                            fab
+                            :disabled="list.checked.length > 0"
+                            inline-block
+                          ><v-icon class="mover">fa-arrows-alt</v-icon></v-btn>
+                        </v-list-item-action>
+                      </v-col>
                     </v-list-item>
                   </transition-group>
                 </draggable>
@@ -160,6 +174,14 @@
           </li>
         </ul>
       </v-card>
+      <v-dialog
+        v-model="exportDialog"
+        v-if="exportDialog"
+      >
+        <v-card>
+          <list-export-options :list_id="exportList"></list-export-options>
+        </v-card>
+      </v-dialog>
     </v-container>
 </template>
 
@@ -167,20 +189,31 @@
 import PageHeader from '@/components/PageHeader.vue'
 import draggable from 'vuedraggable'
 import EditableTextField from '../components/EditableTextField'
+import ProductImage from '../components/products/ProductImage'
+import listExportOptions from '../components/lists/exportOptions'
 
 export default {
   name: 'CustomLists',
   data() {
     return {
-      lists: []
+      lists: [],
+      exportDialog: false,
+      exportList: null
+      //:href="`/public/catalogue/download/${list.id}`"
     }
   },
   components: {
     PageHeader,
     draggable,
-    EditableTextField
+    EditableTextField,
+    ProductImage,
+    listExportOptions
   },
   methods: {
+    loadExportDialog(list_id) {
+      this.exportList = list_id
+      this.exportDialog = !this.exportDialog
+    },
     saveList(list_id) {
       const list = this.lists.find(l => l.id === list_id)
       const products = list.products.map( p => {

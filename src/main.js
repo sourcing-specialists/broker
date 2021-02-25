@@ -24,6 +24,7 @@ Vue.config.productionTip = false
 Vue.prototype.$http = Axios;
 Vue.prototype.$http.defaults.headers.common['apiKey'] = process.env.VUE_APP_API_KEY
 Vue.prototype.$http.defaults.headers.common['userToken'] = store.getters.token
+Vue.prototype.$http.defaults.headers.common['lang'] = store.getters.getLanguage
 
 //load toastr globally
 Vue.use(toasted, {

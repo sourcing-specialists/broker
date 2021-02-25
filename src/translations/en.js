@@ -1,7 +1,7 @@
 const messages = {
   dashboard: 'Dashboard',
   catalogue: 'Catalogue',
-  custom_lists: 'Custom Lists',
+  custom_lists: 'Custom lists',
   order: 'Order | Orders',
   client: 'Client | Clients',
   zone: 'Zone | Zones',
@@ -29,6 +29,16 @@ const messages = {
   hs_code: 'HS Code',
   carton: 'Carton | Cartons',
   day: 'Day | Days',
+  products: 'Products',
+  mandatory_field: 'This field is mandatory',
+  search: 'Search',
+  select: 'Select',
+  categories: 'Categories',
+  product_name: 'Product name',
+  download: 'Download',
+  //new
+  generate: 'Generate',
+  //end
   validation: {
     this_field_required: 'This field is required',
     email_is_required: 'Email is required',
@@ -36,6 +46,14 @@ const messages = {
     this_email_is_not_available: 'This email is not available'
   },
   components: {
+    delivery_date: 'Delivery date',
+    //new
+    export_options: 'Export options',
+    select_currency: 'Select currency',
+    select_language: 'Select languange',
+    select_incoterm: 'Select incoterm',
+    set_price: 'Set new price',
+    //endnew
     companies: {
       company_details: 'Company Details',
       company_name: 'Company name',
@@ -61,6 +79,9 @@ const messages = {
       list_updated: 'List updated',
       list_removed: 'List removed',
       delete_list: 'Delete list',
+    },
+    catalogue: {
+      catalogue_subheader: 'Full list of products available. Please note that prices are filterd according to the delivery date.'
     }
   }
 

@@ -13,6 +13,7 @@
 <script>
 import axios from 'axios'
 import firebase from "firebase/app"
+import { mapGetters } from 'vuex'
 import "firebase/storage"
 
 export default {
@@ -22,6 +23,11 @@ export default {
     return {
       pdfSrc: ''
     }
+  },
+  computed: {
+    ...mapGetters([
+      'getLanguage'
+    ])
   },
   methods: {
     save(pdf) {
@@ -35,9 +41,12 @@ export default {
     }
   },
   mounted() {
+
+    let str = this.objectToUrlString(this.$route.query)
+
     axios({
       method: 'get',
-      url: this.ffunctions(`generateListPdf?list_id=${this.id}`),
+      url: this.ffunctions(`generateListPdf?list_id=${this.id}${str}`),
       responseType: 'blob'
     }).then( res => {
       this.pdfSrc = URL.createObjectURL(res.data)
