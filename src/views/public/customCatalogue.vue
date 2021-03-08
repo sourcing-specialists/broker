@@ -32,13 +32,27 @@
           </tr>
         </tbody>
       </table>
+      <table
+        v-if="list.display_price === 1"
+        :style="{
+          margin: '10px'
+        }"
+      >
+        <tbody>
+          <tr>
+            <th>Incoterm:</th><td>{{ $route.query.incoterm }}</td>
+          </tr>
+          <tr>
+            <th>{{ $t('currency') }}:</th><td>{{ $route.query.currency }}</td>
+          </tr>
+        </tbody>
+      </table>
       <div
         class="product-list"
       >
         <v-container>
-          <v-row>
-            <h1 class="title">{{ list.name }}</h1> 
-          </v-row>
+          <h1 class="title">{{ list.name }}</h1>
+          <v-divider></v-divider>
         </v-container>
         <v-container>
           <div
@@ -108,7 +122,10 @@
                       :key="`option_${option.id}`"
                     >
                       <td>{{ option.ref }}</td>
-                      <td>{{ option.group_name }}: {{ option.group_value }}</td>
+                      <td>
+                        <h4>{{ option.group_name }}: {{ option.group_value }}</h4>
+                        <div v-html="mxOptionDetails(option)"></div>
+                      </td>
                       <td v-html="mxPacking(option)"></td>
                       <td>{{ option.min_order }} {{ $tc('carton', option.min_order) }}</td>
                       <td v-if="list.display_price === 1"><div v-html="getPrice(option)"></div></td>
@@ -128,7 +145,6 @@
 <script>
 import axios from 'axios'
 import { mapGetters } from 'vuex'
-const html2pdf = require('html2pdf.js')
 
 export default {
   name: 'customCatalogue',
@@ -161,12 +177,10 @@ export default {
         return this.mxPriceTiers(option)
       }
     },
-    download() {
-      const element = document.getElementById('customCatalogue')
-      html2pdf().from(element).save();
-    }
   },
   mounted() {
+    //need to hard code the language because it does not take it from the core
+    this.$i18n.locale = this.$route.query.lang
     axios.get(this.endpoint(`my_catalogues/${this.id}`, true), {
       headers: {
         lang: this.$route.query.lang
@@ -211,7 +225,6 @@ export default {
     margin: 15px 0px;
   }
   .product_row {
-    page-break-inside: avoid;
     img {
       width: 100%;
       height: auto;
@@ -223,6 +236,9 @@ export default {
       width: 100%;
       border-collapse: collapse;
       font-size: 12px;
+      tr {
+        page-break-inside: avoid;
+      }
       th {
         padding: 3px;
         text-align: left;

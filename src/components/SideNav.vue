@@ -9,10 +9,7 @@
     >
     <v-list-item>
       <v-list-item-content>
-        <v-img
-          contain
-          :src="logo"
-        ></v-img>
+        <img class="menu-logo" :src="logo">
       </v-list-item-content>
     </v-list-item>
 
@@ -56,22 +53,17 @@
 <script>
 import SideMenu from '../constants/SideMenu.js'
 import logo from '@/assets/images/logo.png'
-import logoIcon from '@/assets/images/logo-icon.png'
 
 export default {
   name: 'SideNav',
   props: ['value'],
   data: function() {
     return {
-      logotipo: logo,
-      logoIcon: logoIcon,
+      logo: logo,
       items: SideMenu
     }
   },
   computed: {
-    logo() {
-      return this.$store.state.appSettings.menuOpen ? logoIcon : this.logotipo
-    },
     menu: {
       get: function() {
         return this.value
@@ -89,5 +81,9 @@ export default {
   .fa-chevron-down {
     font-size: 14px !important;
   }
+}
+.menu-logo {
+  width: 100%;
+  height: auto;
 }
 </style>

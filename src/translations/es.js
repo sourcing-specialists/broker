@@ -36,6 +36,8 @@ const messages = {
   categories: 'Categorias',
   product_name: 'Nombre del producto',
   download: 'Descargar',
+  generate: 'Generar',
+  currency: 'Moneda',
   validation: {
     this_field_required: 'Este campo es obligatorio',
     email_is_required: 'Email es obligatorio',
@@ -44,6 +46,12 @@ const messages = {
   },
   components: {
     delivery_date: 'Fecha de entrega',
+    export_options: 'Opciones para exportar',
+    select_currency: 'Moneda',
+    select_language: 'Idioma',
+    select_incoterm: 'Incoterm',
+    set_price: 'Precio del contenedor',
+    export_history: 'Archivos generados previamente',
     companies: {
       company_details: 'Detalles de la compañia',
       company_name: 'Nombre de la compañia',
@@ -58,7 +66,18 @@ const messages = {
       create_company: 'Crear compañia',
       company_created_successfully: 'Compañia creada exitosamente',
       company_updated: 'Compañia actualizada'
+    },
+     //new
+     products: {
+      total_units_carton: 'Total unidades por carton',
+      cartons_onwards: 'cartones en adelante',
+      carton: 'cartón | cartones',
+      unit: 'unidad | unidades',
+      ref_number: 'Número referencia',
+      weight: 'Peso (kg)',
+      carton_size: 'Tamaño de la caja',
     }
+    //endnew
   },
   views: {
     lists: {

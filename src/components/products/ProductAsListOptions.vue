@@ -27,31 +27,28 @@
                 {{ option.group_name }}: {{ option.group_value }}
               </span>
             </h4>
-            <p><span class="font-weight-bold">Ref Number:</span> {{ option.ref }}</p>
-            <p><span class="font-weight-bold">Carton Size:</span> {{ meas(option) }}</p>
-            <p>{{ option.description.length >= 100 ? `${option.description.substring(0,100)}...` : option.description }}</p>
+            <div class="product_option_description" v-html="mxOptionDetails(option)"></div>
           </div>
-        </v-col>
-        <v-col
-          lg="2"
-          md="2"
-          class="d-flex align-center"
-        >
-          <ul v-html="packing(option)"></ul>
         </v-col>
         <v-col
           lg="1"
           md="1"
           class="d-flex align-center"
         >
-          <p>{{ option.min_order }} Cartons</p>
+        </v-col>
+        <v-col
+          lg="2"
+          md="2"
+          class="d-flex align-center"
+        >
+          <ul v-html="mxPacking(option)"></ul>
         </v-col>
         <v-col
           lg="3"
           md="3"
           class="d-flex align-center"
         >
-          <ul class="pa-2" v-html="prices(option)"></ul>
+          <ul class="pa-2" v-html="mxPriceTiers(option)"></ul>
         </v-col>
         <v-col
           lg="1"
@@ -77,26 +74,6 @@ export default {
     return {
       color: this.$store.getters.vColor
     }
-  },
-  methods: {
-    packing(option) {
-      var string = `
-        <li><span class="font-weight-bold">${option.inner_unit_text}:</span> ${option.inner_units}</li>
-        <li><span class="font-weight-bold">${option.outer_unit_text}:</span> ${option.outer_units}</li>
-      `
-      return string
-    },
-    meas(option) {
-      var string = `${option.length}cm x ${option.width}cm x ${option.height}cm`
-      return string
-    },
-    prices(option) {
-      var string = ''
-      option.tiers.map(function(t) {
-        string+= `<li><span class="font-weight-bold">${t.cost_per_carton}</span> (${t.from} to ${t.to})</li>`
-      })
-      return string
-    },
   },
   computed: {
     image() {

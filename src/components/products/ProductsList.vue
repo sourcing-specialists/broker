@@ -64,6 +64,7 @@
         class="list-header"
       >
         <v-col
+          class="productsHeader"
           :lg="h.col"
           :md="h.col"
           v-for="(h, index) in listHeader"
@@ -71,9 +72,6 @@
         >
           <p v-if="h.text != 'input'"><strong>{{ h.text }}</strong></p>
           <v-checkbox v-if="h.text == 'input' && !isForOrders" v-model="activateSelection">
-            <template v-slot:label>
-              {{ $t('select') }}
-            </template>
           </v-checkbox>
         </v-col>
       </v-row>
@@ -152,6 +150,11 @@ export default {
     SelectionOptions
   },
   watch: {
+    incoterm: function(val, old) {
+      if(val != old) {
+        this.loadProducts()
+      }
+    },
     currency: function(val, old) {
       if(val != old) {
         this.loadProducts()
@@ -175,6 +178,7 @@ export default {
         currency: this.$store.getters.getCurrency,
         pageSize: '25',
         pageNumber: 1,
+        incoterm: this.incoterm,
         filter: [
           {
             custom_catalogue: this.catalogue
@@ -195,6 +199,7 @@ export default {
           //console.log(resp.data.data)
           this.$emit('loaded')
           this.products = resp.data.data
+          console.log(this.products)
         }
       })
     },
@@ -213,7 +218,8 @@ export default {
   },
   computed: {
     ...mapGetters([
-      'getLanguage'
+      'getLanguage',
+      'getIncoterm'
     ]),
     currency() {
       return this.$store.getters.getCurrency
@@ -253,5 +259,10 @@ export default {
     width: 100%;
     display: flex;
   }
+}
+.productsHeader {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
 }
 </style>

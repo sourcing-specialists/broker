@@ -7,7 +7,8 @@ const appSettings = {
     hexColor: '#B71C1C', 
     catalogueView: 'list',
     currency: 'USD',
-    language: 'en'
+    language: 'en',
+    incoterm: 'REVOOLOOP'
   }),
   mutations: {
     menuToggle(state) {
@@ -24,6 +25,9 @@ const appSettings = {
     },
     languageChange(state, language) {
       state.language = language
+    },
+    changeInconterm(state, incoterm) {
+      state.incoterm = incoterm
     }
   },
   getters: {
@@ -49,7 +53,8 @@ const appSettings = {
       }
       return str
     },
-    getLanguage: state => state.language
+    getLanguage: state => state.language,
+    getIncoterm: state => state.incoterm
   }
 }
 

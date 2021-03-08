@@ -36,9 +36,7 @@ const messages = {
   categories: 'Categories',
   product_name: 'Product name',
   download: 'Download',
-  //new
-  generate: 'Generate',
-  //end
+  currency: 'Currency',
   validation: {
     this_field_required: 'This field is required',
     email_is_required: 'Email is required',
@@ -47,13 +45,12 @@ const messages = {
   },
   components: {
     delivery_date: 'Delivery date',
-    //new
     export_options: 'Export options',
     select_currency: 'Select currency',
     select_language: 'Select languange',
     select_incoterm: 'Select incoterm',
     set_price: 'Set new price',
-    //endnew
+    export_history: 'Export History',
     companies: {
       company_details: 'Company Details',
       company_name: 'Company name',
@@ -68,6 +65,15 @@ const messages = {
       create_company: 'Create company',
       company_created_successfully: 'Company created successfully',
       company_updated: 'Company updated'
+    },
+    products: {
+      total_units_carton: 'Total units in carton',
+      cartons_onwards: 'cartons onwards',
+      carton: 'carton | cartons',
+      unit: 'unit | units',
+      ref_number: 'Ref Number',
+      weight: 'Weight (kg)',
+      carton_size: 'Carton size',
     }
   },
   views: {

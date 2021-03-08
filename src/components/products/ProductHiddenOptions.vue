@@ -45,17 +45,21 @@
   </div>
 </template>
 <script>
+import { mapGetters } from 'vuex'
 export default {
   name: 'ProductHiddenOptions',
   props: ['id', 'datasheet', 'tile', 'addCartButton'],
   computed: {
     isTile() {
       return this.tile == '' ? true : false
-    }
+    },
+    ...mapGetters([
+      'getLanguage'
+    ])
   },
   methods: {
     openDatasheet() {
-      window.open(this.datasheet, '_blank')
+      window.open(`${this.datasheet}?lang=${this.getLanguage}`, '_blank')
     }
   }
 }

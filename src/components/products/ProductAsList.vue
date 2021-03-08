@@ -33,9 +33,7 @@
                 {{ mainOption.group_name }}: {{ mainOption.group_value }}
               </span>
             </h4>
-            <p><span class="font-weight-bold">Ref Number:</span> {{ mainOption.ref }}</p>
-            <p><span class="font-weight-bold">Carton Size:</span> {{ mxMeas(mainOption) }}</p>
-            <p>{{ productData.description.length >= 100 ? `${productData.description.substring(0,100)}...` : productData.description }}</p>
+            <div class="product_option_description" v-html="mxOptionDetails(mainOption)"></div>
           </div>
         </v-col>
         <v-col
@@ -51,7 +49,7 @@
           md="2"
           class="d-flex align-center"
         >
-          <ul v-html="mxPacking(mainOption)"></ul>
+          <ul style="padding-left: 10px !important;" v-html="mxPacking(mainOption)"></ul>
         </v-col>
         <v-col
           :lg="canOrder ? 4 : 4"
@@ -200,7 +198,8 @@ export default {
   },
   computed: {
     ...mapGetters([
-      'selected'
+      'selected',
+      'getIncoterm'
     ]),
     isSelected() {
       return this.canSelect ? this.selected.some(s => s === this.productData.id) : false

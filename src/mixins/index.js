@@ -6,7 +6,9 @@ const functions_url = process.env.VUE_APP_FUNCTIONS
 const mixins = {
   computed: {
     ...mapGetters({
-      cartProducts: 'products'
+      cartProducts: 'products',
+      incoterm: 'getIncoterm',
+      lang: 'getLanguage'
     })
   },
   methods: {
@@ -26,16 +28,45 @@ const mixins = {
     },
     //format packing as a list
     mxPacking(option) {
-      var string = `
-        <li><span class="font-weight-bold">${option.inner_unit_text}:</span> ${option.inner_units}</li>
-        <li><span class="font-weight-bold">${option.outer_unit_text}:</span> ${option.outer_units}</li>
-        <li><span class="font-weight-bold">Total Units Carton:</span> ${option.inner_units*option.outer_units}</li>
-      `
+      var string = ''
+      if(option.is_tree === 1) {
+        var packing = option.packing_tree
+        var count = []
+        packing.forEach(p => {
+          count.push(parseInt(p.value))
+          string += `<li><span class="font-weight-bold">${p.name}:</span> ${p.value}</li>`
+        })
+        string += `<li><span class="font-weight-bold">${this.$t('components.products.total_units_carton')}:</span> ${count.reduce((a, b) => a * b, 1)}</li>`
+      } else {
+        string = `
+          <li><span class="font-weight-bold">${option.inner_unit_text}:</span> ${option.inner_units}</li>
+          <li><span class="font-weight-bold">${option.outer_unit_text}:</span> ${option.outer_units}</li>
+          <li><span class="font-weight-bold">${this.$t('components.products.total_units_carton')}:</span> ${option.inner_units*option.outer_units}</li>
+        `
+      }
       return string
     },
     //format measurements
     mxMeas(option) {
+      if(option.length === null && option.width === null && option.height === null) {
+        return false
+      }
       var string = `${option.length}cm x ${option.width}cm x ${option.height}cm`
+      return string
+    },
+    //get a generic info of a product option
+    mxOptionDetails(option) {
+      var string = `<p><span class="font-weight-bold">${ this.$t('components.products.ref_number') }:</span> ${ option.ref }</p>`
+      if(this.mxMeas(option)) {
+        string += `<p><span class="font-weight-bold">${ this.$t('components.products.carton_size') }:</span> ${ this.mxMeas(option) }</p>`
+      }
+      if(option.weight_per_carton !== null) {
+        string += `<p><span class="font-weight-bold">${ this.$t('components.products.weight') }:</span> ${ option.weight_per_carton }</p>`
+      }
+      if(option.description !== '') {
+        const description = (option.description.length >= 100) ? (option.description.substring(0,100)+'...') : option.description
+        string += `<p>${description}</p>`
+      }
       return string
     },
     //format price tiers as a list
@@ -43,30 +74,43 @@ const mixins = {
       var string = ''
       var highlighted = ''
       var vue = this
-      option.tiers.map(function(t) {
-        highlighted = (vue.checkTier(t, option.quantity) && hightlight) ? 'highlight' : ''
-        if(t.to === 'onwards') {
-          string+= `
-            <li class="${highlighted}"> 
-              <div>From ${t.from} cartons onwards</div>
-              <p>
-                <span class="font-weight-bold">${vue.$store.getters.getCurrencyText}${t.cost_per_carton}</span> / carton 
-                <br> 
-                ${vue.$store.getters.getCurrencyText}${t.cost_per_unit} / unit
-              </p>
-            </li>`
-        } else {
-          string+= `
-            <li class="${highlighted}"> 
-              <div>${t.from} to ${t.to} cartons</div>
-              <p>
-                <span class="font-weight-bold">${vue.$store.getters.getCurrencyText}${t.cost_per_carton}</span> / carton 
-                <br> 
-                ${vue.$store.getters.getCurrencyText}${t.cost_per_unit} / unit
-              </p>
-            </li>`
-        }
-      })
+      if(this.incoterm === 'REVOOLOOP') {
+        option.tiers.map(function(t) {
+          highlighted = (vue.checkTier(t, option.quantity) && hightlight) ? 'highlight' : ''
+          if(t.to === 'onwards') {
+            string+= `
+              <li class="${highlighted}"> 
+                <div>From ${t.from} ${vue.$t('components.products.cartons_onwards')}</div>
+                <p>
+                  <span class="font-weight-bold">${vue.$store.getters.getCurrencyText}${t.cost_per_carton}</span> / ${vue.$tc('components.products.carton',1)} 
+                  <br> 
+                  ${vue.$store.getters.getCurrencyText}${t.cost_per_unit} / ${vue.$tc('components.products.unit',1)} 
+                </p>
+              </li>`
+          } else {
+            string+= `
+              <li class="${highlighted}"> 
+                <div>${t.from} to ${t.to} cartons</div>
+                <p>
+                  <span class="font-weight-bold">${vue.$store.getters.getCurrencyText}${t.cost_per_carton}</span> / ${vue.$tc('components.products.carton',1)} 
+                  <br> 
+                  ${vue.$store.getters.getCurrencyText}${t.cost_per_unit} / ${vue.$tc('components.products.unit',1)} 
+                </p>
+              </li>`
+          }
+        })
+      } else if(this.incoterm === 'DDP') {
+        string = `
+          <li>
+            <p>
+              <span class="font-weight-bold">${option.ddp_carton_sale_price_string}</span> / ${vue.$tc('components.products.carton',1)}
+              <br> 
+              ${option.ddp_unit_sale_price_string} / ${vue.$tc('components.products.unit',1)} 
+            </p>
+          </li>
+        `
+        
+      }
       return string
     },
     getSelectedAttributes(option) {
