@@ -78,6 +78,7 @@ export default {
   mounted() {
     this.$http.get(this.endpoint('customer/get'))
     .then( resp => {
+      //console.log(resp)
       this.table.companies = resp.data.data
     })
   }

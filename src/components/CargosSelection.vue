@@ -1,14 +1,23 @@
 <template>
-  <v-select
-    v-model="cargo"
-    :label="$t('components.delivery_date')"
-    :items="cargos"
-    :loading="loading"
-    :hint="$t('mandatory_field')"
-    persistent-hint
-    @change="$emit('cargoChanged', cargo)"
-  >
-  </v-select>
+  <div>
+    <v-select
+      v-model="cargo"
+      :label="$t('components.delivery_date')"
+      :items="cargos"
+      :loading="loading"
+      persistent-hint
+      @change="$emit('cargoChanged', cargo)"
+    >
+    </v-select>
+    <div
+      class="cargo-hint"
+    >
+      <ul>
+        <li><strong>{{ $t('origin') }}:</strong> {{ selected.origin_country_name }}</li>
+        <li><strong>{{ $t('cost') }}:</strong> {{ selected.cost }}</li>
+      </ul>
+    </div>
+  </div>
 </template>
 <script>
 export default {
@@ -23,6 +32,10 @@ export default {
   computed: {
     inOrders() {
       return (this.$router.currentRoute.name == 'OrdersNew') ? true : false
+    },
+    selected() {
+      const cargo = this.cargos.find(cargo => cargo.id == this.cargo)
+      return cargo === undefined ? {} : cargo
     }
   },
   watch: {
@@ -41,7 +54,7 @@ export default {
             if(resp.data.result == true) {
               resp.data.data.map(function(c) {
                 c.value = c.id
-                c.text = c.departure_date != '' ? c.departure_date : c.cutoff_date
+                c.text = `${c.eta } (${c.name})`
               })
               this.cargos = resp.data.data
               //set cargo globally if it is the first time
@@ -63,3 +76,15 @@ export default {
   }
 }
 </script>
+
+<style lang="scss" scoped>
+.cargo-hint {
+  margin-top: -10px;
+  ul {
+    display: flex;
+    li {
+      padding-right: 5px;
+    }
+  }
+}
+</style>

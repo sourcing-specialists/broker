@@ -3,7 +3,10 @@
     :loading="listLoading"
   >
     <v-card-title>{{ $t('components.export_options') }}</v-card-title>
-    <v-container>
+    <v-container
+      fluid
+      class="px-8"
+    >
       <v-row>
         <v-col>
           <v-select
@@ -28,21 +31,22 @@
             :items="languages"
           ></v-select>
         </v-col>
-        <v-col v-if="incoterm !== 'FOB'">
+        <v-col v-if="inco === 'REVOOLOOP'">
           <v-select
             :label="$t('components.delivery_date')"
             v-model="cargo"
             item-text="eta"
             item-value="id"
             :items="cargos"
+            @change="cargoChange"
           >
           </v-select>
         </v-col>
-        <v-col v-if="incoterm !== 'FOB'">
+        <v-col v-if="inco !== 'FOB'">
           <v-text-field
-            :disabled="cargo !== 'custom'"
+            :disabled="inco === 'REVOOLOOP'"
             :label="`${$t('price')} USD`"
-            v-model="selectedCargoPrice"
+            v-model="selectedCargo.cost"
           ></v-text-field>
         </v-col>
         <v-col>
@@ -65,10 +69,12 @@
     >{{ $t('components.export_history') }}</v-card-title>
     <v-container
       v-if="table.items.length"
+      fluid
+      class="px-10"
     >
       <v-row>
         <v-data-table
-          class="elevation-1 list-history"
+          class="elevation-3 list-history rounded-lg"
           :headers="table.headers"
           :items="table.items"
           :loading="listLoading"
@@ -110,11 +116,11 @@ export default {
       currencies: [],
       incoterms: [],
       languages: [],
-      inco: 'REVOOLOOP',
+      inco: '',
       currency: null,
       cargo: null,
       language: null,
-      selectedCargoPrice: null,
+      selectedCargo: {},
       generateLoading: false,
       pdfSrc: '',
       listLoading: true,
@@ -141,7 +147,8 @@ export default {
       'user'
     ]),
     url() {
-      return `?list_id=${this.list_id}&cargo_id=${(this.cargo !== 'custom') ? this.cargo : ''}&currency=${this.currency}&incoterm=${this.inco}&lang=${this.language}&cargo_price=${this.selectedCargoPrice}&user_id=${this.user.id}`
+      var price = this.selectedCargo.cost === undefined ? 0 : this.selectedCargo.cost
+      return `?list_id=${this.list_id}&cargo_id=${(this.cargo !== 'custom') ? this.cargo : ''}&currency=${this.currency}&incoterm=${this.inco}&lang=${this.language}&cargo_price=${price}&user_id=${this.user.id}`
     },
     dateString() {
       const now = new Date()
@@ -181,7 +188,7 @@ export default {
         incoterm: this.inco,
         currency: this.currency,
         language: this.language,
-        cost: this.selectedCargoPrice,
+        cost: this.selectedCargo.cost === undefined ? '' : this.selectedCargo.cost,
         storageLocation: filePath,
         user: this.user.id,
         list: this.list_id
@@ -216,17 +223,20 @@ export default {
         })
         this.listLoading = false
       })
+    },
+    cargoChange() {
+      const cargo = this.cargos.find( c => c.id === this.cargo)
+      this.selectedCargo = cargo
     }
   },
   mounted() {
-    console.log(this.list_id)
+    this.inco = this.getIncoterm
     this.loadFilesHistory()
     getCurrencies().then( resp => {
       this.currencies = resp
       this.currency = this.getCurrency
     })
     getIncoterms().then( resp => {
-      this.inco = this.getIncoterm
       this.incoterms = resp
     })
     getLanguages()
@@ -237,12 +247,12 @@ export default {
     getCargos()
     .then(resp => {
       this.cargos = resp
-      this.cargos.push({
-        id: 'custom',
-        eta: this.$t('components.set_price')
-      })
-      this.cargo = resp[0].id
-      this.selectedCargoPrice = resp[0].cost
+      if(this.inco === 'REVOOLOOP') {
+        this.cargo = resp[0].id
+        this.selectedCargo = resp[0]
+      } else {
+        this.cargo = 'custom'
+      }
     })
   }
 }

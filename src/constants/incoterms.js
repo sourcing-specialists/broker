@@ -1,6 +1,7 @@
 const incoterms = [
   'REVOOLOOP',
-  'DDP'
+  'DDP',
+  'FOB'
 ]
 
 export default incoterms

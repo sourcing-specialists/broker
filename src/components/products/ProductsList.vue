@@ -3,7 +3,9 @@
     <v-card-title>{{ $t('products') }}</v-card-title>
     <v-container fluid>
       <v-row>
-        <v-col>
+        <v-col
+          v-if="getIncoterm !== 'FOB'"
+        >
           <cargos-selection
             :inOrders="true"
             @cargoChanged="cargoChanged"
@@ -124,20 +126,14 @@ import _ from 'lodash'
 export default {
   name: 'ProductsList',
   props: ['forOrders'],
-  data() {
+  data: function() {
     return {
       search: '',
       selectedCargo: this.$store.getters.cargo.id,
       selectedCategories: [],
       products: [],
       activateSelection: false,
-      listHeader: [
-        { text: 'input', col: 1 },
-        { text: this.$t('product_name'), col: 4 },
-        { text: this.$t('categories'), col: 1 },
-        { text: this.$t('packing'), col: 2 },
-        { text: this.$t('price'), col: 3 }
-      ],
+      listHeader: [],
       catalogue: ''
     }
   },
@@ -150,7 +146,7 @@ export default {
     SelectionOptions
   },
   watch: {
-    incoterm: function(val, old) {
+    getIncoterm: function(val, old) {
       if(val != old) {
         this.loadProducts()
       }
@@ -165,6 +161,21 @@ export default {
     },
     getLanguage: function() {
       this.loadProducts()
+    },
+    listHeader() {
+      console.log(this.listHeader)
+    }
+  },
+  computed: {
+    ...mapGetters([
+      'getLanguage',
+      'getIncoterm'
+    ]),
+    currency() {
+      return this.$store.getters.getCurrency
+    },
+    isForOrders() {
+      return this.forOrders == '' ? true : false
     }
   },
   methods: {
@@ -172,13 +183,22 @@ export default {
       this.loadProducts()
     }, 300),
     loadProducts() {
+      //must rebuild header because deeper nodes do not react
+      this.listHeader = [
+        { text: 'input', col: 1 },
+        { text: this.$t('product_name'), col: 4 },
+        { text: this.$t('categories'), col: 1 },
+        { text: this.$t('packing'), col: 2 },
+        { text: this.$t('price') + ' ' + this.$store.getters.getIncoterm, col: 3 }
+      ]
+
       this.products = []
       this.$http.post(this.endpoint(`catalogue/get`), { 
         cargo_id: this.selectedCargo,
         currency: this.$store.getters.getCurrency,
         pageSize: '25',
         pageNumber: 1,
-        incoterm: this.incoterm,
+        incoterm: this.getIncoterm,
         filter: [
           {
             custom_catalogue: this.catalogue
@@ -199,7 +219,7 @@ export default {
           //console.log(resp.data.data)
           this.$emit('loaded')
           this.products = resp.data.data
-          console.log(this.products)
+          //console.log(this.products)
         }
       })
     },
@@ -214,18 +234,6 @@ export default {
     changeView(display) {
       this.activateSelection = false
       this.$store.commit('setCatalogueView', display)
-    }
-  },
-  computed: {
-    ...mapGetters([
-      'getLanguage',
-      'getIncoterm'
-    ]),
-    currency() {
-      return this.$store.getters.getCurrency
-    },
-    isForOrders() {
-      return this.forOrders == '' ? true : false
     }
   },
   beforeMount() {

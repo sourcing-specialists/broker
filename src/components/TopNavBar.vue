@@ -15,6 +15,9 @@
           </v-icon>
         </v-btn>
       </li>
+      <li class="align-self">
+        <img width="150" src="../assets/images/logo-original.png" alt="Sourcing Specialists Logo">
+      </li>
     </ul>
     <ul class="d-flex justify-end">
       <li>

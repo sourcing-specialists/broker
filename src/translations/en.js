@@ -37,6 +37,9 @@ const messages = {
   product_name: 'Product name',
   download: 'Download',
   currency: 'Currency',
+  //new
+  cost: 'Cost',
+  //end new
   validation: {
     this_field_required: 'This field is required',
     email_is_required: 'Email is required',

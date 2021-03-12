@@ -70,11 +70,12 @@ const mixins = {
       return string
     },
     //format price tiers as a list
-    mxPriceTiers(option, hightlight = false) {
+    mxPriceTiers(option, hightlight = false, inco = false) {
       var string = ''
       var highlighted = ''
       var vue = this
-      if(this.incoterm === 'REVOOLOOP') {
+      var thisIncoterm = inco === false ? this.incoterm : inco
+      if(thisIncoterm === 'REVOOLOOP') {
         option.tiers.map(function(t) {
           highlighted = (vue.checkTier(t, option.quantity) && hightlight) ? 'highlight' : ''
           if(t.to === 'onwards') {
@@ -99,7 +100,7 @@ const mixins = {
               </li>`
           }
         })
-      } else if(this.incoterm === 'DDP') {
+      } else if(thisIncoterm === 'DDP') {
         string = `
           <li>
             <p>
@@ -110,6 +111,17 @@ const mixins = {
           </li>
         `
         
+      } else if(thisIncoterm === 'FOB') {
+        //console.log(option)
+        string = `
+          <li>
+            <p>
+              <span class="font-weight-bold">${option.carton_price_string}</span> / ${vue.$tc('components.products.carton',1)}
+              <br> 
+              ${option.unit_price_string} / ${option.packing_base_unit_description === '' ? option.inner_unit_text : option.packing_base_unit_description} 
+            </p>
+          </li>
+        `
       }
       return string
     },

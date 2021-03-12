@@ -60,10 +60,12 @@
             v-for="product in list.products"
             :key="`product_${product.id}`"
           >
-            <v-row>
+            <v-row
+              class="no-break"
+            >
               <div
                 :style="{
-                  width: '25%',
+                  width: '20%',
                   border: '3px solid #CCC',
                   borderRadius: '15px',
                   display: 'inline-table',
@@ -80,7 +82,7 @@
               </div>
               <div
                 :style="{
-                  width: '75%',
+                  width: '80%',
                   padding: '15px'
                 }"
               >
@@ -106,33 +108,35 @@
                     <span style="font-weight: 700;">{{ $t('hs_code') }}: </span>{{ product.hscode.number }}
                   </li>
                 </ul>
-                <table class="options-table">
-                  <thead>
-                    <tr>
-                      <th>{{ $t('ref_ab') }}</th>
-                      <th>{{ $tc('option', 1) }}</th>
-                      <th>{{ $t('packing') }}</th>
-                      <th>{{ $t('moq') }}</th>
-                      <th v-if="list.display_price === 1">{{ $t('price') }} FOB</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    <tr
-                      v-for="option in product.options"
-                      :key="`option_${option.id}`"
-                    >
-                      <td>{{ option.ref }}</td>
-                      <td>
-                        <h4>{{ option.group_name }}: {{ option.group_value }}</h4>
-                        <div v-html="mxOptionDetails(option)"></div>
-                      </td>
-                      <td v-html="mxPacking(option)"></td>
-                      <td>{{ option.min_order }} {{ $tc('carton', option.min_order) }}</td>
-                      <td v-if="list.display_price === 1"><div v-html="getPrice(option)"></div></td>
-                    </tr>
-                  </tbody>
-                </table>
               </div>
+            </v-row>
+            <v-row>
+              <table class="options-table">
+                <thead>
+                  <tr>
+                    <th>{{ $t('ref_ab') }}</th>
+                    <th>{{ $tc('option', 1) }}</th>
+                    <th>{{ $t('packing') }}</th>
+                    <th>{{ $t('moq') }}</th>
+                    <th v-if="list.display_price === 1">{{ $t('price') }} {{ $route.query.incoterm }}</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr
+                    v-for="option in product.options"
+                    :key="`option_${option.id}`"
+                  >
+                    <td>{{ option.ref }}</td>
+                    <td>
+                      <h3>{{ option.group_name }}: {{ option.group_value }}</h3>
+                      <div class="option-details" v-html="mxOptionDetails(option)"></div>
+                    </td>
+                    <td v-html="mxPacking(option)"></td>
+                    <td>{{ option.min_order }} {{ $tc('carton', option.min_order) }}</td>
+                    <td v-if="list.display_price === 1"><div v-html="mxPriceTiers(option, false, $route.query.incoterm)"></div></td>
+                  </tr>
+                </tbody>
+              </table>
             </v-row>
             <v-divider></v-divider>
           </div>
@@ -165,18 +169,7 @@ export default {
       if(product.images.length > 0) {
         return product.images[0].small
       }
-    },
-    getPrice(option) {
-      if(this.$route.query.incoterm === 'FOB') {
-        return option.fob_sale_price_string
-      }
-      if(this.$route.query.incoterm === 'DDP') {
-        return option.ddp_unit_sale_price_string
-      }
-      if(this.$route.query.incoterm === 'REVOOLOOP') {
-        return this.mxPriceTiers(option)
-      }
-    },
+    }
   },
   mounted() {
     //need to hard code the language because it does not take it from the core
@@ -209,6 +202,9 @@ export default {
 }
 #customCatalogue {
   font-family: "Roboto", sans-serif;
+  .no-break {
+    page-break-inside: avoid;
+  }
   li {
     list-style-type: none !important;
   }
@@ -248,6 +244,14 @@ export default {
       td {
         border: 1px solid #CCC;
         padding: 5px;
+        h3 {
+          color: #B71C1C !important;
+        }
+        .option-details {
+          p {
+            margin-bottom: 0px;
+          }
+        }
       }
     }
   }

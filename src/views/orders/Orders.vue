@@ -39,6 +39,12 @@
           </v-col>
         </v-row>
       </template>
+      <template v-slot:[`item.terms`]="{ item }">
+        {{ item.incoterm }} - {{ item.transport_description }}
+      </template>
+      <template v-slot:[`item.stage`]="{ item }">
+        <div :class="item.stage_v2.slug">{{ item.stage_v2.description }}</div>
+      </template>
       <template v-slot:[`item.actions`]="{ item }">
         <v-btn
           class="ma-2"
@@ -71,8 +77,10 @@ export default {
         headers: [
           { text: 'ID', align: 'start', sortable: true, value: 'orderNumber' },
           { text: 'Company', align: 'start', sortable: true, value: 'company' },
+          { text: 'Terms', align: 'start', sortable: true, value: 'terms' },
           { text: 'Date', align: 'start', sortable: true, value: 'date' },
           { text: 'Amount', align: 'start', sortable: true, value: 'total_string' },
+          { text: 'Status', align: 'start', sortable: true, value: 'stage' },
           { text: '', align: 'end', value: 'actions' }
         ],
         orders: []
@@ -93,6 +101,7 @@ export default {
       .then((resp) => {
         this.table.orders = resp.data.data
         this.loading = false
+        console.log(this.table.orders)
       })
     }
   },
