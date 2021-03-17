@@ -8,7 +8,8 @@ const authentication = {
     auth: false,
     status: '',
     token: '',
-    user : 123
+    user : '',
+    jwt: ''
   }),
   mutations: {
     auth_request(state){
@@ -19,6 +20,7 @@ const authentication = {
       state.status = 'success'
       state.token = data.token
       state.user = data.user
+      state.jwt = data.jwt
     },
     auth_error(state){
       state.status = 'error'
@@ -27,6 +29,8 @@ const authentication = {
       state.auth = false
       state.status = ''
       state.token = ''
+      state.user = ''
+      state.jwt = ''
     }
   },
   actions: {
@@ -39,8 +43,9 @@ const authentication = {
           if(resp.data.result === true) {
             const token = resp.data.data.token
             const user = resp.data.data.user
+            const jwt = resp.data.data.jwt
             Vue.prototype.$http.defaults.headers.common['userToken'] = token
-            commit('auth_success', { token, user })
+            commit('auth_success', { token, user, jwt })
             resolve(resp)
           } else {
             commit('auth_error')
@@ -55,12 +60,23 @@ const authentication = {
       })
     },
     //log him out
-    logout({commit}){
-      return new Promise((resolve/*, reject*/) => {
+    logout({commit}, expired = false) {
+      if(expired) {
         this.dispatch('clearCart')
         commit('logout')
         router.push('/login')
-        resolve()
+        return
+      }
+      return new Promise((resolve/*, reject*/) => {
+        Axios({
+          url: `${process.env.VUE_APP_API_ENDPOINT}logout`,
+          method: 'POST'
+        }).then( () => {
+          this.dispatch('clearCart')
+          commit('logout')
+          router.push('/login')
+          resolve()
+        })
       })
     }  
   },
@@ -69,7 +85,8 @@ const authentication = {
     authStatus: state => state.status,
     isAuthenticated: state => state.auth,
     token: state => state.token,
-    user: state => state.user
+    user: state => state.user,
+    jwt: state => state.jwt
   }
 }
 

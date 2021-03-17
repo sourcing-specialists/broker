@@ -106,11 +106,10 @@ const mixins = {
             <p>
               <span class="font-weight-bold">${option.ddp_carton_sale_price_string}</span> / ${vue.$tc('components.products.carton',1)}
               <br> 
-              ${option.ddp_unit_sale_price_string} / ${vue.$tc('components.products.unit',1)} 
+              ${option.ddp_unit_sale_price_string} / ${option.packing_base_unit_description === '' ? option.inner_unit_text : option.packing_base_unit_description} 
             </p>
           </li>
         `
-        
       } else if(thisIncoterm === 'FOB') {
         //console.log(option)
         string = `
@@ -182,6 +181,66 @@ const mixins = {
         return true
       }
       return false
+    },
+    stageColor(stage) {
+      switch (stage) {
+        case 'pending':
+          return 'secondary'
+        case 'waiting_for_customer_confirmation':
+          return 'teal'
+        case 'require_deposit':
+          return 'teal'
+        case 'production':
+          return 'green'
+        case 'quality_control':
+          return 'indigo'
+        case 'colletion':
+          return 'lime'
+        case 'shipped':
+          return 'light-blue'
+        case 'on_ship':
+          return 'light-blue'
+        case 'delivered':
+          return 'amber'
+        default:
+          return ''
+      }
+    },
+    stageIcon(stage) {
+      var icon = ''
+      switch (stage) {
+        case 'pending':
+          icon += 'mdi-account-cog-outline'
+          break
+        case 'waiting_for_customer_confirmation':
+          icon += 'mdi-clock-outline'
+          break
+        case 'require_deposit':
+          icon += 'mdi-clock-outline'
+          break
+        case 'production':
+          icon += 'mdi-factory'
+          break
+        case 'quality_control':
+          icon += 'mdi-magnify-scan'
+          break
+        case 'collection':
+          icon += 'mdi-truck'
+          break
+        case 'shipped':
+          icon += 'mdi-ferry'
+          break
+        case 'on_ship':
+          icon += 'mdi-ferry'
+          break
+        case 'delivered':
+          icon += 'amber'
+          break
+        default:
+          icon += ''
+          break
+      }
+      return icon
     }
   },
 }

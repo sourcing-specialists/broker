@@ -9,7 +9,7 @@
       :icon="stage.icon"
       large
       right
-      :color="orderStatus < stage.id ? 'rgba(0,0,0,0.2)' : $store.getters.vColor"
+      :color="stage_id < stage.id ? 'rgba(0,0,0,0.2)' : $store.getters.vColor"
     >
       <template slot:default>
         <h5>{{ stage.name }}</h5>
@@ -26,33 +26,23 @@ export default {
       default: 'pending'
     }
   },
-  data() {
+  data: function() {
     return {
       stages: [
-        { name: 'Deposit Required', icon: 'fa-hand-holding-usd', id: 1 },
-        { name: 'Producing', icon: 'fa-cogs', id: 2 },
-        { name: 'On Ship', icon: 'fa-ship', id: 3 },
-        { name: 'Balance Required', icon: 'fa-hand-holding-usd', id: 4 },
-        { name: 'Done', icon: 'fa-check', id: 5 },
+        { name: this.$t('orders.pending'), icon: 'mdi-clock-outline', slug: 'pending', id: 1 },
+        { name: this.$t('orders.waiting_customer'), icon: 'mdi-cogs', slug: 'waiting_for_customer_confirmation', id: 2 },
+        { name: this.$t('orders.production'), icon: 'mdi-factory', slug: 'production', id: 3 },
+        { name: this.$t('orders.quality_control'), icon: 'mdi-magnify-scan', slug: 'quality_control', id: 4 },
+        { name: this.$t('orders.collection'), icon: 'mdi-truck', slug: 'collection', id: 5 },
+        { name: this.$t('orders.shipped'), icon: 'mdi-ferry', slug: 'shipped', id: 6 },
+        { name: this.$t('orders.delivered'), icon: 'mdi-airport', slug: 'delivered', id: 7 },
       ]
     }
   },
   computed: {
-    orderStatus() {
-      switch(this.status) {
-        case 'production':
-          return 2
-        case 'quality_control':
-          return 2
-        case 'on_ship':
-          return 3
-        case 'waiting_for_balance':
-          return 4
-        case 'done':
-          return 5
-        default:
-          return 1
-      }
+    stage_id() {
+      var current_stage = this.stages.find(s => s.slug === this.status)
+      return current_stage.id
     }
   }
 }

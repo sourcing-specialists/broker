@@ -3,12 +3,16 @@
     <v-card
       elevation="2"
     >
-      <v-card-title>Brokers Login</v-card-title>
+      <div class="login-header">
+        <img width="250" src="../assets/images/logo-original.png" alt="Sourcing Specialists Logo"><br>
+        <h1>Brokers Login</h1>
+      </div>
       <v-form @submit.prevent="login">
         <v-container>
             <v-text-field
               v-model="email"
               :rules="[rules.required]"
+              autofocus
               label="E-mail"
               type="email"
               name="email"
@@ -41,6 +45,8 @@
 </template>
 
 <script>
+import firebase from "firebase/app"
+import 'firebase/auth'
   export default {
     name: 'LoginForm',
     data: () => {
@@ -65,6 +71,8 @@
         let password = this.password
         this.$store.dispatch('login', { email, password })
        .then(() => {
+         //login to firebase
+         firebase.auth().signInWithCustomToken(this.$store.getters.jwt)
          this.$router.push('/')
          this.$store.commit('isLoading', false) //OFF loading
        })
@@ -88,8 +96,16 @@
   .login-container {
     height: calc(100vh - 60px);
     justify-content: center;
+    .login-header {
+      text-align: center;
+      padding-top: 30px;
+    }
     .v-card {
-      min-width: 480px;
+      width: 100%;
+      max-width: 720px;
+    }
+    form {
+      padding: 25px;
     }
   }
 </style>

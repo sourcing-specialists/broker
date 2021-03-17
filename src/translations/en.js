@@ -1,5 +1,5 @@
 const messages = {
-  dashboard: 'Dashboard',
+  dashboard_title: 'Dashboard',
   catalogue: 'Catalogue',
   custom_lists: 'Custom lists',
   order: 'Order | Orders',
@@ -39,6 +39,22 @@ const messages = {
   currency: 'Currency',
   //new
   cost: 'Cost',
+  no_products: 'No products match the selected criteria',
+  dashboard: {
+    coming_events: 'Coming events'
+  },
+  orders: {
+    pending: 'Pending',
+    waiting_customer: 'Waiting customer confirmation',
+    production: 'Production',
+    quality_control: 'Quantily control',
+    collection: 'Collection',
+    shipped: 'Shipped',
+    delivered: 'Delivered',
+    place_at: 'Placed at',
+    estimated_delivery: 'Estimated delivery',
+    terms: 'Terms',
+  },
   //end new
   validation: {
     this_field_required: 'This field is required',

@@ -21,6 +21,7 @@
         </v-col>
         <v-col>
           <categories-selection
+            :cargo_id="selectedCargo"
             @categoriesChanged="categoriesChanged"
            />
         </v-col>
@@ -56,7 +57,7 @@
     <v-skeleton-loader
       class="mx-auto"
       type="table"
-      v-if="products.length == 0"
+      v-if="isLoading"
     />
     <v-container
       fluid
@@ -109,6 +110,19 @@
         </div>
       </v-row>
     </v-container>
+    <div
+      class="no-results"
+      v-if="products.length === 0 && isLoading === false"
+    >
+      <v-alert
+        border="left"
+        colored-border
+        type="warning"
+        elevation="2"
+      >
+        {{ $t('no_products') }}
+      </v-alert>
+    </div>
     <selection-options v-model="activateSelection"></selection-options>
   </div>
 </template>
@@ -134,7 +148,8 @@ export default {
       products: [],
       activateSelection: false,
       listHeader: [],
-      catalogue: ''
+      catalogue: '',
+      isLoading: true
     }
   },
   components: {
@@ -161,15 +176,13 @@ export default {
     },
     getLanguage: function() {
       this.loadProducts()
-    },
-    listHeader() {
-      console.log(this.listHeader)
     }
   },
   computed: {
     ...mapGetters([
       'getLanguage',
-      'getIncoterm'
+      'getIncoterm',
+      'cargo'
     ]),
     currency() {
       return this.$store.getters.getCurrency
@@ -181,7 +194,7 @@ export default {
   methods: {
     filterSearch: _.debounce(function() {
       this.loadProducts()
-    }, 300),
+    }, 600),
     loadProducts() {
       //must rebuild header because deeper nodes do not react
       this.listHeader = [
@@ -193,6 +206,7 @@ export default {
       ]
 
       this.products = []
+      this.isLoading = true
       this.$http.post(this.endpoint(`catalogue/get`), { 
         cargo_id: this.selectedCargo,
         currency: this.$store.getters.getCurrency,
@@ -216,11 +230,10 @@ export default {
       }, { headers: { lang: this.getLanguage }})
       .then( resp => {
         if(resp.data.result == true) {
-          //console.log(resp.data.data)
           this.$emit('loaded')
           this.products = resp.data.data
-          //console.log(this.products)
         }
+        this.isLoading = false
       })
     },
     cargoChanged(e) {

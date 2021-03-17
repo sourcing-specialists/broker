@@ -30,14 +30,21 @@
   </v-autocomplete>
 </template>
 <script>
+import { mapGetters } from 'vuex'
 export default {
   name: 'CategoriesSelection',
-  data() {
+  data: function() {
     return {
       categories: [],
       categoriesSelected: [],
       loading: true
     }
+  },
+  computed: {
+    ...mapGetters([
+      'getIncoterm',
+      'cargo'
+    ])
   },
   methods: {
     remove (item) {
@@ -45,24 +52,37 @@ export default {
       if (index >= 0) this.categoriesSelected.splice(index, 1)
     },
     loadCategories() {
+      this.categories = []
+      this.categoriesSelected = []
       return new Promise((resolve/*, reject*/) => {
-        this.$http.get(this.endpoint(`category/get`))
-          .then( resp => {
-            if(resp.data.result == true) {
-              resp.data.data.map(function(c) {
-                c.value = c.id
-                c.text = c.name
-              })
-              this.categories = resp.data.data
-              resolve()
-            }
-          })
+        this.$http.get(this.endpoint(`category/get`), {
+          params: {
+            incoterm: this.getIncoterm,
+            cargo_id: this.cargo.id !== undefined ? this.cargo.id : ''
+          }
+        }).then( resp => {
+          if(resp.data.result == true) {
+            resp.data.data.map(function(c) {
+              c.value = c.id
+              c.text = c.name
+            })
+            //console.log(resp.data.data)
+            this.categories = resp.data.data
+            resolve()
+          }
+        })
       })
     }
   },
   watch: {
     categoriesSelected: function(val) {
       this.$emit('categoriesChanged', val)
+    },
+    getIncoterm: function() {//reset on incoterm change
+      this.loadCategories()
+    },
+    cargo: function() {//reset on cargo change
+      this.loadCategories()
     }
   },
   beforeMount() {

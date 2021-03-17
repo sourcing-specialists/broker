@@ -1,6 +1,6 @@
 const SideMenu = [
   { 
-    title: 'dashboard',
+    title: 'dashboard_title',
     to: '/dashboard',
     icon: 'fa-chart-pie',
     children: [] 

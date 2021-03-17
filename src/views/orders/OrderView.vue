@@ -1,14 +1,25 @@
 <template>
   <v-container fluid>
     <PageHeader 
-      :title="`Order #${order.orderNumber}`"
+      :title="`${ $tc('order', 1) } #${ order.orderNumber }`"
       subheader=""
     />
+    <router-link :to="{ name: 'Orders' }">
+      <v-btn
+        class="ma-2 add_button"
+        color="secondary"
+        elevation="2"
+        fab
+        dark
+      >
+        <v-icon>mdi-chevron-left</v-icon>
+      </v-btn>
+    </router-link>
     <v-row>
       <v-col
         lg="3"
       >
-        <order-timeline :status="order.stage_slug"></order-timeline>
+        <order-timeline :status="stage"></order-timeline>
       </v-col>
       <v-col
         lg="9"
@@ -17,15 +28,16 @@
           <v-card-title>{{ company.name }}</v-card-title>
           <v-card-text>
             <ul>
-              <li><strong>Placed at:</strong> {{ order.date }}</li>
-              <li><strong>Estimated delivery:</strong> {{ order.date }}</li>
+              <li><strong>{{ $t('orders.place_at') }}:</strong> {{ order.date }}</li>
+              <li><strong>{{ $t('orders.estimated_delivery') }}:</strong> {{ order.date }}</li>
+              <li><strong>{{ $t('orders.terms') }}:</strong> {{ order.incoterm }} - {{ order.transport_description }}</li>
             </ul>
           </v-card-text>
         </v-card>
         <v-card
           class="mt-8"
         >
-          <v-card-title>Products</v-card-title>
+          <v-card-title>{{ $tc('product', 0) }}</v-card-title>
           <v-card-text>
             <v-data-table
               :search="table.search"
@@ -57,6 +69,7 @@ export default {
       order: {},
       company: {},
       products: [],
+      stage: 'pending',
       table: {
         search: '',
         headers: [
@@ -72,10 +85,10 @@ export default {
     loadOrder() {
       this.$http.get(this.endpoint(`order/get/${this.id}`))
       .then( resp => {
-        console.log(resp.data.data)
         this.company = resp.data.data.order.company
         this.order = resp.data.data.order
         this.products = resp.data.data.order_items
+        this.stage = resp.data.data.order.stage.slug
       })
     }
   },

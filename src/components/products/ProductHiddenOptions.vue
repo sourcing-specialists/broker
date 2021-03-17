@@ -59,7 +59,7 @@ export default {
   },
   methods: {
     openDatasheet() {
-      window.open(`${this.datasheet}?lang=${this.getLanguage}`, '_blank')
+      window.open(`${this.datasheet}?lang=${this.getLanguage}&no_price=1`, '_blank')
     }
   }
 }

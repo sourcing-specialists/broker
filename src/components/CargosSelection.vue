@@ -41,9 +41,9 @@ export default {
   watch: {
     cargo(val) {
       const cargo = this.cargos.find(cargo => cargo.id == val)
-      if(this.inOrders == true) {
+      //if(this.inOrders == true) {
         this.$store.dispatch('cargoSelection', cargo)
-      }
+      //}
     }
   },
   methods: {

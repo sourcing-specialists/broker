@@ -1,5 +1,5 @@
 const messages = {
-  dashboard: 'Tablero',
+  dashboard_title: 'Tablero',
   catalogue: 'Catálogo',
   custom_lists: 'Listas personalizadas',
   order: 'Orden | Órdenes',

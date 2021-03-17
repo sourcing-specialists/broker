@@ -66,7 +66,7 @@ new Vue({
     this.$http.interceptors.response.use(undefined, (err) => {
       return new Promise((/*resolve, reject*/) => {
         if (err.response.status === 401 && err.response.config && !err.response.config.__isRetryRequest) {
-          this.$store.dispatch('logout')
+          this.$store.dispatch('logout', true)
         }
         throw err
       })

@@ -43,7 +43,19 @@
         {{ item.incoterm }} - {{ item.transport_description }}
       </template>
       <template v-slot:[`item.stage`]="{ item }">
-        <div :class="item.stage_v2.slug">{{ item.stage_v2.description }}</div>
+        <v-chip
+          class="ma-2"
+          :color="stageColor(item.stage.slug)"
+          text-color="white"
+        >
+          <v-avatar left>
+            <v-icon>{{ stageIcon(item.stage.slug) }}</v-icon>
+          </v-avatar>
+          {{ item.stage.description }} 
+          <div v-if="item.stage.slug === 'shipped'">
+            . ETA: {{ item.eta }}
+          </div>
+        </v-chip>
       </template>
       <template v-slot:[`item.actions`]="{ item }">
         <v-btn
