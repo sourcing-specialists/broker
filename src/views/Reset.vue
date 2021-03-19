@@ -1,16 +1,16 @@
 <template>
   <v-container>
-    <login-form></login-form>
+    <reset-form></reset-form>
   </v-container>
 </template>
 
 <script>
-import LoginForm from '../components/LoginForm.vue'
+import resetForm from '../components/resetForm.vue'
 
 export default {
   name: 'Login',
   components: {
-    LoginForm,
+    resetForm
   }
 }
 </script>

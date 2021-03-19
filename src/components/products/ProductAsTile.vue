@@ -18,12 +18,12 @@
       <v-divider></v-divider>
       <p>{{ product.description.length >= 30 ? `${product.description.substring(0,30)}...` : product.description }}</p>
       <ul>
-        <li><span class="font-weight-bold">Ref Number:</span> {{ mainOption.ref }}</li>
-        <li><span class="font-weight-bold">Carton Size:</span> {{ mxMeas(mainOption) }}</li>
-        <li><span class="font-weight-bold">MOQ:</span> {{ mainOption.min_order }} Cartons</li>
+        <li><span class="font-weight-bold">{{ $t('components.products.ref_number') }}:</span> {{ mainOption.ref }}</li>
+        <li><span class="font-weight-bold">{{ $t('components.products.carton_size') }}:</span> {{ mxMeas(mainOption) }}</li>
+        <li><span class="font-weight-bold">{{ $t('moq') }}:</span> {{ mainOption.min_order }} {{ $tc('carton',mainOption.min_order) }}</li>
       </ul>
       <ul v-html="mxPacking(mainOption)"></ul>
-      <h5>Price Tiers</h5>
+      <h5>{{ $t('price_tiers') }}</h5>
       <ul class="price-tiers" v-html="mxPriceTiers(mainOption)"></ul>
     </div>
     <v-card-actions

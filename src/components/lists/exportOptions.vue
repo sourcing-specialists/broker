@@ -246,7 +246,11 @@ export default {
     })
     getCargos()
     .then(resp => {
-      this.cargos = resp
+      var vue = this
+      this.cargos = resp.map( c => {
+        c.eta = vue.formatDate(c.eta) + `(${c.name})`
+        return c
+      })
       if(this.inco === 'REVOOLOOP') {
         this.cargo = resp[0].id
         this.selectedCargo = resp[0]

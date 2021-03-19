@@ -7,12 +7,11 @@
         <img width="250" src="../assets/images/logo-original.png" alt="Sourcing Specialists Logo"><br>
         <h1>Brokers Login</h1>
       </div>
-      <v-form @submit.prevent="login">
+      <v-form ref="loginForm">
         <v-container>
             <v-text-field
               v-model="email"
-              :rules="[rules.required]"
-              autofocus
+              :rules="rules.emailRule"
               label="E-mail"
               type="email"
               name="email"
@@ -21,7 +20,7 @@
             <v-text-field
               v-model="password"
               :append-icon="show ? 'mdi-eye' : 'mdi-eye-off'"
-              :rules="[rules.required]"
+              :rules="rules.requiredRule"
               :type="show ? 'text' : 'password'"
               name="password"
               label="Password"
@@ -29,22 +28,83 @@
             />
         </v-container>
         <v-container>
-          <v-btn
-            :color="$store.getters.vColor"
-            elevation="2"
-            x-large
-            type="submit"
-            :disabled="!formValid"
-          >
-          <span class="white--text">Login</span>
-          </v-btn>
+          <v-row>
+            <v-col>
+              <v-checkbox
+                v-model="remember"
+                :label="`${$t('remember_me')}`"
+                color="indigo"
+                value="red"
+                hide-details
+              ></v-checkbox>
+            </v-col>
+          </v-row>
+        </v-container>
+        <v-container>
+          <v-row>
+            <v-col
+              lg="6"
+              md="12"
+            >
+              <v-btn
+                :color="$store.getters.vColor"
+                elevation="2"
+                x-large
+                @click.prevent="login"
+                dark
+              >{{ $t('login') }}</v-btn>
+            </v-col>
+            <v-col
+              lg="6"
+              md="12"
+              class="text-right"
+            >
+              <v-btn
+                @click.prevent="forgotDialog = true"
+              >{{ $t('forgot_password') }}?</v-btn>
+            </v-col>
+          </v-row>
         </v-container>
       </v-form>
     </v-card>
+    <v-dialog
+      v-model="forgotDialog"
+      v-if="forgotDialog"
+      max-width="720"
+    >
+      <v-card
+        class="pa-3"
+      >
+        <v-card-title>{{ $t('forgot_password') }}</v-card-title>
+        <v-form ref="forgot">
+          <v-card-text>
+          <v-text-field
+            v-model="forgotEmail"
+            :rules="rules.requiredRule"
+            name="email_forget"
+            :label="$t('email')"
+          >
+          </v-text-field>
+          </v-card-text>
+          <v-card-actions>
+            <v-btn
+              @click.prevent="submitForget"
+              :color="$store.getters.vColor"
+              elevation="2"
+              x-large
+              type="submit"
+              dark
+              :loading="forgotButtonLoading"
+            >{{ $t('reset') }}</v-btn>
+          </v-card-actions>
+        </v-form>
+      </v-card>
+    </v-dialog>
   </v-container>
 </template>
 
 <script>
+import { emailRule, requiredRule } from '../constants/formRules'
 import firebase from "firebase/app"
 import 'firebase/auth'
   export default {
@@ -54,22 +114,28 @@ import 'firebase/auth'
         email: '',
         password: '',
         show: false,
+        remember: false,
         rules: {
-          required: value => !!value || 'Required.',
+          emailRule,
+          requiredRule
         },
+        forgotDialog: false,
+        forgotEmail: '',
+        forgotButtonLoading: false
       }
     },
     methods: {
       login() {
         //check if form is complete
-        if(!this.formValid) return false
+        if(!this.$refs.loginForm.validate()) return false
 
         this.$store.commit('isLoading', true) //ON loading
 
         //
         let email = this.email
         let password = this.password
-        this.$store.dispatch('login', { email, password })
+        let remember_me = this.remember ? 1 : 0
+        this.$store.dispatch('login', { email, password, remember_me })
        .then(() => {
          //login to firebase
          firebase.auth().signInWithCustomToken(this.$store.getters.jwt)
@@ -80,14 +146,20 @@ import 'firebase/auth'
          this.$toasted.error('This credentials do not match our records.')
          this.$store.commit('isLoading', false) //OFF loading
        })
-      }
-    },
-    computed: {
-      formValid: function() {
-        if(this.email.length > 0 && this.password.length > 0) {
-          return true
+      },
+      submitForget() {
+        if(this.$refs.forgot.validate()) {
+          this.forgotButtonLoading = !this.forgotButtonLoading
+          this.$http.post(this.endpoint('forget'), {
+            email: this.forgotEmail,
+            callback_url: process.env.VUE_APP_URL+'reset'
+          }).then(() => {
+            this.forgotEmail = ''
+            this.$toasted.success(this.$t('forgot_reset_success'))
+            this.forgotDialog = false
+            this.forgotButtonLoading = !this.forgotButtonLoading
+          })
         }
-        return false
       }
     }
   }

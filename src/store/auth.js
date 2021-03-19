@@ -38,8 +38,11 @@ const authentication = {
     login({commit}, user){
       return new Promise((resolve, reject) => {
         //commit('auth_request')
-        Axios({url: `${process.env.VUE_APP_API_ENDPOINT}auth`, data: user, method: 'POST' })
-        .then(resp => {
+        Axios({
+          url: `${process.env.VUE_APP_API_ENDPOINT}auth`, 
+          data: user,
+          method: 'POST'
+        }).then(resp => {
           if(resp.data.result === true) {
             const token = resp.data.data.token
             const user = resp.data.data.user

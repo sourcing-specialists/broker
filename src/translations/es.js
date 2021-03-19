@@ -38,6 +38,41 @@ const messages = {
   download: 'Descargar',
   generate: 'Generar',
   currency: 'Moneda',
+  friendly_error: 'Algo salio mal, intenta mas tarde',
+  price_tiers: 'Precios por nivel',
+  something_wrong: 'Algo salio mal, intenta mas tarde',
+  password_length: 'La contraseña necesita 8 caracteres',
+  password_unmatch: 'Las contraseñas no coinciden',
+  required: 'Campo requerido',
+  password: 'Contraseña',
+  password_confirmation: 'Confirmar contraseña',
+  email: 'Correo electronico',
+  reset: 'Restaurar',
+  reset_success: 'Ha actualizado su contraseña exitosamente',
+  forgot_reset_success: 'Hemos enviando un mail al correo especificado.',
+  forgot_password: 'Olvidaste tu contraseñna',
+  login: 'Iniciar sesión',
+  remember_me: 'Recordarme',
+  yes: 'Si',
+  field_required: 'Campo requerido',
+  cost: 'Costo',
+  no_products: 'No se encontraron productos',
+  export: 'Exportar',
+  dashboard: {
+    coming_events: 'Próximos eventos'
+  },
+  orders: {
+    pending: 'Pendiente',
+    waiting_customer: 'Esperando confirmación del cliente',
+    production: 'Producción',
+    quality_control: 'Control de calidad',
+    collection: 'Recolección',
+    shipped: 'Enviado',
+    delivered: 'Entregado',
+    place_at: 'Fecha de creación',
+    estimated_delivery: 'Entrega estimada',
+    terms: 'Términos',
+  },
   validation: {
     this_field_required: 'Este campo es obligatorio',
     email_is_required: 'Email es obligatorio',
@@ -45,6 +80,7 @@ const messages = {
     this_email_is_not_available: 'Este email no esta disponible'
   },
   components: {
+    hide_price: 'Ocultar precio',
     delivery_date: 'Fecha de entrega',
     export_options: 'Opciones para exportar',
     select_currency: 'Moneda',
@@ -67,7 +103,6 @@ const messages = {
       company_created_successfully: 'Compañia creada exitosamente',
       company_updated: 'Compañia actualizada'
     },
-     //new
      products: {
       total_units_carton: 'Total unidades por carton',
       cartons_onwards: 'cartones en adelante',
@@ -77,7 +112,6 @@ const messages = {
       weight: 'Peso (kg)',
       carton_size: 'Tamaño de la caja',
     }
-    //endnew
   },
   views: {
     lists: {
@@ -88,6 +122,8 @@ const messages = {
       list_updated: 'Lista actualizada',
       list_removed: 'Lista removida',
       delete_list: 'Borrar lista',
+      save_current_sequence: 'Guardar secuencia',
+      new_sequence_saved: 'Secuencia guardada'
     },
     catalogue: {
       catalogue_subheader: 'Lista completa de productos disponibles de acuerdo a la fecha de entrega.'

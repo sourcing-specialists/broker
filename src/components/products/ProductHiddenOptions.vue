@@ -10,7 +10,7 @@
           class="ma-2"
           x-small
           :fab="!isTile"
-          @click="openDatasheet()"
+          @click="exportDialog = true"
         >
           <v-icon>fa-download</v-icon>
         </v-btn>
@@ -42,13 +42,31 @@
           </v-btn>
       </li>
     </ul>
+    <v-dialog
+      v-model="exportDialog"
+      v-if="exportDialog"
+    >
+      <v-card>
+        <product-datasheet-options :datasheet_url="datasheet"></product-datasheet-options>
+      </v-card>
+    </v-dialog>
   </div>
 </template>
 <script>
 import { mapGetters } from 'vuex'
+import productDatasheetOptions from './productDatasheetOptions'
+
 export default {
   name: 'ProductHiddenOptions',
   props: ['id', 'datasheet', 'tile', 'addCartButton'],
+  components: {
+    productDatasheetOptions
+  },
+  data() {
+    return {
+      exportDialog: false
+    }
+  },
   computed: {
     isTile() {
       return this.tile == '' ? true : false
@@ -59,7 +77,9 @@ export default {
   },
   methods: {
     openDatasheet() {
-      window.open(`${this.datasheet}?lang=${this.getLanguage}&no_price=1`, '_blank')
+      this.exportDialog = true
+
+      //  window.open(`${this.datasheet}?lang=${this.getLanguage}&no_price=1`, '_blank')
     }
   }
 }

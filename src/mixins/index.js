@@ -1,4 +1,5 @@
 import { mapGetters } from 'vuex'
+import { DateTime } from 'luxon'
 
 const url = process.env.VUE_APP_API_ENDPOINT
 const functions_url = process.env.VUE_APP_FUNCTIONS
@@ -241,6 +242,11 @@ const mixins = {
           break
       }
       return icon
+    },
+    formatDate(string) {
+      var dMain = new Date(string)
+      var d = DateTime.fromJSDate(dMain, { locale: this.$store.getters.getLanguage })
+      return d.toLocaleString(DateTime.DATE_MED)
     }
   },
 }

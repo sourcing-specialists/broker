@@ -37,9 +37,26 @@ const messages = {
   product_name: 'Product name',
   download: 'Download',
   currency: 'Currency',
-  //new
+  friendly_error: 'Sorry, something went wrong',
+  price_tiers: 'Price tiers',
+  something_wrong: 'Something went wrong',
+  password_length: 'Password min length is 8 characteres',
+  password_unmatch: 'Passwords does not match',
+  required: 'Field required',
+  password: 'Password',
+  password_confirmation: 'Password confirmation',
+  email: 'Email',
+  reset: 'Reset',
+  reset_success: 'Your password has been changed',
+  forgot_reset_success: 'An email has been sent to the specified address.',
+  forgot_password: 'Forgot password',
+  login: 'Login',
+  remember_me: 'Remember me',
+  yes: 'Yes',
+  field_required: 'Field required',
   cost: 'Cost',
   no_products: 'No products match the selected criteria',
+  export: 'Export',
   dashboard: {
     coming_events: 'Coming events'
   },
@@ -55,7 +72,6 @@ const messages = {
     estimated_delivery: 'Estimated delivery',
     terms: 'Terms',
   },
-  //end new
   validation: {
     this_field_required: 'This field is required',
     email_is_required: 'Email is required',
@@ -63,6 +79,7 @@ const messages = {
     this_email_is_not_available: 'This email is not available'
   },
   components: {
+    hide_price: 'Hide price',
     delivery_date: 'Delivery date',
     export_options: 'Export options',
     select_currency: 'Select currency',
@@ -104,6 +121,8 @@ const messages = {
       list_updated: 'List updated',
       list_removed: 'List removed',
       delete_list: 'Delete list',
+      save_current_sequence: 'Save sequence',
+      new_sequence_saved: 'Sequence saved'
     },
     catalogue: {
       catalogue_subheader: 'Full list of products available. Please note that prices are filterd according to the delivery date.'

@@ -3,14 +3,6 @@
     <v-card-title>{{ $t('products') }}</v-card-title>
     <v-container fluid>
       <v-row>
-        <v-col
-          v-if="getIncoterm !== 'FOB'"
-        >
-          <cargos-selection
-            :inOrders="true"
-            @cargoChanged="cargoChanged"
-          />
-        </v-col>
         <v-col>
           <v-text-field
             append-icon="mdi-magnify"
@@ -19,18 +11,37 @@
             @keyup="filterSearch"
           ></v-text-field>
         </v-col>
-        <v-col>
+      </v-row>
+    </v-container>
+    <v-container fluid>
+      <v-row>
+        <v-col
+          v-if="getIncoterm !== 'FOB'"
+          :lg="3"
+        >
+          <cargos-selection
+            :inOrders="true"
+            @cargoChanged="cargoChanged"
+          />
+        </v-col>
+        <v-col
+          :lg="getIncoterm !== 'FOB' ? 4 : 5"
+        >
           <categories-selection
             :cargo_id="selectedCargo"
             @categoriesChanged="categoriesChanged"
            />
         </v-col>
-        <v-col>
+        <v-col
+          :lg="getIncoterm !== 'FOB' ? 3 : 5"
+        >
           <custom-catalogue-selection
             v-model="catalogue"
           ></custom-catalogue-selection>
         </v-col>
-        <v-col>
+        <v-col
+          :lg="2"
+        >
           <ul class="d-flex d-justify-end">
             <li>
               <v-btn

@@ -9,15 +9,22 @@
   >
     <template v-slot:selection="data">
       <v-chip
+        v-if="data.index === 0"
         style="padding: 10px;"
         v-bind="data.attrs"
         :input-value="data.selected"
         close
         @click="data.select"
-        @click:close="remove(data.item)"
+        @click:close="remove(data.item, data)"
       >
         {{ data.item.name }}
       </v-chip>
+      <span
+        v-if="data.index === 1"
+        class="grey--text caption"
+      >
+        (+{{ categoriesSelected.length - 1 }} others)
+      </span>
     </template>
     <template v-slot:item="data">
       <template>

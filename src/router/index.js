@@ -5,6 +5,7 @@ import VuePageTransition from 'vue-page-transition'
 
 //components
 import Login from '../views/Login.vue'
+import Reset from '../views/Reset.vue'
 import Dashboard from '../views/Dashboard.vue'
 import Companies from '../views/Companies/Companies.vue'
 import crudCompany from '../views/Companies/Crud.vue'
@@ -24,6 +25,14 @@ const routes = [
     path: '/login',
     name: 'Login',
     component: Login
+  },
+  {
+    path: '/reset',
+    name: 'Reset',
+    component: Reset,
+    meta: {
+      requiresAuth: false
+    }
   },
   {
     path: '/public/catalogue/:id',

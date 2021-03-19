@@ -42,6 +42,9 @@
       <template v-slot:[`item.terms`]="{ item }">
         {{ item.incoterm }} - {{ item.transport_description }}
       </template>
+      <template v-slot:[`item.date`]="{ item }">
+        {{ formatDate(item.date) }}
+      </template>
       <template v-slot:[`item.stage`]="{ item }">
         <v-chip
           class="ma-2"
@@ -113,7 +116,7 @@ export default {
       .then((resp) => {
         this.table.orders = resp.data.data
         this.loading = false
-        console.log(this.table.orders)
+        //console.log(this.table.orders)
       })
     }
   },

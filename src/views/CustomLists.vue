@@ -1,11 +1,38 @@
 <template>
     <v-container fluid>
       <PageHeader :title="$t('custom_lists')" />
+      <v-btn
+        class="ma-2 add_button"
+        color="blue lighten-1"
+        elevation="2"
+        dark
+        v-if="showSaveSequence"
+        @click="saveListsSequence"
+      >{{ $t('views.lists.save_current_sequence') }}</v-btn>
       <v-card>
         <v-alert v-if="lists.length === 0" type="warning">
           {{ $t('views.lists.no_lists_text') }}
         </v-alert>
+        <v-container fluid>
+          <v-row>
+            <v-col>
+              <v-text-field
+                append-icon="mdi-magnify"
+                v-model="search"
+                :label="$t('search')"
+                @keyup="loadLists"
+              ></v-text-field>
+            </v-col>
+          </v-row>
+        </v-container>
         <ul>
+          <draggable
+            v-model="lists"
+            :disabled="false"
+            ghost-class="ghost"
+            handle=".mover"
+            @end="showSaveSequence = true"
+          >
           <li
             v-for="(list, index) in lists"
             :key="`list_${list.id}`"
@@ -106,6 +133,14 @@
                       </v-list-item>
                     </v-list>
                   </v-menu>
+                  <v-list-item-action>
+                    <v-btn
+                      x-small
+                      fab
+                      :disabled="list.checked.length > 0"
+                      inline-block
+                    ><v-icon class="mover">fa-arrows-alt</v-icon></v-btn>
+                  </v-list-item-action>
                 </v-list-item>
               </v-list>
               <v-list
@@ -172,6 +207,7 @@
               :key="index"
             ></v-divider>
           </li>
+          </draggable>
         </ul>
       </v-card>
       <v-dialog
@@ -191,6 +227,7 @@ import draggable from 'vuedraggable'
 import EditableTextField from '../components/EditableTextField'
 import ProductImage from '../components/products/ProductImage'
 import listExportOptions from '../components/lists/exportOptions'
+import _ from 'lodash'
 
 export default {
   name: 'CustomLists',
@@ -198,7 +235,9 @@ export default {
     return {
       lists: [],
       exportDialog: false,
-      exportList: null
+      exportList: null,
+      showSaveSequence: false,
+      search: ''
       //:href="`/public/catalogue/download/${list.id}`"
     }
   },
@@ -210,6 +249,25 @@ export default {
     listExportOptions
   },
   methods: {
+    saveListsSequence() {
+      const list_sequence = this.lists.map( (l, index) => {
+        return JSON.stringify({
+          id: l.id,
+          seq: index+1
+        })
+      })
+      this.$http.post(this.endpoint('my_catalogues/sequence_update'), {
+        sequence: list_sequence
+      }).then( (resp) => {
+        if(resp.data.result === true) {
+          this.$toasted.success(this.$t('views.lists.new_sequence_saved'))
+          this.showSaveSequence = false
+        } else {
+          this.$toasted.error(this.$t('friendly_error'))
+          console.log(resp.data)
+        }
+      })
+    },
     loadExportDialog(list_id) {
       this.exportList = list_id
       this.exportDialog = !this.exportDialog
@@ -274,9 +332,13 @@ export default {
         })
       }
     },
-    loadLists() {
-      this.$http.get(this.endpoint('my_catalogues'))
-      .then( resp => {
+    loadLists: _.debounce(function() {
+      //this.lists = []
+      this.$http.get(this.endpoint('my_catalogues'), {
+        params: {
+          search: this.search
+        }
+      }).then( resp => {
         this.lists = resp.data.data.adminCatalogues.map( l => {
           l.products = []
           l.show_products = false
@@ -285,7 +347,7 @@ export default {
           return l
         })
       })
-    },
+    }, 600),
     removeItems(list_id) {
       const list = this.lists.find(l => l.id === list_id)
 
@@ -333,7 +395,7 @@ export default {
   }
 }
 .ghost {
-  opacity: 0.5;
-  background: #E2E2E2;
+  opacity: 1;
+  border: 2px solid #42A5F5;
 }
 </style>

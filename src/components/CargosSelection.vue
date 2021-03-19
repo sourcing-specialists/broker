@@ -52,9 +52,10 @@ export default {
         this.$http.get(this.endpoint(`cargo/get`))
           .then( resp => {
             if(resp.data.result == true) {
+              var vue = this
               resp.data.data.map(function(c) {
                 c.value = c.id
-                c.text = `${c.eta } (${c.name})`
+                c.text = `${ vue.formatDate(c.eta) } (${c.name})`
               })
               this.cargos = resp.data.data
               //set cargo globally if it is the first time

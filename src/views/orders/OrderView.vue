@@ -28,8 +28,8 @@
           <v-card-title>{{ company.name }}</v-card-title>
           <v-card-text>
             <ul>
-              <li><strong>{{ $t('orders.place_at') }}:</strong> {{ order.date }}</li>
-              <li><strong>{{ $t('orders.estimated_delivery') }}:</strong> {{ order.date }}</li>
+              <li><strong>{{ $t('orders.place_at') }}:</strong> {{ formatDate(order.date) }}</li>
+              <li v-if="order.eta != null"><strong>{{ $t('orders.estimated_delivery') }}:</strong> {{ formatDate(order.eta) }}</li>
               <li><strong>{{ $t('orders.terms') }}:</strong> {{ order.incoterm }} - {{ order.transport_description }}</li>
             </ul>
           </v-card-text>
