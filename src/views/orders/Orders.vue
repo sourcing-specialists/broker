@@ -31,6 +31,16 @@
             </v-select>
           </v-col>
           <v-col>
+            <v-select
+              clearable
+              :items="orderStages"
+              :label="$t('stage')"
+              v-model="orderStage"
+              @change="loadOrders()"
+            >
+            </v-select>
+          </v-col>
+          <v-col>
             <v-text-field
               append-icon="mdi-magnify"
               v-model="table.search"
@@ -78,6 +88,7 @@
 
 <script>
 import PageHeader from '../../components/PageHeader'
+import { getOrderStages } from '../../endpoints'
 
 export default {
   name: 'Orders',
@@ -90,16 +101,18 @@ export default {
       table: {
         search: '',
         headers: [
-          { text: 'ID', align: 'start', sortable: true, value: 'orderNumber' },
-          { text: 'Company', align: 'start', sortable: true, value: 'company' },
-          { text: 'Terms', align: 'start', sortable: true, value: 'terms' },
+          { text: 'ID', align: 'start', sortable: true, filterable: true, value: 'orderNumber' },
+          { text: 'Company', align: 'start', sortable: true, filterable: true, value: 'company' },
+          { text: 'Terms', align: 'start', sortable: true, filterable: true, value: 'terms' },
           { text: 'Date', align: 'start', sortable: true, value: 'date' },
           { text: 'Amount', align: 'start', sortable: true, value: 'total_string' },
           { text: 'Status', align: 'start', sortable: true, value: 'stage' },
           { text: '', align: 'end', value: 'actions' }
         ],
-        orders: []
-      }
+        orders: [],
+      },
+      orderStages: [],
+      orderStage: ''
     }
   },
   components: {
@@ -107,9 +120,13 @@ export default {
   },
   methods: {
     loadOrders() {
+      console.log(this.orderStage)
       this.loading = true
       this.$http.get(this.endpoint('order/get'), {
         params: {
+          stage: this.orderStage,
+          //client_id: '',
+          //incoterm: '',
           order_type: this.ordersType
         }
       })
@@ -121,6 +138,14 @@ export default {
     }
   },
   mounted() {
+    getOrderStages().then(stages => {
+      this.orderStages = stages.map( s => {
+        return {
+          text: s.name,
+          value: s.slug
+        }
+      })
+    })
     this.loadOrders()
   }
 }

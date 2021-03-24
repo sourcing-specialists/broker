@@ -195,7 +195,7 @@ const mixins = {
           return 'green'
         case 'quality_control':
           return 'indigo'
-        case 'colletion':
+        case 'collection':
           return 'lime'
         case 'shipped':
           return 'light-blue'

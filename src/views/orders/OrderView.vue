@@ -1,31 +1,28 @@
 <template>
   <v-container fluid>
-    <PageHeader 
-      :title="`${ $tc('order', 1) } #${ order.orderNumber }`"
-      subheader=""
-    />
-    <router-link :to="{ name: 'Orders' }">
-      <v-btn
-        class="ma-2 add_button"
-        color="secondary"
-        elevation="2"
-        fab
-        dark
-      >
-        <v-icon>mdi-chevron-left</v-icon>
-      </v-btn>
-    </router-link>
+    <v-btn
+      :to="{ name: 'Orders' }"
+      class="mb-5"
+      color="blue-grey"
+      elevation="2"
+      dark
+    >
+      <v-icon>mdi-chevron-left</v-icon>
+    </v-btn>
     <v-row>
-      <v-col
-        lg="3"
-      >
-        <order-timeline :status="stage"></order-timeline>
-      </v-col>
       <v-col
         lg="9"
       >
         <v-card>
-          <v-card-title>{{ company.name }}</v-card-title>
+          <v-card-title class="justify-space-between">
+            <h2><span class="mColor-text pr-2">{{ `${ $tc('order', 1) } #${ order.orderNumber }` }}</span> - {{ company.name }}</h2>
+            <v-btn
+              @click="downloadOrderPdf()"
+            >
+              {{ $t('download') }}<v-icon class="pl-3">mdi-download</v-icon>
+            </v-btn>
+          </v-card-title>
+          <v-divider></v-divider>
           <v-card-text>
             <ul>
               <li><strong>{{ $t('orders.place_at') }}:</strong> {{ formatDate(order.date) }}</li>
@@ -37,31 +34,93 @@
         <v-card
           class="mt-8"
         >
-          <v-card-title>{{ $tc('product', 0) }}</v-card-title>
-          <v-card-text>
-            <v-data-table
-              :search="table.search"
-              :headers="table.headers"
-              :items="products"
-              :items-per-page="10"
+          <v-tabs
+            v-model="tab"
+            :background-color="$store.getters.vColor"
+            dark
+            icons-and-text
+          >
+            <v-tabs-slider></v-tabs-slider>
+            <v-tab href="#products">
+              {{ $tc('product',2) }}
+              <v-icon>mdi-format-list-text</v-icon>
+            </v-tab>
+
+            <v-tab href="#payments">
+              {{ $t('payments') }}
+              <v-icon>mdi-cash-check</v-icon>
+            </v-tab>
+
+            <v-tab href="#inspections">
+              {{ $t('inspections') }}
+              <v-icon>mdi-magnify-scan</v-icon>
+            </v-tab>
+          </v-tabs>
+
+          <v-tabs-items v-model="tab">
+            <v-tab-item
+              value="products"
             >
-            </v-data-table>
-          </v-card-text>
+              <v-card
+                class="pa-3"
+                flat
+              >
+                <v-data-table
+                  :search="table.search"
+                  :headers="table.headers"
+                  :items="products"
+                  :items-per-page="10"
+                >
+                  <template v-slot:[`item.name`]="{ item }">
+                    <h4>{{ item.name }}</h4>
+                    <p class="pa-0 mb-0"><strong class="mColor-text">{{ item.option.key }}:</strong> {{ item.option.value }}</p> 
+                  </template>
+                  <template v-slot:[`item.quantity`]="{ item }">
+                    <h4>{{ item.quantity }} {{ $tc('carton', item.quantity) }}</h4>
+                    <p class="pa-0 mb-0">{{ unit(item) }}</p>
+                  </template>
+                  <template v-slot:[`item.total_price_string`]="{ item }">
+                    <h4>{{ item.total_price_string }}</h4>
+                    <p class="pa-0 mb-0">{{ item.unit_price_string }}</p> 
+                  </template>
+                  <template v-slot:[`body.append`]>
+                    <tr>
+                      <td colspan="3"></td>
+                      <td>{{ order.cbm }}</td>
+                      <td>
+                        <h4 class="text-right">{{ $t('total') }}: {{ order.currency }} {{ order.total }}</h4>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td colspan="4"></td>
+                      <td>
+                        <h4 class="text-right"><strong class="mColor-text">{{ $t('outstanding') }}:</strong> {{ order.currency }} {{ order.outstanding }}</h4>
+                      </td>
+                    </tr>
+                  </template>
+                </v-data-table>
+              </v-card>
+            </v-tab-item>
+          </v-tabs-items>
         </v-card>
+      </v-col>
+      <v-col
+        lg="3"
+        class="overflow-hidden"
+      >
+        <order-timeline :status="stage"></order-timeline>
       </v-col>
     </v-row>
   </v-container>
 </template>
 
 <script>
-import PageHeader from '@/components/PageHeader.vue'
 import OrderTimeline from '../../components/orders/orderTimeline'
 
 export default {
   name: 'Order',
   props: ['id'],
   components: {
-    PageHeader,
     OrderTimeline
   },
   data: function() {
@@ -73,15 +132,23 @@ export default {
       table: {
         search: '',
         headers: [
-          { text: 'Ref', align: 'start', sortable: true, value: 'ref' },
-          { text: 'Name', align: 'start', sortable: true, value: 'name' },
-          { text: 'Cbm', align: 'start', sortable: true, value: 'total_cbm' },
-          { text: 'Price', align: 'end', value: 'total_price_string' }
+          { text: this.$t('ref'), align: 'start', sortable: true, value: 'ref' },
+          { text: this.$t('product_name'), align: 'start', sortable: true, value: 'name' },
+          { text: this.$t('quantity'), align: 'start', sortable: true, value: 'quantity' },
+          { text: this.$t('cbm'), align: 'start', sortable: true, value: 'total_cbm' },
+          { text: this.$t('price'), align: 'end', value: 'total_price_string' }
         ]
-      }
+      },
+      tab: 'products'
     }
   },
   methods: {
+    unit(item) {
+      return `${item.total_units} ${this.$tc('components.products.unit', item.total_units)}`
+    },
+    downloadOrderPdf() {
+      console.log(123)
+    },
     loadOrder() {
       this.$http.get(this.endpoint(`order/get/${this.id}`))
       .then( resp => {
@@ -89,6 +156,7 @@ export default {
         this.order = resp.data.data.order
         this.products = resp.data.data.order_items
         this.stage = resp.data.data.order.stage.slug
+        console.log(resp.data.data)
       })
     }
   },

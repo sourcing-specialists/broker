@@ -43,9 +43,22 @@ const getCargos = function() {
   })
 }
 
+const getOrderStages = function() {
+  return new Promise( (resolve, reject) => {
+    axios.get(url + 'order/stages')
+    .then( resp => {
+      resolve(resp.data.data)
+    })
+    .catch( error => {
+      reject(error)
+    })
+  })
+}
+
 export {
   getCurrencies,
   getIncoterms,
   getLanguages,
-  getCargos
+  getCargos,
+  getOrderStages
 }

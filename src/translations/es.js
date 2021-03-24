@@ -50,7 +50,7 @@ const messages = {
   reset: 'Restaurar',
   reset_success: 'Ha actualizado su contraseña exitosamente',
   forgot_reset_success: 'Hemos enviando un mail al correo especificado.',
-  forgot_password: 'Olvidaste tu contraseñna',
+  forgot_password: 'Olvidaste tu contraseña',
   login: 'Iniciar sesión',
   remember_me: 'Recordarme',
   yes: 'Si',
@@ -58,6 +58,14 @@ const messages = {
   cost: 'Costo',
   no_products: 'No se encontraron productos',
   export: 'Exportar',
+  customer: 'Cliente',
+  stage: 'Estado',
+  payments: 'Pagos',
+  inspections: 'Inspecciones',
+  total: 'Total',
+  outstanding: 'Monto pendiente',
+  quantity: 'Cantidad',
+  cbm: 'CBM',
   dashboard: {
     coming_events: 'Próximos eventos'
   },

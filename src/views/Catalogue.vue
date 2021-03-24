@@ -1,7 +1,7 @@
 <template>
     <v-container fluid>
       <PageHeader :title="title" :subheader="subheader" />
-      <v-card>
+      <v-card class="pa-5">
         <ProductsList />
       </v-card>
     </v-container>

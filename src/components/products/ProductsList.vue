@@ -1,6 +1,5 @@
 <template>
   <div>
-    <v-card-title>{{ $t('products') }}</v-card-title>
     <v-container fluid>
       <v-row>
         <v-col>
@@ -42,7 +41,7 @@
         <v-col
           :lg="2"
         >
-          <ul class="d-flex d-justify-end">
+          <ul class="d-flex justify-space-around">
             <li>
               <v-btn
                 fab

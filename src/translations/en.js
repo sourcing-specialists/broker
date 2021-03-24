@@ -57,6 +57,14 @@ const messages = {
   cost: 'Cost',
   no_products: 'No products match the selected criteria',
   export: 'Export',
+  customer: 'Customer',
+  stage: 'Stage',
+  payments: 'Payments',
+  inspections: 'Inspections',
+  total: 'Total',
+  outstanding: 'Outstanding',
+  quantity: 'Quantity',
+  cbm: 'CBM',
   dashboard: {
     coming_events: 'Coming events'
   },
