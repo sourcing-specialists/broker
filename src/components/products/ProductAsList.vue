@@ -32,6 +32,11 @@
               >
                 {{ mainOption.group_name }}: {{ mainOption.group_value }}
               </span>
+              <v-btn
+                color="indigo"
+                v-if="productData.certifications.length > 0"
+                @click="showCertifications"
+              ><v-icon>mdi-certificate</v-icon></v-btn>
             </h4>
             <div class="product_option_description" v-html="mxOptionDetails(mainOption)"></div>
           </div>
@@ -118,6 +123,16 @@
         :product="productData"
       />
     </v-dialog>
+    <v-dialog
+      v-model="showCertificationsModal"
+      transition="dialog-bottom-transition"
+      max-width="720"
+    >
+      <product-certifications
+        :product="productData"
+        :certifications="productData.certifications"
+      ></product-certifications> 
+    </v-dialog>
   </div>
 </template>
 
@@ -126,6 +141,7 @@ import ProductImage from './ProductImage.vue'
 import ProductAsListOptions from './ProductAsListOptions.vue'
 import ProductHiddenOptions from './ProductHiddenOptions'
 import ProductDetailsModal from './ProductDetailsModal'
+import productCertifications from './ProductCertifications'
 import { mapMutations, mapGetters } from 'vuex'
 
 export default {
@@ -159,20 +175,25 @@ export default {
     ProductImage,
     ProductAsListOptions,
     ProductHiddenOptions,
-    ProductDetailsModal
+    ProductDetailsModal,
+    productCertifications
   },
   data() {
     return {
       color: this.$store.getters.vColor,
       swiped: false,
       showOptions: false,
-      showFullDetails: false
+      showFullDetails: false,
+      showCertificationsModal: false
     }
   },
   methods: {
     ...mapMutations([
       'addToSelection'
     ]),
+    showCertifications() {
+      this.showCertificationsModal = true
+    },
     fullDetailsToggle(val) {
       this.showFullDetails = val
     },

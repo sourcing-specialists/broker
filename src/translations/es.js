@@ -66,8 +66,25 @@ const messages = {
   outstanding: 'Monto pendiente',
   quantity: 'Cantidad',
   cbm: 'CBM',
+  created: 'Creada',
+  reason: 'Razón',
+  due_date: 'Vencimiento',
+  status: 'Estado',
+  paid_at: 'Pagado',
+  amount: 'Monto',
+  all: 'Todas',
+  charts: {
+    top_clients_purchases: 'Compras mejores clientes',
+    confirm_sales_in: 'Compras confirmadas en',
+    pending_sales_in: 'Compras pendientes en',
+    sales: 'Ventas',
+    pending: 'Pendientes',
+    confirmed: 'Confirmadas',
+    orders_status: 'Ventas por estado de orden',
+    top_product_sales: 'Mejores ventas por producto',
+  },
   dashboard: {
-    coming_events: 'Próximos eventos'
+    coming_events: 'Próximos eventos',
   },
   orders: {
     pending: 'Pendiente',
@@ -80,6 +97,12 @@ const messages = {
     place_at: 'Fecha de creación',
     estimated_delivery: 'Entrega estimada',
     terms: 'Términos',
+    no_payments: 'No hay pagos registrados hasta el momento.',
+    no_inspections: 'No hay ninguna inspección en la agenda por el momento.',
+    pass: 'Aprovada',
+    date: 'Fecha',
+    inspector: 'Inspector',
+    result: 'Resultado',
   },
   validation: {
     this_field_required: 'Este campo es obligatorio',
@@ -119,6 +142,8 @@ const messages = {
       ref_number: 'Número referencia',
       weight: 'Peso (kg)',
       carton_size: 'Tamaño de la caja',
+      certificate_name: 'Nombre del certificado',
+      certificates: 'Certificados'
     }
   },
   views: {

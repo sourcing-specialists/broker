@@ -65,8 +65,27 @@ const messages = {
   outstanding: 'Outstanding',
   quantity: 'Quantity',
   cbm: 'CBM',
+  created: 'Created',
+  reason: 'Reason',
+  due_date: 'Due date',
+  status: 'Status',
+  paid_at: 'Paid at',
+  amount: 'Amount',
+  //new
+  all: 'All',
+  //end new
+  charts: {
+    top_clients_purchases: 'Top clients purchases',
+    confirm_sales_in: 'Confirmed sales in',
+    pending_sales_in: 'Pending sales in',
+    sales: 'Sales',
+    pending: 'Pending',
+    confirmed: 'Confirmed',
+    orders_status: 'Sales by order status',
+    top_product_sales: 'Sales by Top Products',
+  },
   dashboard: {
-    coming_events: 'Coming events'
+    coming_events: 'Coming events',
   },
   orders: {
     pending: 'Pending',
@@ -79,6 +98,12 @@ const messages = {
     place_at: 'Placed at',
     estimated_delivery: 'Estimated delivery',
     terms: 'Terms',
+    no_payments: 'You have no payments registered at the moment.',
+    no_inspections: 'You have no inspections schedule at the moment.',
+    pass: 'Pass',
+    date: 'Date',
+    inspector: 'Inspector',
+    result: 'Result',
   },
   validation: {
     this_field_required: 'This field is required',
@@ -118,6 +143,8 @@ const messages = {
       ref_number: 'Ref Number',
       weight: 'Weight (kg)',
       carton_size: 'Carton size',
+      certificate_name: 'Certificate name',
+      certificates: 'Certificates'
     }
   },
   views: {

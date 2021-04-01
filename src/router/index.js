@@ -151,9 +151,9 @@ const router = new VueRouter({
 
 //validate routes and check sessions
 router.beforeEach( function(to, from, next) {
+  if (to.name === 'Login' && store.getters.isAuthenticated) next({ name: 'Dashboard' })
   if(to.meta.requiresAuth === false) {
-    next()
-    return
+    return next()
   }
   if (to.name !== 'Login' && !store.getters.isAuthenticated) next({ name: 'Login' })
   else next()

@@ -53,10 +53,10 @@
       :items="options"
       hide-default-footer
     >
-      <template v-slot:item.packing="{ item }">
+      <template v-slot:[`item.packing`]="{ item }">
         <ul v-html="item.packing"></ul>
       </template>
-      <template v-slot:item.price="{ item }">
+      <template v-slot:[`item.price`]="{ item }">
         <ul class="price-tiers" v-html="item.price"></ul>
       </template>
     </v-data-table>
@@ -78,9 +78,6 @@ export default {
       ]
     }
   },
-  methods: {
-
-  },
   computed: {
     options() {
       var vue = this
@@ -97,9 +94,6 @@ export default {
       }
       return {}
     },
-  },
-  mounted() {
-    console.log(this.product)
   }
 }
 </script>

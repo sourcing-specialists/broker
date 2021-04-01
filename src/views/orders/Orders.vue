@@ -120,7 +120,7 @@ export default {
   },
   methods: {
     loadOrders() {
-      console.log(this.orderStage)
+      //console.log(this.orderStage)
       this.loading = true
       this.$http.get(this.endpoint('order/get'), {
         params: {

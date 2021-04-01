@@ -166,6 +166,32 @@ const mixins = {
       })
       return tier[0]
     },
+    countDecimals(n) {
+      // Convert to String
+      const numStr = String(n)
+      // String Contains Decimal
+      if (numStr.includes('.')) {
+          return numStr.split('.')[1].length
+      }
+      // String Does Not Contain Decimal
+      return 0
+    },
+    numberToNiceString(n, currency = 'USD') {
+      //get the nice decimals
+      let decimals = 2
+      if(this.countDecimals(n) >= 4) {
+        decimals = 4
+      }
+      if(this.countDecimals(n) == 3) {
+        decimals = 3
+      }
+      var formatter = new Intl.NumberFormat('en', {
+        style: 'currency',
+        currency: currency,
+        minimumFractionDigits: decimals
+      })
+      return `${currency} ${formatter.format(n)}`
+    },
     formattedNumber(n) {
       const num = this.fixDigits(n)
       return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")
@@ -183,26 +209,26 @@ const mixins = {
       }
       return false
     },
-    stageColor(stage) {
+    stageColor(stage, hex = false) {
       switch (stage) {
         case 'pending':
-          return 'secondary'
+          return hex ? '#9E9E9E' : 'secondary'
         case 'waiting_for_customer_confirmation':
-          return 'teal'
+          return hex ? '#009688' : 'teal'
         case 'require_deposit':
-          return 'teal'
+          return hex ? '#009688' : 'teal'
         case 'production':
-          return 'green'
+          return hex ? '#4CAF50' : 'green'
         case 'quality_control':
-          return 'indigo'
+          return hex ? '#3F51B5' : 'indigo'
         case 'collection':
-          return 'lime'
+          return hex ? '#CDDC39' : 'lime'
         case 'shipped':
-          return 'light-blue'
+          return hex ? '#03A9F4' : 'light-blue'
         case 'on_ship':
-          return 'light-blue'
+          return hex ? '#03A9F4' : 'light-blue'
         case 'delivered':
-          return 'amber'
+          return hex ? '#FFC107' : 'amber'
         default:
           return ''
       }
@@ -247,6 +273,13 @@ const mixins = {
       var dMain = new Date(string)
       var d = DateTime.fromJSDate(dMain, { locale: this.$store.getters.getLanguage })
       return d.toLocaleString(DateTime.DATE_MED)
+    },
+    fillArray(value, len) {
+      var arr = [];
+      for (var i = 0; i < len; i++) {
+        arr.push(value);
+      }
+      return arr;
     }
   },
 }

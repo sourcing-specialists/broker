@@ -17,7 +17,8 @@
           <v-card-title class="justify-space-between">
             <h2><span class="mColor-text pr-2">{{ `${ $tc('order', 1) } #${ order.orderNumber }` }}</span> - {{ company.name }}</h2>
             <v-btn
-              @click="downloadOrderPdf()"
+              :href="order.download_url"
+              target="_blank"
             >
               {{ $t('download') }}<v-icon class="pl-3">mdi-download</v-icon>
             </v-btn>
@@ -77,16 +78,16 @@
                   </template>
                   <template v-slot:[`item.quantity`]="{ item }">
                     <h4>{{ item.quantity }} {{ $tc('carton', item.quantity) }}</h4>
-                    <p class="pa-0 mb-0">{{ unit(item) }}</p>
+                    <p class="pa-0 mb-0">{{ item.total_units }} {{ unit(item) }}</p>
                   </template>
                   <template v-slot:[`item.total_price_string`]="{ item }">
                     <h4>{{ item.total_price_string }}</h4>
-                    <p class="pa-0 mb-0">{{ item.unit_price_string }}</p> 
+                    <p class="pa-0 mb-0">{{ item.unit_price_string }} {{ unit(item, 1) }}</p> 
                   </template>
                   <template v-slot:[`body.append`]>
                     <tr>
                       <td colspan="3"></td>
-                      <td>{{ order.cbm }}</td>
+                      <td>{{ round(order.total_cbm) }}</td>
                       <td>
                         <h4 class="text-right">{{ $t('total') }}: {{ order.currency }} {{ order.total }}</h4>
                       </td>
@@ -100,6 +101,30 @@
                   </template>
                 </v-data-table>
               </v-card>
+            </v-tab-item>
+            <v-tab-item
+              value="payments"
+            >
+              <keep-alive>
+                <v-card
+                  class="pa-3"
+                  flat
+                >
+                  <order-payments :order-id="order.id"></order-payments>
+                </v-card>
+              </keep-alive>
+            </v-tab-item>
+             <v-tab-item
+              value="inspections"
+            >
+              <keep-alive>
+                <v-card
+                  class="pa-3"
+                  flat
+                >
+                  <order-inspections :order-id="order.id"></order-inspections>
+                </v-card>
+              </keep-alive>
             </v-tab-item>
           </v-tabs-items>
         </v-card>
@@ -116,12 +141,16 @@
 
 <script>
 import OrderTimeline from '../../components/orders/orderTimeline'
+import orderPayments from '../../components/orders/payments'
+import orderInspections from '../../components/orders/inspections'
 
 export default {
   name: 'Order',
   props: ['id'],
   components: {
-    OrderTimeline
+    OrderTimeline,
+    orderPayments,
+    orderInspections
   },
   data: function() {
     return {
@@ -143,8 +172,10 @@ export default {
     }
   },
   methods: {
-    unit(item) {
-      return `${item.total_units} ${this.$tc('components.products.unit', item.total_units)}`
+    unit(item, q = 0) {
+      const qty = q === 0 ? item.total_units : q
+      const unitDescription = item.is_tree === 1 ? item.packing_base_unit_description : this.$tc('components.products.unit', qty)
+      return `${unitDescription}`
     },
     downloadOrderPdf() {
       console.log(123)
