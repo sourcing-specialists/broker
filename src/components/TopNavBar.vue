@@ -24,9 +24,6 @@
         <language-selection />
       </li>
       <li>
-        <incoterm-selection />
-      </li>
-      <li>
         <currency-select />
       </li>
       <li>
@@ -60,7 +57,6 @@
 <script>
 import currencySelect from './currencySelect'
 import languageSelection from './langSelection'
-import incotermSelection from './incoSelection'
 
 export default {
   name: 'TopNavBar',
@@ -72,7 +68,6 @@ export default {
   components: {
     currencySelect,
     languageSelection,
-    incotermSelection
   }
 }
 </script>

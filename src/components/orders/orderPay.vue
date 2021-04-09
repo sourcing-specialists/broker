@@ -2,6 +2,7 @@
   <v-dialog
     v-model="show"
     :persistent="true"
+    max-width="720"
   >
     <v-card
       light
@@ -48,8 +49,12 @@
           </v-expansion-panels>
         </v-card-text>
         <v-card-actions
-          class="d-flex justify-end"
+          class="d-flex justify-space-between"
         >
+          <v-btn
+            @click="cancelPayment()"
+            x-large
+          ><v-icon>mdi-close-thick</v-icon> Cancel</v-btn>
           <v-btn
             :color="$store.getters.vColor"
             elevation="2"
@@ -63,6 +68,8 @@
   </v-dialog>
 </template>
 <script>
+import { mapActions } from 'vuex'
+
 export default {
   props: ['order'],
   data() {
@@ -90,14 +97,24 @@ export default {
     }
   },
   methods: {
+    ...mapActions([
+      'clearCart'
+    ]),
     loadPayments() {
-      this.$http.get(this.endpoint(`order/${this.order}/payment/get`))
+      this.$http.get(this.endpoint(`order/${this.order}/payments/list`))
       .then( resp => {
         console.log(resp.data.data)
         this.loading = false
         this.payments = resp.data.data
       })
+    },
+    cancelPayment() {
+      this.clearCart()
+      this.$router.push({ name: 'Orders' })
     }
+  },
+  mounted() {
+    this.loadPayments()
   }
 }
 </script>

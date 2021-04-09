@@ -11,14 +11,14 @@
           <sales-by-status></sales-by-status>
         </v-col>
         <v-col
-          lg="3"
+          lg="6"
           md="6"
           sm="12"
         >
           <sales></sales>
         </v-col>
         <v-col
-          lg="3"
+          lg="6"
           md="6"
           sm="12"
         >
@@ -26,7 +26,7 @@
         </v-col>
         <v-col
           lg="6"
-          md="12"
+          md="6"
           sm="12"
         >
           <top-products></top-products>

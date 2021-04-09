@@ -37,7 +37,7 @@
           <span class="white--text">{{ count == 0 ? 'No items' : 'Confirm Order' }}</span>
         </v-btn>
         <v-btn
-          v-if="true"
+          v-if="false"
           color="red darken-1"
           elevation="2"
           x-large

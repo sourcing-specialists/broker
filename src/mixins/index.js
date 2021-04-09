@@ -76,6 +76,9 @@ const mixins = {
       var highlighted = ''
       var vue = this
       var thisIncoterm = inco === false ? this.incoterm : inco
+      if(this.$route.name === 'OrdersNew') {
+        thisIncoterm = 'REVOOLOOP'
+      }
       if(thisIncoterm === 'REVOOLOOP') {
         option.tiers.map(function(t) {
           highlighted = (vue.checkTier(t, option.quantity) && hightlight) ? 'highlight' : ''
@@ -212,21 +215,21 @@ const mixins = {
     stageColor(stage, hex = false) {
       switch (stage) {
         case 'pending':
-          return hex ? '#9E9E9E' : 'secondary'
+          return hex ? '#B71C1C' : 'red darken-4'
         case 'waiting_for_customer_confirmation':
-          return hex ? '#009688' : 'teal'
+          return hex ? '#3F51B5' : 'indigo'
         case 'require_deposit':
-          return hex ? '#009688' : 'teal'
+          return hex ? '#3F51B5' : 'indigo'
         case 'production':
           return hex ? '#4CAF50' : 'green'
         case 'quality_control':
-          return hex ? '#3F51B5' : 'indigo'
+          return hex ? '#673AB7' : 'deep-purple'
         case 'collection':
-          return hex ? '#CDDC39' : 'lime'
+          return hex ? '#00BCD4' : 'cyan'
         case 'shipped':
-          return hex ? '#03A9F4' : 'light-blue'
+          return hex ? '#0D47A1' : 'blue darken-4'
         case 'on_ship':
-          return hex ? '#03A9F4' : 'light-blue'
+          return hex ? '#0D47A1' : 'light-blue'
         case 'delivered':
           return hex ? '#FFC107' : 'amber'
         default:

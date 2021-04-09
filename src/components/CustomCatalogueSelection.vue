@@ -43,9 +43,10 @@ export default {
     }
   },
   beforeMount() {
+    var vue = this
     this.loadCatalogues()
     .then( () => {
-      this.loading = false
+      vue.loading = false
     })
   }
 }

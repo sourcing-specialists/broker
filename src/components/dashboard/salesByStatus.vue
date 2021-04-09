@@ -21,6 +21,7 @@
             v-model="clientsSelection"
             ref="clients"
             :return-value.sync="selectedClient"
+            :close-on-content-click="false"
           >
             <template v-slot:activator="{ on, attrs }">
               <v-btn
@@ -32,6 +33,15 @@
               ><v-icon class="mr-2" dense>mdi-account-group</v-icon> {{ selectedClient === 'all' ? $t('all') : selectedClient.name }}</v-btn>
             </template>
             <v-list>
+              <v-list-item>
+                <v-text-field
+                  v-model="optionsSearch"
+                  :label="$t('search')"
+                  append-icon="mdi-magnify"
+                  @keyup="filterSearch"
+                ></v-text-field>
+              </v-list-item>
+              <v-divider></v-divider>
               <v-list-item
                 @click="changeCompany('all')"
               >
@@ -41,6 +51,7 @@
                 v-for="company in clients"
                 :key="company.id"
                 @click="changeCompany(company)"
+                v-show="company.inSearch"
               >
                 <v-list-item-title>{{ company.name }}</v-list-item-title>
               </v-list-item>
@@ -105,6 +116,7 @@
       return {
         loading: true,
         chartData: null,
+        optionsSearch: '',
         chartOptions: {
           cutoutPercentage: 65,
           legend: {
@@ -134,6 +146,15 @@
       }
     },
     methods: {
+      filterSearch() {
+        this.clients.map( c => {
+          if(!c.name.toLowerCase().includes(this.optionsSearch.toLowerCase())) {
+            c.inSearch = false
+          } else {
+            c.inSearch = true
+          }
+        })
+      },
       changeCompany(company) {
         this.$refs.clients.save(company)
         this.selectedClient = company
@@ -154,7 +175,7 @@
           }
         })
         .then( resp => {
-          var debugging = true
+          var debugging = false
           if(debugging) {
             console.log(resp.data)
             //return
@@ -180,7 +201,10 @@
           }
           //add clients
           if(this.clients.length === 0) {
-            this.clients = resp.data.data.companies
+            this.clients = resp.data.data.companies.map( c => {
+              c.inSearch = true
+              return c
+            })
           }
         })
       }
@@ -191,7 +215,7 @@
   }
 </script>
 
-<style scoped lang="scss">
+<style lang="scss">
 .total_sales {
   display: flex;
   align-items: center;

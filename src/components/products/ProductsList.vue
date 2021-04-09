@@ -15,7 +15,14 @@
     <v-container fluid>
       <v-row>
         <v-col
-          v-if="getIncoterm !== 'FOB'"
+          :lg="listIncoterm === 'FOB' ? 2 : 1"
+        >
+          <inco-selection
+            :forOrders="isForOrders"
+          ></inco-selection>
+        </v-col>
+        <v-col
+          v-if="canSelectCargo"
           :lg="3"
         >
           <cargos-selection
@@ -24,7 +31,7 @@
           />
         </v-col>
         <v-col
-          :lg="getIncoterm !== 'FOB' ? 4 : 5"
+          :lg="listIncoterm !== 'FOB' ? 3 : 4"
         >
           <categories-selection
             :cargo_id="selectedCargo"
@@ -32,7 +39,7 @@
            />
         </v-col>
         <v-col
-          :lg="getIncoterm !== 'FOB' ? 3 : 5"
+          :lg="listIncoterm !== 'FOB' ? 3 : 4"
         >
           <custom-catalogue-selection
             v-model="catalogue"
@@ -64,17 +71,15 @@
         </v-col>
       </v-row>
     </v-container>
-    <v-skeleton-loader
-      class="mx-auto"
-      type="table"
-      v-if="isLoading"
-    />
     <v-container
       fluid
-      v-if="products.length > 0 && $store.getters.catView == 'list'"
+      v-if="$store.getters.catView == 'list'"
+      style="min-height: 100px;"
     >
+      <loading-box v-model="isLoading"></loading-box>
       <v-row
         class="list-header"
+        v-if="products.length > 0"
       >
         <v-col
           class="productsHeader"
@@ -83,8 +88,12 @@
           v-for="(h, index) in listHeader"
           :key="index"
         >
-          <p v-if="h.text != 'input'"><strong>{{ h.text }}</strong></p>
-          <v-checkbox v-if="h.text == 'input' && !isForOrders" v-model="activateSelection">
+          <p
+            v-if="filterHeader(h)"
+          ><strong>{{ h.text }}</strong></p>
+          <v-checkbox
+            v-if="h.text == 'input' && !isForOrders"
+            v-model="activateSelection">
           </v-checkbox>
         </v-col>
       </v-row>
@@ -129,8 +138,18 @@
         colored-border
         type="warning"
         elevation="2"
+        v-if="error == ''"
       >
-        {{ $t('no_products') }}
+        {{ $t('no_products') }} {{ error }}
+      </v-alert>
+      <v-alert
+        border="left"
+        colored-border
+        type="error"
+        elevation="2"
+        v-if="error != ''"
+      >
+        {{ error }}
       </v-alert>
     </div>
     <selection-options v-model="activateSelection"></selection-options>
@@ -144,6 +163,8 @@ import CargosSelection from '../CargosSelection.vue'
 import CategoriesSelection from '../CategoriesSelection.vue'
 import CustomCatalogueSelection from '../CustomCatalogueSelection'
 import SelectionOptions from './selectionOptions'
+import IncoSelection from '../incoSelection'
+import loadingBox from '../loadingBox'
 import { mapGetters } from 'vuex'
 import _ from 'lodash'
 
@@ -159,7 +180,8 @@ export default {
       activateSelection: false,
       listHeader: [],
       catalogue: '',
-      isLoading: true
+      isLoading: true,
+      error: ''
     }
   },
   components: {
@@ -168,7 +190,9 @@ export default {
     CargosSelection,
     CategoriesSelection,
     CustomCatalogueSelection,
-    SelectionOptions
+    SelectionOptions,
+    IncoSelection,
+    loadingBox
   },
   watch: {
     getIncoterm: function(val, old) {
@@ -199,20 +223,42 @@ export default {
     },
     isForOrders() {
       return this.forOrders == '' ? true : false
+    },
+    canSelectCargo() {
+      if(this.isForOrders) return true
+      if(this.getIncoterm !== 'FOB') return true
+      return false
+    },
+    listIncoterm() {
+      if(this.isForOrders) return 'REVOOLOOP'
+      return this.getIncoterm
     }
   },
   methods: {
     filterSearch: _.debounce(function() {
       this.loadProducts()
     }, 600),
+    filterHeader(header) {
+      //h.text != 'input' && isForOrders === h.inOrders
+      if(header.text == 'input') {
+        return false
+      }
+      if(this.isForOrders) {
+        if(header.inOrders) {
+          return true
+        }
+        return false
+      }
+      return true
+    },
     loadProducts() {
       //must rebuild header because deeper nodes do not react
       this.listHeader = [
-        { text: 'input', col: 1 },
-        { text: this.$t('product_name'), col: 4 },
-        { text: this.$t('categories'), col: 1 },
-        { text: this.$t('packing'), col: 2 },
-        { text: this.$t('price') + ' ' + this.$store.getters.getIncoterm, col: 3 }
+        { text: 'input', inOrders: true, col: 1 },
+        { text: this.$t('product_name'), inOrders: true, col: (this.isForOrders ? 3 : 4) },
+        { text: this.$t('categories'), inOrders: false, col: 1 },
+        { text: this.$t('packing'), inOrders: true, col: 2 },
+        { text: this.$t('price') + ' ' + this.listIncoterm, inOrders: true, col: 3 }
       ]
 
       this.products = []
@@ -222,7 +268,7 @@ export default {
         currency: this.$store.getters.getCurrency,
         pageSize: '25',
         pageNumber: 1,
-        incoterm: this.getIncoterm,
+        incoterm: this.listIncoterm,
         filter: [
           {
             custom_catalogue: this.catalogue
@@ -244,6 +290,9 @@ export default {
           this.products = resp.data.data
         }
         this.isLoading = false
+      }).catch( error => {
+        this.isLoading = false
+        this.error = `${error.response.data.message.message}`
       })
     },
     cargoChanged(e) {

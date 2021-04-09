@@ -29,7 +29,7 @@
                 x-large
                 class="activators"
               >
-                <v-icon>fa-folder</v-icon> New Catalogue
+                <v-icon>fa-folder</v-icon> {{ $t('components.products.new_catalogue') }}
               </v-btn>
             </template>
             <v-list>
@@ -51,7 +51,7 @@
                         elevation="2"
                         dark
                         @click="addNewList"
-                      >Add</v-btn>
+                      >{{ $t('components.products.add') }}</v-btn>
                     </template>
                   </v-text-field>
                 </v-form>
@@ -64,6 +64,7 @@
             offset-y
             top
             v-model="existingList"
+            :close-on-content-click="false"
           >
             <template v-slot:activator="{ attrs }">
               <v-btn
@@ -74,14 +75,24 @@
                 x-large
                 class="activators"
               >
-                <v-icon>fa-folder-plus</v-icon> Add to existing catalogue
+                <v-icon>fa-folder-plus</v-icon> {{ $t('components.products.add_to_existing_catalogue') }}
               </v-btn>
             </template>
             <v-list>
+              <v-list-item>
+                <v-text-field
+                  v-model="optionsSearch"
+                  :label="$t('search')"
+                  append-icon="mdi-magnify"
+                  @keyup="filterSearch"
+                ></v-text-field>
+              </v-list-item>
+              <v-divider></v-divider>
               <v-list-item
                 v-for="list in lists"
                 :key="list.id"
                 @click="addToExistingList(list.id)"
+                v-show="list.inSearch"
               >
                 <v-list-item-title>{{ list.name }}</v-list-item-title>
               </v-list-item>
@@ -116,7 +127,8 @@ export default {
       requiredRules: [
         v => !!v || 'This field is required',
       ],
-      lists: []
+      lists: [],
+      optionsSearch: '',
     }
   },
   computed: {
@@ -127,6 +139,15 @@ export default {
     ]),
   },
   methods: {
+    filterSearch() {
+      this.lists.map( l => {
+        if(!l.name.toLowerCase().includes(this.optionsSearch.toLowerCase())) {
+          l.inSearch = false
+        } else {
+          l.inSearch = true
+        }
+      })
+    },
     ...mapMutations([
       'clearSelected'
     ]),
@@ -152,14 +173,16 @@ export default {
             this.clearSelected()
             this.hide()
           }
-          console.log(resp)
         })
       }
     },
     loadExistingLists() {
       this.$http.get(this.endpoint('my_catalogues'))
       .then( resp => {
-        this.lists = resp.data.data.adminCatalogues
+        this.lists = resp.data.data.adminCatalogues.map( ac => {
+          ac.inSearch = true
+          return ac
+        })
         this.existingList = true
       })
     },

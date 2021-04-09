@@ -61,7 +61,7 @@ export default {
       }
     },
     toCheckout() {
-      console.log(1)
+      //console.log(1)
       this.hide()
       this.$emit('checkout')
     }

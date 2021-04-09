@@ -4,10 +4,10 @@
 
     <Loader />
 
-    <SideNav v-if="isAuthenticated" v-model="side" />
+    <SideNav v-if="isAuthenticated" />
 
     <v-app-bar app v-if="isAuthenticated">
-      <TopNavBar @toggleSideNav="side = !side" />
+      <TopNavBar @toggleSideNav="$store.commit('menuToggle')" />
     </v-app-bar>
 
     <!-- Sizes your content based upon application components -->
@@ -37,7 +37,7 @@
     name: 'Layout',
     data() {
       return {
-        side: false,
+        side: true,
       }
     },
     components: {

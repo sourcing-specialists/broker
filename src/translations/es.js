@@ -77,11 +77,13 @@ const messages = {
     top_clients_purchases: 'Compras mejores clientes',
     confirm_sales_in: 'Compras confirmadas en',
     pending_sales_in: 'Compras pendientes en',
-    sales: 'Ventas',
+    sales: 'Ventas - Confirmadas vs Pendientes',
     pending: 'Pendientes',
     confirmed: 'Confirmadas',
     orders_status: 'Ventas por estado de orden',
     top_product_sales: 'Mejores ventas por producto',
+    total_confirmed: 'Total confirmadas',
+    total_pending: 'Total Pendientes'
   },
   dashboard: {
     coming_events: 'Próximos eventos',

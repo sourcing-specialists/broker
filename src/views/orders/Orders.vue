@@ -59,7 +59,7 @@
         <v-chip
           class="ma-2"
           :color="stageColor(item.stage.slug)"
-          text-color="white"
+          outlined
         >
           <v-avatar left>
             <v-icon>{{ stageIcon(item.stage.slug) }}</v-icon>

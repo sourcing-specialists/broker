@@ -19,6 +19,7 @@
             v-model="categorySelection"
             ref="categories"
             :return-value.sync="categoriesSelected"
+            :close-on-content-click="false"
           >
             <template v-slot:activator="{ on, attrs }">
               <v-btn
@@ -30,6 +31,15 @@
               ><v-icon class="mr-2" dense>mdi-folder-cog</v-icon> {{ categoriesSelectedName }}</v-btn>
             </template>
             <v-list>
+              <v-list-item>
+                <v-text-field
+                  v-model="optionsSearch"
+                  :label="$t('search')"
+                  append-icon="mdi-magnify"
+                  @keyup="filterSearch"
+                ></v-text-field>
+              </v-list-item>
+              <v-divider></v-divider>
               <v-list-item
                 @click="changeCategories('all')"
               >
@@ -39,6 +49,7 @@
                 v-for="category in categories"
                 :key="category.id"
                 @click="changeCategories(category)"
+                v-show="category.inSearch"
               >
                 <v-list-item-title>{{ category.name }}</v-list-item-title>
               </v-list-item>
@@ -92,10 +103,20 @@
         categoriesSelectedName: this.$t('all'),
         categoriesSelected: [],
         categories: [],
-        categorySelection: false
+        categorySelection: false,
+        optionsSearch: '',
       }
     },
     methods: {
+      filterSearch() {
+        this.categories.map( c => {
+          if(!c.name.toLowerCase().includes(this.optionsSearch.toLowerCase())) {
+            c.inSearch = false
+          } else {
+            c.inSearch = true
+          }
+        })
+      },
       rangeChange(dates) {
         this.dates = dates
         this.getData()
@@ -136,7 +157,10 @@
 
           //add categories
           if(this.categories.length === 0) {
-            this.categories = resp.data.data.categories
+            this.categories = resp.data.data.categories.map( c => {
+              c.inSearch = true
+              return c
+            })
           }
 
         })

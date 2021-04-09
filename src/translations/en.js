@@ -78,11 +78,13 @@ const messages = {
     top_clients_purchases: 'Top clients purchases',
     confirm_sales_in: 'Confirmed sales in',
     pending_sales_in: 'Pending sales in',
-    sales: 'Sales',
+    sales: 'Sales - Confirmed vs Pending',
     pending: 'Pending',
     confirmed: 'Confirmed',
     orders_status: 'Sales by order status',
     top_product_sales: 'Sales by Top Products',
+    total_confirmed: 'Total confirmed',
+    total_pending: 'Total Pending'
   },
   dashboard: {
     coming_events: 'Coming events',
@@ -144,7 +146,12 @@ const messages = {
       weight: 'Weight (kg)',
       carton_size: 'Carton size',
       certificate_name: 'Certificate name',
-      certificates: 'Certificates'
+      certificates: 'Certificates',
+      //new
+      add_to_existing_catalogue: 'Add to existing catalogue',
+      add: 'Add',
+      new_catalogue: 'New catalogue',
+      //end new
     }
   },
   views: {

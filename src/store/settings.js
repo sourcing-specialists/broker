@@ -54,7 +54,9 @@ const appSettings = {
       return str
     },
     getLanguage: state => state.language,
-    getIncoterm: state => state.incoterm
+    getIncoterm: state => {
+      return state.incoterm
+    }
   }
 }
 

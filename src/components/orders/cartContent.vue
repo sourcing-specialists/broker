@@ -66,7 +66,7 @@
                 </v-btn>
               </v-text-field>
             </li>
-            <li class="price"><span class="font-weight-bold">{{ $store.getters.getCurrencyText }}{{ p.formatted_subtotal }}</span></li>
+            <li class="price"><span class="font-weight-bold">{{ numberToNiceString(p.formatted_subtotal, getCurrency) }}</span></li>
           </ul>
           <v-btn
             class="delete_product"
@@ -85,7 +85,7 @@
           <ul class="cart_total">
             <li></li>
             <li><span class="font-weight-bold">CBM: {{ round(cbm) }}</span></li>
-            <li class="price"><span class="font-weight-bold">Subtotal: {{ getCurrencyText }} {{ subtotal }}</span></li>
+            <li class="price"><span class="font-weight-bold">Subtotal: {{ numberToNiceString(subtotal, getCurrency) }}</span></li>
           </ul>
         </v-list-item-content>
       </v-list-item>
@@ -115,6 +115,7 @@ export default {
       'company',
       'subtotal',
       'getCurrencyText',
+      'getCurrency',
       'cbm',
       'distribution',
       'cargoAvCbm'

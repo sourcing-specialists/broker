@@ -21,6 +21,7 @@
             v-model="clientsSelection"
             ref="clients"
             :return-value.sync="selectedClient"
+            :close-on-content-click="false"
           >
             <template v-slot:activator="{ on, attrs }">
               <v-btn
@@ -32,6 +33,15 @@
               ><v-icon class="mr-2" dense>mdi-account-group</v-icon> {{ selectedClient === 'all' ? $t('all') : selectedClient.name }}</v-btn>
             </template>
             <v-list>
+              <v-list-item>
+                <v-text-field
+                  v-model="optionsSearch"
+                  :label="$t('search')"
+                  append-icon="mdi-magnify"
+                  @keyup="filterSearch"
+                ></v-text-field>
+              </v-list-item>
+              <v-divider></v-divider>
               <v-list-item
                 @click="changeCompany('all')"
               >
@@ -41,6 +51,7 @@
                 v-for="company in clients"
                 :key="company.id"
                 @click="changeCompany(company)"
+                v-show="company.inSearch"
               >
                 <v-list-item-title>{{ company.name }}</v-list-item-title>
               </v-list-item>
@@ -52,12 +63,33 @@
     <v-divider></v-divider>
     <v-card-text style="position: relative; min-height: 100px;">
       <loading-box v-model="loading"></loading-box>
-      <div v-if="chartData !== null">
-        <doughnut-chart
-          :chart-data="chartData"
-          :options="chartOptions"
-        ></doughnut-chart>
-      </div>
+      <v-row>
+        <v-col
+          lg="6"
+          md="6"
+          sm="12"
+          class="total_sales"
+        >
+          <div>
+            <h4>{{ $t('charts.total_confirmed') }}</h4>
+            <h1 class="indigo--text mb-3">{{ numberToNiceString(totalSalesConfirmed, $store.getters.getCurrency) }}</h1>
+            <h4>{{ $t('charts.total_pending') }}</h4>
+            <h1 class="red--text text--darken-4">{{ numberToNiceString(totalSalesPending, $store.getters.getCurrency) }}</h1>
+          </div>
+        </v-col>
+        <v-col
+          lg="6"
+          md="6"
+          sm="12"
+        >
+          <div v-if="chartData !== null">
+            <doughnut-chart
+              :chart-data="chartData"
+              :options="chartOptions"
+            ></doughnut-chart>
+          </div>
+        </v-col>
+      </v-row>
     </v-card-text>
   </v-card>
 </template>
@@ -78,17 +110,37 @@
       return {
         loading: true,
         chartData: null,
-        chartOptions: {},
+        chartOptions: {
+          cutoutPercentage: 65,
+          legend: {
+            display: false
+          },
+        },
         dates: [
           new Date(new Date().getFullYear(), 0, 2).toISOString().substr(0, 10),//first day of the year
           new Date().toISOString().substr(0, 10),//now
         ],
         clientsSelection: false,
         selectedClient: 'all',
-        clients: []
+        clients: [],
+        labels: [],
+        data: [],
+        totalSales: '',
+        totalSalesConfirmed: '',
+        totalSalesPending: '',
+        optionsSearch: '',
       }
     },
     methods: {
+      filterSearch() {
+        this.clients.map( c => {
+          if(!c.name.toLowerCase().includes(this.optionsSearch.toLowerCase())) {
+            c.inSearch = false
+          } else {
+            c.inSearch = true
+          }
+        })
+      },
       changeCompany(company) {
         this.$refs.clients.save(company)
         this.selectedClient = company
@@ -109,23 +161,29 @@
           }
         })
         .then( resp => {
-          //console.log(resp.data)
+          console.log(resp.data)
           this.loading = false
-          const labels = [ this.$t('charts.confirmed'), this.$t('charts.pending')]
-          const data = [resp.data.data.sales.total_sales_confirmed, resp.data.data.sales.total_sales_pending]
+          this.labels = [ this.$t('charts.confirmed'), this.$t('charts.pending')]
+          this.data = [resp.data.data.sales.total_sales_confirmed, resp.data.data.sales.total_sales_pending]
+          this.totalSales = resp.data.data.sales.total_sales
+          this.totalSalesConfirmed = resp.data.data.sales.total_sales_confirmed
+          this.totalSalesPending = resp.data.data.sales.total_sales_pending
           this.chartData = {
-            labels: labels,
+            labels: this.labels,
             datasets: [
               {
                 label: `${this.$t('charts.confirm_sales_in')} ${this.$store.getters.getCurrency}`,
-                data: data,
+                data: this.data,
                 backgroundColor: ['#3F51B5', '#B71C1C'],
               }
             ]
           }
           //add clients
           if(this.clients.length === 0) {
-            this.clients = resp.data.data.companies
+            this.clients = resp.data.data.companies.map( c => {
+              c.inSearch = true
+              return c
+            })
           }
         })
       }

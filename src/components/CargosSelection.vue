@@ -52,15 +52,17 @@ export default {
         this.$http.get(this.endpoint(`cargo/get`))
           .then( resp => {
             if(resp.data.result == true) {
-              var vue = this
-              resp.data.data.map(function(c) {
-                c.value = c.id
-                c.text = `${ vue.formatDate(c.eta) } (${c.name})`
-              })
-              this.cargos = resp.data.data
-              //set cargo globally if it is the first time
-              if(this.$store.getters.cargo.id == undefined) {
-                this.$store.dispatch('cargoSelection', resp.data.data[0])
+              if(resp.data.data.length > 0) {
+                var vue = this
+                resp.data.data.map(function(c) {
+                  c.value = c.id
+                  c.text = `${ vue.formatDate(c.eta) } (${c.name})`
+                })
+                this.cargos = resp.data.data
+                //set cargo globally if it is the first time
+                if(this.$store.getters.cargo.id == undefined) {
+                  this.$store.dispatch('cargoSelection', resp.data.data[0])
+                }
               }
               resolve()
             }

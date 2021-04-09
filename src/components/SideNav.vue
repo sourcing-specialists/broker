@@ -5,12 +5,15 @@
     v-model="menu"
     :color="$store.getters.vColor"
     fixed
-    temporary
-    >
-    <v-list-item>
-      <v-list-item-content>
-        <img class="menu-logo" :src="logo">
-      </v-list-item-content>
+    permanent
+    :mini-variant.sync="menu"
+    :expand-on-hover="menu"
+  >
+    <v-list-item class="px-2">
+      <v-list-item-avatar>
+        <v-img :src="logo" class="logo-avatar"></v-img>
+      </v-list-item-avatar>
+      <v-list-item-title><strong>Sourcing Specialists</strong></v-list-item-title>
     </v-list-item>
 
     <v-divider></v-divider>
@@ -52,21 +55,25 @@
 
 <script>
 import SideMenu from '../constants/SideMenu.js'
-import logo from '@/assets/images/logo.png'
+import logoIcon from '@/assets/images/logo-icon.png'
+import { mapGetters } from 'vuex'
 
 export default {
   name: 'SideNav',
-  props: ['value'],
   data: function() {
     return {
-      logo: logo,
-      items: SideMenu
+      logo: logoIcon,
+      items: SideMenu,
+      miniMenu: true
     }
   },
   computed: {
+    ...mapGetters([
+      'menuOpen'
+    ]),
     menu: {
       get: function() {
-        return this.value
+        return this.menuOpen
       },
       set: function(newValue) {
         this.$emit('input', newValue)
@@ -82,8 +89,9 @@ export default {
     font-size: 14px !important;
   }
 }
-.menu-logo {
-  width: 100%;
-  height: auto;
+.logo-avatar {
+  .v-image__image--cover {
+    background-size: contain !important;
+  }
 }
 </style>
