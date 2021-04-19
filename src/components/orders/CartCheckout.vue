@@ -16,7 +16,7 @@
         </template>
       </v-simple-table>
     </div>
-    <v-container fluid>
+    <v-container class="mt-8" fluid>
       <v-row class="justify-end">
         <v-select
           :items="[{ text: 'Confirm', value: 'confirm' }, { text: 'Confirm and pay', value: 'confirm_pay' }]"
@@ -73,10 +73,10 @@ export default {
           name: 'Order Subtotal:',
           value: this.getCurrencyText + this.formattedNumber(this.subtotal),
         },
-        {
+        ...(this.incoterm !== 'FOB' ? {
           name: 'Distribution:',
           value: this.getCurrencyText + this.formattedNumber(this.distribution.cost_total)
-        },
+        } : ''),
         {
           name: 'Total:',
           value: this.getCurrencyText + this.formattedNumber(this.total)
@@ -84,17 +84,20 @@ export default {
       ]
       return totals
     },
-    ...mapGetters([
+    ...mapGetters('cart', [
       'count',
       'subtotal',
-      'getCurrencyText',
       'distribution',
       'total',
+      'incoterm'
+    ]),
+    ...mapGetters([
+      'getCurrencyText',
       'vColor'
     ])
   },
   methods: {
-    ...mapActions([
+    ...mapActions('cart', [
       'getDistribution',
       'confirmOrder',
       'clearCart'
@@ -111,14 +114,19 @@ export default {
         this.$router.push({ name: 'Orders'})
       }).catch((result) => {
         console.log(result)
+        this.$toasted.error(this.$t('something_wrong'))
+        this.loading = false
       })
     },
     debug() {
+      this.pay = 88
       console.log(this.$store.state.cart)
     }
   },
   mounted() {
-    this.getDistribution()
+    if(this.incoterm !== 'FOB') {
+      this.getDistribution()
+    }
   }
 }
 </script>

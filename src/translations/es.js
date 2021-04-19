@@ -73,6 +73,8 @@ const messages = {
   paid_at: 'Pagado',
   amount: 'Monto',
   all: 'Todas',
+  company: 'Compañía',
+  cutoff_date: 'Día de corte',
   charts: {
     top_clients_purchases: 'Compras mejores clientes',
     confirm_sales_in: 'Compras confirmadas en',
@@ -105,6 +107,13 @@ const messages = {
     date: 'Fecha',
     inspector: 'Inspector',
     result: 'Resultado',
+    incoterm: 'Incoterm',
+    transport: 'Transporte',
+    sea: 'Mar',
+    air: 'Aire',
+    select_cargo: 'Seleccionar cargo',
+    cbm_used_vs_free: 'usado de',
+    confirm_settings: 'Confirmar configuración',
   },
   validation: {
     this_field_required: 'Este campo es obligatorio',
@@ -145,10 +154,18 @@ const messages = {
       weight: 'Peso (kg)',
       carton_size: 'Tamaño de la caja',
       certificate_name: 'Nombre del certificado',
-      certificates: 'Certificados'
+      certificates: 'Certificados',
+      add_to_existing_catalogue: 'Agregar a catálogo existente',
+      add: 'Agregar',
+      new_catalogue: 'Catálogo nuevo',
     }
   },
   views: {
+    orders: {
+      order_settings: 'Order settings',
+      add_items: 'Select items',
+      confirm_order: 'Confirm'
+    },
     lists: {
       no_lists_text: 'Al parecer no tienes ninguna lista todavia. Por favor ve a la sección de catalogos y crea tu primera lista.',
       show_products: 'Mostrar productos',

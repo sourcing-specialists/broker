@@ -2,22 +2,19 @@
   <v-navigation-drawer
     dark
     app
-    v-model="menu"
+    :v-model="menu"
     :color="$store.getters.vColor"
     fixed
     permanent
+    clipped
     :mini-variant.sync="menu"
     :expand-on-hover="menu"
   >
-    <v-list-item class="px-2">
-      <v-list-item-avatar>
-        <v-img :src="logo" class="logo-avatar"></v-img>
-      </v-list-item-avatar>
-      <v-list-item-title><strong>Sourcing Specialists</strong></v-list-item-title>
-    </v-list-item>
-
-    <v-divider></v-divider>
-    <v-list dense nav>
+    <v-list
+      dense
+      nav
+      rounded
+    >
       <div  v-for="item in items" :key="item.title">
         <v-list-group
           v-if="item.children.length > 0"
@@ -39,7 +36,9 @@
           </v-list-item>
         </v-list-group>
         <v-list-item v-else :to="item.to">
-          <v-list-item-icon>
+          <v-list-item-icon
+            class="menu-icons"
+          >
             <v-icon>{{ item.icon }}</v-icon>
           </v-list-item-icon>
           <v-list-item-content>
@@ -64,7 +63,7 @@ export default {
     return {
       logo: logoIcon,
       items: SideMenu,
-      miniMenu: true
+      isDisabled: false
     }
   },
   computed: {
@@ -75,8 +74,9 @@ export default {
       get: function() {
         return this.menuOpen
       },
-      set: function(newValue) {
-        this.$emit('input', newValue)
+      set: function(val) {
+        console.log(val)
+        this.$emit('input', 1)
       }
     }
   }
@@ -93,5 +93,13 @@ export default {
   .v-image__image--cover {
     background-size: contain !important;
   }
+}
+.disabled {
+  pointer-events: none !important;
+}
+.menu-clipper {
+  position: absolute;
+  bottom: 10px;
+  left: 3px;
 }
 </style>

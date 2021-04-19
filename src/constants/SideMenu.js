@@ -2,13 +2,13 @@ const SideMenu = [
   { 
     title: 'dashboard_title',
     to: '/dashboard',
-    icon: 'fa-chart-pie',
+    icon: 'mdi-view-dashboard',
     children: [] 
   },
   { 
     title: 'catalogue', 
     to: '', 
-    icon: 'fa-list', 
+    icon: 'mdi-format-list-bulleted-square', 
     children: [
       {
         title: 'catalogue',
@@ -26,13 +26,13 @@ const SideMenu = [
   { 
     title: 'order', 
     to: '/orders', 
-    icon: 'fa-boxes', 
+    icon: 'mdi-file-cog-outline', 
     children: []
   },
   { 
     title: 'client', 
     to: '/companies', 
-    icon: 'fa-users', 
+    icon: 'mdi-account-multiple', 
     children: []
   }
 ]

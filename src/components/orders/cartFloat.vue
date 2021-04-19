@@ -47,7 +47,7 @@ export default {
     cartContent
   },
   computed: {
-    ...mapGetters([
+    ...mapGetters('cart', [
       'count'
     ])
   },

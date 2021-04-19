@@ -40,6 +40,7 @@
 import { mapGetters } from 'vuex'
 export default {
   name: 'CategoriesSelection',
+  props: ['listIncoterm'],
   data: function() {
     return {
       categories: [],
@@ -48,8 +49,7 @@ export default {
     }
   },
   computed: {
-    ...mapGetters([
-      'getIncoterm',
+    ...mapGetters('cart', [
       'cargo'
     ])
   },
@@ -64,7 +64,7 @@ export default {
       return new Promise((resolve/*, reject*/) => {
         this.$http.get(this.endpoint(`category/get`), {
           params: {
-            incoterm: this.getIncoterm,
+            incoterm: this.listIncoterm,
             cargo_id: this.cargo.id !== undefined ? this.cargo.id : ''
           }
         }).then( resp => {
@@ -85,7 +85,7 @@ export default {
     categoriesSelected: function(val) {
       this.$emit('categoriesChanged', val)
     },
-    getIncoterm: function() {//reset on incoterm change
+    listIncoterm: function() {//reset on incoterm change
       this.loadCategories()
     },
     cargo: function() {//reset on cargo change

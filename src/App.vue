@@ -4,15 +4,21 @@
 
     <Loader />
 
-    <SideNav v-if="isAuthenticated" />
+    <side-nav
+      v-if="isAuthenticated"
+    ></side-nav>
 
-    <v-app-bar app v-if="isAuthenticated">
-      <TopNavBar @toggleSideNav="$store.commit('menuToggle')" />
+    <v-app-bar
+      v-if="isAuthenticated"
+      app
+      color="white"
+      clipped-left
+    >
+      <top-nav-bar></top-nav-bar>
     </v-app-bar>
 
     <!-- Sizes your content based upon application components -->
     <v-main>
-
       <!-- Provides the application the proper gutter -->
       <v-container fluid>
         <vue-page-transition name="fade-in-right">

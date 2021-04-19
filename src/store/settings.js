@@ -1,14 +1,15 @@
 //app general settings
 const appSettings = {
   state: () => ({
-    menuOpen: true,
+    menuOpen: false,
     loading: false,
     vuetifyColor: 'red darken-4',
     hexColor: '#B71C1C', 
     catalogueView: 'list',
     currency: 'USD',
     language: 'en',
-    incoterm: 'REVOOLOOP'
+    incoterm: 'REVOOLOOP',
+    catalogueCargo: {}
   }),
   mutations: {
     menuToggle(state) {
@@ -28,6 +29,9 @@ const appSettings = {
     },
     changeInconterm(state, incoterm) {
       state.incoterm = incoterm
+    },
+    setCatalogueCargo(state, cargo) {
+      state.catalogueCargo = cargo
     }
   },
   getters: {
@@ -56,7 +60,8 @@ const appSettings = {
     getLanguage: state => state.language,
     getIncoterm: state => {
       return state.incoterm
-    }
+    },
+    catalogueCargo: state => state.catalogueCargo
   }
 }
 

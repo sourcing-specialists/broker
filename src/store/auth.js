@@ -65,7 +65,7 @@ const authentication = {
     //log him out
     logout({commit}, expired = false) {
       if(expired) {
-        this.dispatch('clearCart')
+        this.dispatch('cart/clearCart')
         commit('logout')
         router.push('/login')
         return
@@ -75,7 +75,7 @@ const authentication = {
           url: `${process.env.VUE_APP_API_ENDPOINT}logout`,
           method: 'POST'
         }).then( () => {
-          this.dispatch('clearCart')
+          this.dispatch('cart/clearCart')
           commit('logout')
           router.push('/login')
           resolve()

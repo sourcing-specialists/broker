@@ -1,7 +1,6 @@
 <template>
   <v-container fluid>
     <PageHeader :title="title" :subheader="subheader" />
-    {{ $store.getters.getIncoterm }}
     <router-link :to="{ name: 'createCompany' }">
       <v-btn
         class="ma-2 add_button"

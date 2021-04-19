@@ -19,7 +19,7 @@
         <v-col
           lg="4"
           md="4"
-          class="d-flex align-center"
+          class="d-flex align-center pl-8"
         >
           <div>
             <h4>

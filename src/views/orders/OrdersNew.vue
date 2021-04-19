@@ -9,10 +9,12 @@
       fab
       @click="toggleCart()"
     >
-      <span class="white--text"><v-icon>mdi-cart</v-icon>({{ $store.getters.count }})</span>
+      <span class="white--text"><v-icon>mdi-cart</v-icon>({{ count }})</span>
     </v-btn>
     <div>
-      <v-stepper v-model="step">
+      <v-stepper
+        v-model="step"
+      >
         <v-stepper-header>
           <v-stepper-step
             step="1"
@@ -20,18 +22,18 @@
             edit-icon="mdi-pencil"
             editable
           >
-            Select Customer
+            {{ $t('views.orders.order_settings') }}
           </v-stepper-step>
 
           <v-divider></v-divider>
 
           <v-stepper-step
             step="2"
-            :editable="company_id != ''"
+            :editable="company.id !== undefined"
             :complete="step > 2"
             edit-icon="mdi-pencil"
           >
-            Add items to cart
+            {{ $t('views.orders.add_items') }}
           </v-stepper-step>
 
           <v-divider></v-divider>
@@ -41,19 +43,14 @@
             :editable="company_id != ''"
             :complete="step > 3"
           >
-            Confirm
+            {{ $t('views.orders.confirm_order') }}
           </v-stepper-step>
         </v-stepper-header>
         <v-stepper-items>
           <v-stepper-content step="1">
-            <v-autocomplete
-              v-model="company_id"
-              label="Company"
-              :items="companies"
-              :loading="loading"
-              @change="customerChanged()"
-            >
-            </v-autocomplete>
+            <order-new-settings
+              @onConfirm="step = 2"
+            ></order-new-settings>
           </v-stepper-content>
 
           <v-stepper-content step="2">
@@ -84,12 +81,13 @@
 </template>
 
 <script>
+import { mapGetters } from 'vuex'
 import PageHeader from '../../components/PageHeader'
 import ProductsList from '../../components/products/ProductsList.vue'
 import ProductModal from '../../components/orders/productModal'
 import CartFloat from '../../components/orders/cartFloat'
 import CartCheckout from '../../components/orders/CartCheckout'
-import { mapGetters } from 'vuex'
+import orderNewSettings from '../../components/orders/orderNewSettings'
 
 export default {
   name: 'OrdersNew',
@@ -97,7 +95,6 @@ export default {
     return {
       title: 'Create a new order',
       subheader: '',
-      company_id: this.$store.getters.company.id ? this.$store.getters.company.id : '',
       loading: true,
       step: 1,
       showCart: false,
@@ -107,10 +104,10 @@ export default {
         { text: 'Packing', col: 2 },
         { text: 'Price', col: 4 }
       ],
-      companies: [],
       products: [],
       productInModal: {},
-      showProductModal: false
+      showProductModal: false,
+      company_id: ''
     }
   },
   components: {
@@ -119,28 +116,18 @@ export default {
     ProductModal,
     CartFloat,
     CartCheckout,
+    orderNewSettings
   },
   computed: {
-    ...mapGetters([
+    ...mapGetters('cart', [
       'company',
       'subtotal',
       'getCurrencyText',
       'cbm',
       'origin_zone',
-      'destination_zone'
+      'destination_zone',
+      'count'
     ])
-  },
-  beforeMount() {
-    //load customers
-    this.$http.get(this.endpoint('customer/get'))
-    .then( resp => {
-      resp.data.data.map(function(c) {
-        c.value = c.id
-        c.text = c.name
-      })
-      this.companies = resp.data.data
-      this.loading = false
-    })
   },
   methods: {
     toggleCart() {
@@ -149,20 +136,15 @@ export default {
     toggleDialog() {
       this.showProductModal = !this.showProductModal
     },
-    customerChanged() {
-      this.step = 2
-      //pass client to the cart store
-      const company = this.companies.filter(c => c.id == this.company_id)
-      this.$store.dispatch('setCompany', company[0])
-    },
     productModal(product) {
+      console.log(product)
       this.productInModal = product
       this.showProductModal = true
     },
     clear() {
       this.company_id = ''
       this.step = 1
-      this.$store.dispatch('clearCart')
+      this.$store.dispatch('cart/clearCart')
     },
     remove(id) {
       this.$store.dispatch('removeFromCart', id)

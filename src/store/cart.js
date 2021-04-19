@@ -8,33 +8,48 @@ const defaultState = () => {
     cargo: {},
     products: [],
     company: {},
-    distribution: {}
+    distribution: {},
+    incoterm: '',
+    transport: 'sea'
   }
 }
 
 const cart = {
   state: defaultState(),
+  namespaced: true,
   mutations: {
     add(state, product) {
       if(product.quantity < product.min_order) {
         Vue.toasted.error('Product quantity must be greater or equal to '+product.min_order)
         return
       }
-      const tier = mixins.methods.getTier(product.tiers, product.quantity)
-      product.price = tier
-      product.subtotal = mixins.methods.round((tier.cost_per_carton*product.quantity) ,2)
-      product.formatted_subtotal = mixins.methods.round((tier.cost_per_carton*product.quantity) ,2)
+      var price = {
+        cost_per_carton: product.cost_per_carton
+      }
+      //replace with tier prices if REVOOLOOP
+      if(state.incoterm === 'REVOOLOOP') {
+        price = mixins.methods.getTier(product.tiers, product.quantity)
+      }
+      product.price = price
+      product.subtotal = mixins.methods.round((price.cost_per_carton*product.quantity) ,2)
+      product.formatted_subtotal = mixins.methods.round((price.cost_per_carton*product.quantity) ,2)
       state.products.push(product)
       Vue.toasted.success('Product added')
     },
     update(state, { product, addUp, failedUpdate }) {
       const existing = state.products.find(x => x.id === product.id)
       const quantity = addUp === true ? existing.quantity+product.quantity : product.quantity 
-      const tier = mixins.methods.getTier(existing.tiers, quantity)
+      var price = {
+        cost_per_carton: existing.cost_per_carton
+      }
+      //replace with tier prices if REVOOLOOP
+      if(state.incoterm === 'REVOOLOOP') {
+        price = mixins.methods.getTier(existing.tiers, quantity)
+      }
       existing.quantity = quantity
-      existing.price = tier
-      existing.subtotal = mixins.methods.round((tier.cost_per_carton*quantity) ,2)
-      existing.formatted_subtotal = mixins.methods.round((tier.cost_per_carton*quantity) ,2)
+      existing.price = price
+      existing.subtotal = mixins.methods.round((price.cost_per_carton*quantity), 2)
+      existing.formatted_subtotal = mixins.methods.round((price.cost_per_carton*quantity), 2)
       if(failedUpdate === 'min') {
         Vue.toasted.error('Product quantity must be greater or equal to '+product.quantity)
         return
@@ -66,12 +81,25 @@ const cart = {
     },
     setCargo(state, cargo) {
       state.cargo = cargo
+    },
+    setIncoterm(state, incoterm) {
+      state.incoterm = incoterm
+    },
+    setTransport(state, transport) {
+      state.transport = transport
     }
   },
   actions: {
+    setIncoterm({commit}, incoterm) {
+      commit('setIncoterm', incoterm)
+    },
+    setTransport({commit}, transport) {
+      commit('setTransport', transport)
+    },
     addToCart({state, commit, dispatch, getters}, product) {
-      //check if cargo has space with the quantities that want to be add
-      if(!mixins.methods.cargoHasSpace(getters.cargoAvCbm, product)) {
+      
+      //check if cargo has space with the quantities that want to be add || IGNORE ON FOB
+      if(!mixins.methods.cargoHasSpace(getters.cargoAvCbm, product, state.incoterm)) {
         Vue.toasted.error('Quantity exceed cargo capacity.')
         return
       }
@@ -82,7 +110,9 @@ const cart = {
       } else {
         commit('add', product)
       }
-      dispatch('getDistribution')
+      if(state.incoterm !== 'FOB') {
+        dispatch('getDistribution')
+      }
     },
     removeFromCart({commit}, id) {
       Vue.toasted.success('Product deleted successfully')
@@ -95,7 +125,7 @@ const cart = {
 
       const item = state.products.find(i => i.id === updates.id)
 
-      if(!mixins.methods.cargoHasSpace(getters.cargoAvCbm, { cbm_per_carton: item.cbm_per_carton, quantity: Math.abs(item.quantity-updates.quantity) })) {
+      if(!mixins.methods.cargoHasSpace(getters.cargoAvCbm, { cbm_per_carton: item.cbm_per_carton, quantity: Math.abs(item.quantity-updates.quantity) }, state.incoterm)) {
         commit('update', { product: { id: updates.id, quantity: item.quantity }, failedUpdate: 'capacity' })
         return
       }
@@ -106,7 +136,9 @@ const cart = {
         commit('update', { product: { id: updates.id, quantity: item.min_order }, failedUpdate: 'min' })
       } else {
         commit('update', { product: { id: updates.id, quantity: updates.quantity }})
-        dispatch('getDistribution')
+        if(state.incoterm !== 'FOB') {
+          dispatch('getDistribution')
+        }
       }
     },
     setCompany({commit}, company) {
@@ -178,7 +210,15 @@ const cart = {
     cargoAvCbm: (state, getters) => {
       return state.cargo.cbm_free-getters.cbm
     },
-    total: (state, getters) => getters.subtotal+getters.distribution.cost_total
+    total: (state, getters) => {
+      var total = getters.subtotal
+      if(getters.incoterm !== 'FOB') {
+        total += getters.distribution.cost_total
+      }
+      return total
+    },
+    incoterm: (state) => state.incoterm,
+    transport: (state) => state.transport
   }
 }
 

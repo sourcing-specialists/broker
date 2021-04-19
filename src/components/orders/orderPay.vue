@@ -97,7 +97,7 @@ export default {
     }
   },
   methods: {
-    ...mapActions([
+    ...mapActions('cart', [
       'clearCart'
     ]),
     loadPayments() {
@@ -114,7 +114,9 @@ export default {
     }
   },
   mounted() {
-    this.loadPayments()
+    if(this.order !== null) {
+      this.loadPayments()
+    }
   }
 }
 </script>

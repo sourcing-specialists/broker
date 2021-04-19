@@ -7,6 +7,8 @@
             append-icon="mdi-magnify"
             v-model="search"
             :label="$t('search')"
+            clearable
+            @input="filterSearch"
             @keyup="filterSearch"
           ></v-text-field>
         </v-col>
@@ -15,6 +17,7 @@
     <v-container fluid>
       <v-row>
         <v-col
+          v-if="!isForOrders"
           :lg="listIncoterm === 'FOB' ? 2 : 1"
         >
           <inco-selection
@@ -22,7 +25,7 @@
           ></inco-selection>
         </v-col>
         <v-col
-          v-if="canSelectCargo"
+          v-if="!isForOrders && listIncoterm !== 'FOB'"
           :lg="3"
         >
           <cargos-selection
@@ -31,15 +34,16 @@
           />
         </v-col>
         <v-col
-          :lg="listIncoterm !== 'FOB' ? 3 : 4"
+          :lg="isForOrders ? 5 : (listIncoterm !== 'FOB' ? 3 : 4)"
         >
           <categories-selection
+            :listIncoterm="listIncoterm"
             :cargo_id="selectedCargo"
             @categoriesChanged="categoriesChanged"
            />
         </v-col>
         <v-col
-          :lg="listIncoterm !== 'FOB' ? 3 : 4"
+          :lg="isForOrders ? 5 : (listIncoterm !== 'FOB' ? 3 : 4)"
         >
           <custom-catalogue-selection
             v-model="catalogue"
@@ -109,8 +113,9 @@
     </v-container>
     <v-container
       fluid
-      v-if="products.length > 0 && $store.getters.catView == 'tiles'"
+      v-if="$store.getters.catView == 'tiles'"
     >
+      <loading-box v-model="isLoading"></loading-box>
       <v-row
         :class="['product-tile-row', $vuetify.breakpoint.name]"
       >
@@ -174,7 +179,7 @@ export default {
   data: function() {
     return {
       search: '',
-      selectedCargo: this.$store.getters.cargo.id,
+      selectedCargo: this.$store.getters.catalogueCargo,
       selectedCategories: [],
       products: [],
       activateSelection: false,
@@ -213,10 +218,13 @@ export default {
     }
   },
   computed: {
+    ...mapGetters('cart', [
+      'incoterm',
+      'cargo'
+    ]),
     ...mapGetters([
       'getLanguage',
       'getIncoterm',
-      'cargo'
     ]),
     currency() {
       return this.$store.getters.getCurrency
@@ -225,12 +233,12 @@ export default {
       return this.forOrders == '' ? true : false
     },
     canSelectCargo() {
-      if(this.isForOrders) return true
+      if(this.isForOrders) return false
       if(this.getIncoterm !== 'FOB') return true
       return false
     },
     listIncoterm() {
-      if(this.isForOrders) return 'REVOOLOOP'
+      if(this.isForOrders) return this.incoterm
       return this.getIncoterm
     }
   },
@@ -264,7 +272,7 @@ export default {
       this.products = []
       this.isLoading = true
       this.$http.post(this.endpoint(`catalogue/get`), { 
-        cargo_id: this.selectedCargo,
+        cargo_id: this.isForOrders ? this.cargo.id : this.selectedCargo.id,
         currency: this.$store.getters.getCurrency,
         pageSize: '25',
         pageNumber: 1,
@@ -308,7 +316,7 @@ export default {
       this.$store.commit('setCatalogueView', display)
     }
   },
-  beforeMount() {
+  mounted() {
     this.loadProducts()
   }
 }

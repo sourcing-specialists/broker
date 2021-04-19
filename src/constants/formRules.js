@@ -7,7 +7,12 @@ const requiredRule = [
   v => !!v || 'required'
 ]
 
+const requiredRuleObjects = [
+  v => !!v.id || 'required'
+]
+
 export {
   emailRule,
-  requiredRule
+  requiredRule,
+  requiredRuleObjects
 }

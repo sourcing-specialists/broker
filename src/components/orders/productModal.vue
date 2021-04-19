@@ -1,6 +1,7 @@
 <template>
   <v-dialog
     v-model="dialog"
+    max-width="1080"
   >
     <v-card
       light
@@ -15,67 +16,78 @@
         <v-col
           lg="11"
         >
-          <h3>
-            <span :style="`color: ${$store.getters.hexColor}`">{{ product.name }}</span> 
-          </h3>
-          <v-divider></v-divider>
-          <p>{{ product.description }}</p>
+          <h2 class="mColor-text">{{ product.name }}</h2>
+          <p class="ps-2">{{ product.description }}</p>
         </v-col>
       </v-row>
-      <h4>Options</h4>
-      <v-form
-        v-for="(option, option_index) in options"
-        :key="option.id"
-        class="option-in-modal"
-        ref="opt"
+      <div
+        class="pa-3"
       >
-        <v-row>
-          <v-col lg="1" md="1" class="d-flex align-center">
-            {{ option.ref }}
-          </v-col>
-          <v-col lg="3" md="3" class="d-flex align-center">
-            <div>
-              <h5><span :style="`color: ${$store.getters.hexColor}`">{{ option.group_name }}:</span> {{ option.group_value }}</h5>
-              <ul>
-                <li><span class="font-weight-bold">Carton Size:</span> {{ mxMeas(option) }}</li>
-                <li><span class="font-weight-bold">MOQ:</span> {{ option.min_order }} Cartons</li>
-              </ul>
-              <ul v-html="mxPacking(option)"></ul>
-            </div>
-          </v-col>
-          <v-col lg="2" md="2" class="d-flex align-center">
-            <div>
-              <v-select
-                v-for="(attrs, index) in option.attributes_grouped"
-                :key="index"
-                :items="attrs"
-                item-text="value"
-                item-value="attribute_id"
-                :rules="requiredRules"
-                :label="attrs[0].group_name"
-                v-model="attrs.selected"
-              ></v-select>
-              <div class="i-exist" v-if="inCart(option)">Product in cart: {{ inCartQuantity(option) }} Cartons</div>
-            </div>
-          </v-col>
-          <v-col lg="4" md="4" class="d-flex align-center">
-            <ul class="price-tiers" v-html="mxPriceTiers(option, true)"></ul>
-          </v-col>
-          <v-col lg="2" md="2" class="d-flex align-center">
-            <vue-number-input v-model="option.quantity" :min="0" center controls />
-            <v-btn
-              class="ma-2"
-              x-small
-              fab
-              elevation="2"
-              :color="$store.getters.vColor"
-              @click="addOption(option_index)"
+        <h4>Options</h4>
+        <v-form
+          v-for="(option, option_index) in options"
+          :key="option.id"
+          class="option-in-modal mt-3"
+          ref="opt"
+        >
+          <v-card
+            elevation="2"
+            class="mb-4"
+          >
+            <v-card-title
+              class="pa-2"
             >
-              <span class="white--text"><v-icon>mdi-plus</v-icon></span>
-            </v-btn>
-          </v-col>
-        </v-row>
-      </v-form>
+              <h5><span :style="`color: ${$store.getters.hexColor}`">{{ option.group_name }}:</span> {{ option.group_value }}</h5>
+            </v-card-title>
+            <v-divider></v-divider>
+            <v-container>
+              <v-row>
+                <v-col lg="3" md="3" class="d-flex align-center">
+                  <div>
+                    <ul>
+                      <li><span class="font-weight-bold">Ref:</span> {{ option.ref }}</li>
+                      <li><span class="font-weight-bold">Carton Size:</span> {{ mxMeas(option) }}</li>
+                      <li><span class="font-weight-bold">MOQ:</span> {{ option.min_order }} Cartons</li>
+                    </ul>
+                    <ul v-html="mxPacking(option)"></ul>
+                  </div>
+                </v-col>
+                <v-col lg="2" md="2" class="d-flex align-center">
+                  <div>
+                    <v-select
+                      v-for="(attrs, index) in option.attributes_grouped"
+                      :key="index"
+                      :items="attrs"
+                      item-text="value"
+                      item-value="attribute_id"
+                      :rules="requiredRules"
+                      :label="attrs[0].group_name"
+                      v-model="attrs.selected"
+                    ></v-select>
+                    <div class="i-exist" v-if="inCart(option)">Product in cart: {{ inCartQuantity(option) }} Cartons</div>
+                  </div>
+                </v-col>
+                <v-col lg="4" md="4" class="d-flex align-center">
+                  <ul class="price-tiers" v-html="mxPriceTiers(option, true)"></ul>
+                </v-col>
+                <v-col lg="3" md="3" class="d-flex align-center">
+                  <vue-number-input v-model="option.quantity" :min="0" center controls />
+                  <v-btn
+                    class="ma-2"
+                    x-small
+                    fab
+                    elevation="2"
+                    :color="$store.getters.vColor"
+                    @click="addOption(option_index)"
+                  >
+                    <span class="white--text"><v-icon>mdi-plus</v-icon></span>
+                  </v-btn>
+                </v-col>
+              </v-row>
+            </v-container>
+          </v-card>
+        </v-form>
+      </div>
     </v-card>
   </v-dialog>
 </template>
@@ -138,12 +150,12 @@ export default {
       var p = this.products.find( p => p.id == idd )
       return p.quantity
     },
-    ...mapActions([
+    ...mapActions('cart', [
       'addToCart'
     ])
   },
   computed: {
-    ...mapGetters([
+    ...mapGetters('cart', [
       'products',
       'cargoAvCbm'
     ]),
@@ -153,9 +165,3 @@ export default {
   }
 }
 </script>
-
-<style scoped>
-  .option-in-modal {
-    border-bottom: 1px solid #CCC;
-  }
-</style>

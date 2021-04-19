@@ -6,6 +6,9 @@ const functions_url = process.env.VUE_APP_FUNCTIONS
 
 const mixins = {
   computed: {
+    ...mapGetters('cart', {
+      cartIncoterm: 'incoterm'
+    }),
     ...mapGetters({
       cartProducts: 'products',
       incoterm: 'getIncoterm',
@@ -77,7 +80,7 @@ const mixins = {
       var vue = this
       var thisIncoterm = inco === false ? this.incoterm : inco
       if(this.$route.name === 'OrdersNew') {
-        thisIncoterm = 'REVOOLOOP'
+        thisIncoterm = this.cartIncoterm
       }
       if(thisIncoterm === 'REVOOLOOP') {
         option.tiers.map(function(t) {
@@ -151,6 +154,7 @@ const mixins = {
         quantity: option.quantity,
         attributes: attrs,
         tiers: option.tiers,
+        cost_per_carton: option.carton_price
       }
     },
     checkTier(tier, quantity) {
@@ -206,7 +210,10 @@ const mixins = {
       var ceros = Math.pow(10, decimals)
       return Math.round((n + Number.EPSILON) * ceros) / ceros
     },
-    cargoHasSpace(space, product) {
+    cargoHasSpace(space, product, incoterm) {
+      if(incoterm === 'FOB') {
+        return true
+      }
       if(space > (product.cbm_per_carton*product.quantity)) {
         return true
       }

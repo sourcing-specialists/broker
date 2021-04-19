@@ -1,9 +1,10 @@
 <template>
   <v-card class="tile-content">
-    <v-img
-      height="250"
+    <img
+      class="tile-product-image"
+      contain
       :src="product.images[0].small"
-    ></v-img>
+    >
     <div
       class="pa-4"
     >
@@ -104,13 +105,20 @@ export default {
 <style lang="scss" scoped>
 .tile-content {
   width: 100%;
-  display: flex;
-  flex-direction: column;
+  display: table;
+  height: 100%;
+  //flex-direction: column;
 }
 .asTile {
   background-color: #F2F2F2;
   border-bottom-left-radius: 5px;
   border-bottom-right-radius: 5px;
   padding: 0px !important;
+  vertical-align: bottom;
+  display: table-row-group;
+}
+.tile-product-image {
+  width: 100%;
+  height: auto;
 }
 </style>

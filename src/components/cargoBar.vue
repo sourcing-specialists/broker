@@ -23,7 +23,7 @@ import { mapGetters } from 'vuex'
 export default {
   name: 'cargobar',
   computed: {
-    ...mapGetters([
+    ...mapGetters('cart', [
       'cbm',
       'cargo'
     ]),

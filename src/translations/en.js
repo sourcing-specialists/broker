@@ -71,9 +71,9 @@ const messages = {
   status: 'Status',
   paid_at: 'Paid at',
   amount: 'Amount',
-  //new
   all: 'All',
-  //end new
+  company: 'Company',
+  cutoff_date: 'Cut off date',
   charts: {
     top_clients_purchases: 'Top clients purchases',
     confirm_sales_in: 'Confirmed sales in',
@@ -106,6 +106,13 @@ const messages = {
     date: 'Date',
     inspector: 'Inspector',
     result: 'Result',
+    incoterm: 'Incoterm',
+    transport: 'Transport',
+    sea: 'Sea',
+    air: 'Air',
+    select_cargo: 'Please chose a cargo',
+    cbm_used_vs_free: 'used out of',
+    confirm_settings: 'Confirm settings',
   },
   validation: {
     this_field_required: 'This field is required',
@@ -147,14 +154,17 @@ const messages = {
       carton_size: 'Carton size',
       certificate_name: 'Certificate name',
       certificates: 'Certificates',
-      //new
       add_to_existing_catalogue: 'Add to existing catalogue',
       add: 'Add',
       new_catalogue: 'New catalogue',
-      //end new
     }
   },
   views: {
+    orders: {
+      order_settings: 'Order settings',
+      add_items: 'Select items',
+      confirm_order: 'Confirm'
+    },
     lists: {
       no_lists_text: 'Seems you do not have any lists yet. Please go to the catalogue and create your first list from there.',
       show_products: 'Show products',

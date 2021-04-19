@@ -9,8 +9,8 @@
       <br><span class="font-weight-bold">Zone:</span> {{ company.zone ? company.zone.name : '' }}</p>
     </v-container>
     <v-divider></v-divider>
-    <cargo-bar></cargo-bar>
-    <v-divider></v-divider>
+    <cargo-bar v-if="incoterm !== 'FOB'"></cargo-bar>
+    <v-divider v-if="incoterm !== 'FOB'"></v-divider>
     <v-list
       v-if="products.length > 0"
     >
@@ -54,12 +54,12 @@
                   <v-icon>mdi-minus</v-icon>
                 </v-btn>
                 <v-btn
-                  :title="!cargoHasSpace(cargoAvCbm, { cbm_per_carton: p.cbm_per_carton, quantity: 1 }) ? 'Container is full' : 'Add quantity'"
+                  :title="!cargoHasSpace(cargoAvCbm, { cbm_per_carton: p.cbm_per_carton, quantity: 1 }, incoterm) ? 'Container is full' : 'Add quantity'"
                   slot="append-outer"
                   fab
                   small
                   color="red darken-4"
-                  :disabled="!cargoHasSpace(cargoAvCbm, { cbm_per_carton: p.cbm_per_carton, quantity: 1 })"
+                  :disabled="!cargoHasSpace(cargoAvCbm, { cbm_per_carton: p.cbm_per_carton, quantity: 1 }, incoterm)"
                   @click="p.quantity++ && updateQuantity({ id: p.id, quantity: p.quantity })"
                 >
                   <v-icon>mdi-plus</v-icon>
@@ -73,7 +73,7 @@
             x-small
             fab
             elevation="2"
-            @click="$store.dispatch('removeFromCart', p.id)"
+            @click="$store.dispatch('cart/removeFromCart', p.id)"
           >
             <span class="black--text"><v-icon>fa-times</v-icon></span>
           </v-btn>
@@ -110,19 +110,22 @@ export default {
     isCheckout() {
       return this.checkout == '' ? true : false
     },
-    ...mapGetters([
+    ...mapGetters('cart', [
       'products',
       'company',
       'subtotal',
-      'getCurrencyText',
-      'getCurrency',
       'cbm',
       'distribution',
-      'cargoAvCbm'
+      'cargoAvCbm',
+      'incoterm'
+    ]),
+    ...mapGetters([
+      'getCurrencyText',
+      'getCurrency',
     ])
   },
   methods: {
-    ...mapActions([
+    ...mapActions('cart', [
       'updateQuantity',
       'confirmOrder'
     ])

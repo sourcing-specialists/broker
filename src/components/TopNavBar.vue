@@ -1,22 +1,20 @@
 <template>
   <div class="top-nav-container d-flex">
     <ul class="d-flex">
-      <li class="align-self">
+      <li class="align-self menu-toggle-wrapper">
         <v-btn
-          class="mx-2"
+          :class="{ inverted: isInverted }"
           fab
-          dark
           small
-          color="secondary"
-          @click="$emit('toggleSideNav')"
-          >
+          @click="$store.commit('menuToggle')"
+        >
           <v-icon dark>
-            fa-bars
+            mdi-menu-open
           </v-icon>
         </v-btn>
       </li>
-      <li class="align-self">
-        <img width="150" src="../assets/images/logo-original.png" alt="Sourcing Specialists Logo">
+      <li class="align-self mx-2">
+        <img width="130" src="../assets/images/logo-original.png" alt="Sourcing Specialists Logo">
       </li>
     </ul>
     <ul class="d-flex justify-end">
@@ -68,6 +66,11 @@ export default {
   components: {
     currencySelect,
     languageSelection,
+  },
+  computed: {
+    isInverted() {
+      return this.$store.getters.menuOpen ? true : false
+    }
   }
 }
 </script>
@@ -84,4 +87,11 @@ export default {
       list-style-type: none;
     }
   }
+  .menu-toggle-wrapper {
+    margin-left: -5px;
+    .inverted {
+      transform: rotate(180deg);
+    }
+  }
+
 </style>

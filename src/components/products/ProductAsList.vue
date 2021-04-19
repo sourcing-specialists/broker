@@ -118,6 +118,7 @@
     <v-dialog
       v-model="showFullDetails"
       transition="dialog-bottom-transition"
+      max-width="1080"
     >
       <product-details-modal
         :product="productData"
@@ -236,13 +237,15 @@ export default {
       return {}
     },
     image() {
-      return this.productData.images[0].thumb ? this.productData.images[0].thumb : ''
+      return this.productData.images[0] !== undefined ? this.productData.images[0].thumb : ''
     },
     categories() {
       var str = ''
-      this.productData.categories.map(function(c) {
-        str+= c.name+', ' 
-      })
+      if(this.productData.categories !==  null) {
+        this.productData.categories.map(function(c) {
+          str+= c.name+', ' 
+        })
+      }
       return str
     }
   }
@@ -294,6 +297,9 @@ export default {
         &.opened {
           transform: rotate(180deg);
         }
+      }
+      &:hover {
+        background-color: #F2F2F2;
       }
     }
   }
