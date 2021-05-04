@@ -6,10 +6,9 @@
         class="ma-2 add_button"
         :color="$store.getters.vColor"
         elevation="2"
-        fab
-      >
-        <span class="white--text"><v-icon>mdi-plus</v-icon></span>
-      </v-btn>
+        x-large
+        dark
+      >{{ newOrderText }} <v-icon>{{ newOrderIcon }}</v-icon></v-btn>
     </router-link>
     <v-data-table
       :loading="loading"
@@ -92,6 +91,9 @@ import { getOrderStages } from '../../endpoints'
 
 export default {
   name: 'Orders',
+  components: {
+    PageHeader
+  },
   data() {
     return {
       title: 'Orders',
@@ -115,8 +117,16 @@ export default {
       orderStage: ''
     }
   },
-  components: {
-    PageHeader
+  computed: {
+    newOrderText() {
+      if(this.$store.getters['cart/company'].id !== undefined) {
+        return this.$t('views.orders.continue_order')
+      }
+      return this.$t('views.orders.start_new_order')
+    },
+    newOrderIcon() {
+      return this.$store.getters['cart/company'].id !== undefined ? 'mdi-chevron-right' : 'mdi-plus'
+    }
   },
   methods: {
     loadOrders() {

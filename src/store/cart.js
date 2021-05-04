@@ -68,9 +68,13 @@ const cart = {
     clearProducts(state) {
       state.products = []
     },
-    clear(state) {
+    clear(state, clearOnlyItems = false) {
       // Merge rather than replace so we don't lose observers
       // https://github.com/vuejs/vuex/issues/1118
+      if(clearOnlyItems) {
+        state.products = []
+        return
+      }
       Object.assign(state, defaultState())
     },
     company(state, company) {
@@ -110,7 +114,7 @@ const cart = {
       } else {
         commit('add', product)
       }
-      if(state.incoterm !== 'FOB') {
+      if(state.incoterm === 'REVOOLOOP') {
         dispatch('getDistribution')
       }
     },
@@ -120,6 +124,9 @@ const cart = {
     },
     clearCart({commit}) {
       commit('clear')
+    },
+    clearCartItems({commit}) {
+      commit('clear', true)
     },
     updateQuantity({state, commit, dispatch, getters}, updates) {
 
@@ -136,7 +143,7 @@ const cart = {
         commit('update', { product: { id: updates.id, quantity: item.min_order }, failedUpdate: 'min' })
       } else {
         commit('update', { product: { id: updates.id, quantity: updates.quantity }})
-        if(state.incoterm !== 'FOB') {
+        if(state.incoterm === 'REVOOLOOP') {
           dispatch('getDistribution')
         }
       }
@@ -150,14 +157,15 @@ const cart = {
         commit('setCargo', cargo)
       }
     },
-    confirmOrder({state, getters}) {
+    confirmOrder({state, getters, rootGetters}) {
       return new Promise((resolve, reject) => {
         Axios.post(mixins.methods.endpoint('order/create'), {
           reference: '',
           customer_id: getters.company.id,
-          currency: getters.getCurrency,
+          currency: rootGetters.getCurrency,
           cargo_id: state.cargo.id,
-          products: state.products
+          products: state.products,
+          incoterm: state.incoterm
         }).then(resp => {
           if(resp.data.result == true) {
             resolve(resp)
@@ -169,14 +177,14 @@ const cart = {
         })
       })
     },
-    getDistribution({commit, getters}) {
+    getDistribution({commit, getters, rootGetters}) {
       return new Promise((resolve, reject) => {
         Axios.get(mixins.methods.endpoint('distribution/get'), {
           params: {
             origin_zone: getters.origin_zone,
             destination_zone: getters.destination_zone,
             cbm: getters.cbm,
-            currency: getters.getCurrency
+            currency: rootGetters.getCurrency
           }
         }).then(dist => {
           commit('setDistribution', dist.data.data)
@@ -212,7 +220,7 @@ const cart = {
     },
     total: (state, getters) => {
       var total = getters.subtotal
-      if(getters.incoterm !== 'FOB') {
+      if(getters.incoterm === 'REVOOLOOP') {
         total += getters.distribution.cost_total
       }
       return total

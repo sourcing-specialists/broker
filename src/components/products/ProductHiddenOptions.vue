@@ -45,9 +45,14 @@
     <v-dialog
       v-model="exportDialog"
       v-if="exportDialog"
+      max-width="720"
     >
       <v-card>
-        <product-datasheet-options :datasheet_url="datasheet"></product-datasheet-options>
+        <v-card-title>{{ $t('export_options') }}</v-card-title>
+        <v-divider></v-divider>
+        <v-card-text>
+          <product-datasheet-options :datasheet_url="datasheet"></product-datasheet-options>
+        </v-card-text>
       </v-card>
     </v-dialog>
   </div>

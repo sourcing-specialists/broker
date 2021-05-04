@@ -74,8 +74,7 @@ export default {
       get: function() {
         return this.menuOpen
       },
-      set: function(val) {
-        console.log(val)
+      set: function() {
         this.$emit('input', 1)
       }
     }

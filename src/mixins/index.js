@@ -3,6 +3,7 @@ import { DateTime } from 'luxon'
 
 const url = process.env.VUE_APP_API_ENDPOINT
 const functions_url = process.env.VUE_APP_FUNCTIONS
+const public_url = process.env.VUE_APP_URL
 
 const mixins = {
   computed: {
@@ -10,7 +11,6 @@ const mixins = {
       cartIncoterm: 'incoterm'
     }),
     ...mapGetters({
-      cartProducts: 'products',
       incoterm: 'getIncoterm',
       lang: 'getLanguage'
     })
@@ -139,6 +139,7 @@ const mixins = {
     },
     buildCartProduct(product, option, attrs) {
       const idd = `${option.id}-${attrs.join('-')}` //product + attributes
+      var image = (product.images[0]) ? product.images[0].small : ''
       return {
         id: idd,
         product_id: product.id,
@@ -154,7 +155,8 @@ const mixins = {
         quantity: option.quantity,
         attributes: attrs,
         tiers: option.tiers,
-        cost_per_carton: option.carton_price
+        cost_per_carton: this.cartIncoterm === 'DDP' ? option.ddp_carton_sale_price : option.carton_price,
+        image: image
       }
     },
     checkTier(tier, quantity) {
@@ -290,6 +292,21 @@ const mixins = {
         arr.push(value);
       }
       return arr;
+    },
+    copyToClipboard(text, is_url = false) {
+      if(is_url) {
+        var url = public_url+text
+        const el = document.createElement('textarea');
+        el.value = url;
+        el.setAttribute('readonly', '');
+        el.style.position = 'absolute';
+        el.style.left = '-9999px';
+        document.body.appendChild(el);
+        el.select();
+        document.execCommand('copy');
+        document.body.removeChild(el);
+        this.$toasted.success(this.$t('link_copied'))
+      }
     }
   },
 }

@@ -6,6 +6,7 @@
     item-text="name"
     item-value="id"
     multiple
+    :loading="loading"
   >
     <template v-slot:selection="data">
       <v-chip
@@ -40,7 +41,7 @@
 import { mapGetters } from 'vuex'
 export default {
   name: 'CategoriesSelection',
-  props: ['listIncoterm'],
+  props: ['listIncoterm', 'inOrders'],
   data: function() {
     return {
       categories: [],
@@ -51,35 +52,10 @@ export default {
   computed: {
     ...mapGetters('cart', [
       'cargo'
+    ]),
+    ...mapGetters([
+      'catalogueCargo'
     ])
-  },
-  methods: {
-    remove (item) {
-      const index = this.categoriesSelected.indexOf(item.id)
-      if (index >= 0) this.categoriesSelected.splice(index, 1)
-    },
-    loadCategories() {
-      this.categories = []
-      this.categoriesSelected = []
-      return new Promise((resolve/*, reject*/) => {
-        this.$http.get(this.endpoint(`category/get`), {
-          params: {
-            incoterm: this.listIncoterm,
-            cargo_id: this.cargo.id !== undefined ? this.cargo.id : ''
-          }
-        }).then( resp => {
-          if(resp.data.result == true) {
-            resp.data.data.map(function(c) {
-              c.value = c.id
-              c.text = c.name
-            })
-            //console.log(resp.data.data)
-            this.categories = resp.data.data
-            resolve()
-          }
-        })
-      })
-    }
   },
   watch: {
     categoriesSelected: function(val) {
@@ -90,13 +66,43 @@ export default {
     },
     cargo: function() {//reset on cargo change
       this.loadCategories()
+    },
+    catalogueCargo() {
+      this.loadCategories()
+    }
+  },
+  methods: {
+    remove (item) {
+      const index = this.categoriesSelected.indexOf(item.id)
+      if (index >= 0) this.categoriesSelected.splice(index, 1)
+    },
+    loadCategories() {
+      this.loading = true
+      this.categories = []
+      if(this.categoriesSelected.length > 0) this.categoriesSelected = []
+
+      return new Promise((resolve/*, reject*/) => {
+        this.$http.get(this.endpoint(`category/get`), {
+          params: {
+            incoterm: this.listIncoterm,
+            cargo_id: this.inOrders ? this.cargo.id : this.catalogueCargo.id
+          }
+        }).then( resp => {
+          if(resp.data.result == true) {
+            resp.data.data.map(function(c) {
+              c.value = c.id
+              c.text = c.name
+            })
+            this.categories = resp.data.data
+            resolve()
+          }
+          this.loading = false
+        })
+      })
     }
   },
   beforeMount() {
     this.loadCategories()
-      .then(() => {
-        this.loading = false
-      })
   }
 }
 </script>

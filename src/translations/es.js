@@ -75,6 +75,16 @@ const messages = {
   all: 'Todas',
   company: 'Compañía',
   cutoff_date: 'Día de corte',
+  cargo_price: 'Precio contenedor',
+  cargo_price_explain: 'Para calcular el precio DDP or REVOOLOOP el sistema necesita tener un costo de contenedor. Antes de exportar la ficha técnica debe especificar un precio.',
+  export_options: 'Opciones para exportar',
+  no_number: 'Este campo solo acepta numeros y .',
+  cancel: 'Cancelar',
+  confirm: 'Confirmar',
+  edit_payment: 'Editar pago',
+  remarks: 'Comentarios',
+  refresh: 'Refrescar',
+  link_copied: 'Direccion copiada',
   charts: {
     top_clients_purchases: 'Compras mejores clientes',
     confirm_sales_in: 'Compras confirmadas en',
@@ -114,6 +124,19 @@ const messages = {
     select_cargo: 'Seleccionar cargo',
     cbm_used_vs_free: 'usado de',
     confirm_settings: 'Confirmar configuración',
+    please_confirm: 'Por favor confirmar',
+    changing_incoterm_confirmation_text: 'Cambiar el incoterm en una orden ya empezada borrara todos los products agregados hasta el momento. Esta seguro que desea proceder?',
+    cart: 'Orden',
+    clear_cart: 'Limpiar orden',
+    create_order: 'Crear orden',
+    order_incoterm: 'Incoterm de la orden',
+    public_url: 'Dirección pública',
+    cbm_per_carton: 'CBM por caja',
+    box_size: 'Tamaño de la caja',
+    subtotal: 'Subtotal',
+    distribution_cost: 'Costo distribución',
+    available: 'disponible',
+    estimated_departure: 'Salida estimada',
   },
   validation: {
     this_field_required: 'Este campo es obligatorio',
@@ -162,9 +185,12 @@ const messages = {
   },
   views: {
     orders: {
-      order_settings: 'Order settings',
-      add_items: 'Select items',
-      confirm_order: 'Confirm'
+      order_settings: 'Configuración de la orden',
+      add_items: 'Seleccionar productos',
+      confirm_order: 'Confirmar orden',
+      start_new_order: 'Empezar orden nueva',
+      continue_order: 'Continuar orden',
+      confirm_order_pay: 'Confirmar y pagar',
     },
     lists: {
       no_lists_text: 'Al parecer no tienes ninguna lista todavia. Por favor ve a la sección de catalogos y crea tu primera lista.',
@@ -178,9 +204,28 @@ const messages = {
       new_sequence_saved: 'Secuencia guardada'
     },
     catalogue: {
-      catalogue_subheader: 'Lista completa de productos disponibles de acuerdo a la fecha de entrega.'
+      catalogue_subheader: 'Lista completa de productos disponibles de acuerdo a la fecha de entrega.',
+      page_size: 'Productos por página',
     }
   },
+  payment: {
+    create_payment: 'Crear un requisito de pago',
+    payment_updated_successfully: 'Pago actualizado',
+    payment_created_successfully: 'Pago creado',
+    deposit: 'Deposito',
+    balance: 'Balance',
+    pay_now: 'Pagar ahora',
+    full_name: 'Nombre completo',
+    secure_payments: 'Pagos seguros por',
+    pay_by_credit_card: 'Pagar con tarjeta de credito',
+    pay_by_transfer: 'Pagar por transferencia',
+    payment_options: 'Opciones de pago',
+    payment_successful: 'Pago exitoso',
+    payment_type: 'Tipo de pago',
+    notify_client_payment_done: 'Notificar cliente que el pago esta completado?',
+    notify_client_payment_request: 'Notificar cliente de este requisito de pago_',
+    confirm_payment: 'Confirmar pago',
+  }
 }
 
 export default messages

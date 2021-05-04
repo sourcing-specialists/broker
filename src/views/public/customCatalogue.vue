@@ -189,7 +189,7 @@ export default {
     })
     .then( resp => {
       this.list = resp.data.data.catalogue
-      console.log(this.list)
+      //console.log(this.list)
     })
   }
 }

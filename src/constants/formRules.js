@@ -8,11 +8,16 @@ const requiredRule = [
 ]
 
 const requiredRuleObjects = [
-  v => !!v.id || 'required'
+  v => Object.keys(v).length === 0 || 'required'
+]
+
+const onlyNumbers = [
+  v => /^\d*\.?\d*$/.test(v) || this.$t('no_number')
 ]
 
 export {
   emailRule,
   requiredRule,
-  requiredRuleObjects
+  requiredRuleObjects,
+  onlyNumbers
 }

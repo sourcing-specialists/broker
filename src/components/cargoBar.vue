@@ -2,8 +2,11 @@
   <div class="pa-3"
     v-if="cargo.id"
   >
-    <h4>Container space</h4>
-    <p><strong>Cut off: </strong>{{ cargo.cutoff_date }} | <strong>Estimated Arrival: </strong>{{ cargo.eta }} </p>
+    <h4>{{ cargo.name }}</h4>
+    <p>
+      <strong>{{ $t('cost') }}: </strong>{{ cargo.cost }} | 
+      <strong>{{ $t('cutoff_date') }}: </strong>{{ formatDate(cargo.cutoff_date) }} | 
+      <strong>{{ $t('orders.estimated_departure') }}: </strong>{{ formatDate(cargo.departure_date) }}</p>
     <v-progress-linear
       color="cyan"
       height="40"
@@ -11,10 +14,12 @@
       striped
     >
       <template v-slot:default>
-        {{ filledUpTo }}% - {{ cbmLeft }}cbm available.
+        {{ filledUpTo }}% - {{ cbmLeft }}cbm {{ $t('orders.available') }}.
       </template>
     </v-progress-linear>
-    <v-divider></v-divider>
+    <h2 class="mt-3 ml-3 text-center">
+      <v-icon>mdi-ferry</v-icon><strong class="mColor-text ml-3">{{ $t('orders.estimated_delivery') }}: </strong>{{ formatDate(cargo.eta) }}
+    </h2>
   </div>
 </template>
 

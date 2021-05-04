@@ -74,6 +74,21 @@ const messages = {
   all: 'All',
   company: 'Company',
   cutoff_date: 'Cut off date',
+  cargo_price: 'Cargo price',
+  cargo_price_explain: 'To calculate DDP price the system must know the cargo price. Please specify the cargo price in this field before exporting the datasheet.',
+  export_options: 'Export options',
+  no_number: 'This field only allows numbers and .',
+  cancel: 'Cancel',
+  confirm: 'Confirm',
+  edit_payment: 'Edit payment',
+  remarks: 'Remarks',
+  refresh: 'Refresh',
+  link_copied: 'Link copied',
+  //new
+  view_file: 'View file',
+  designs: 'Designs',
+  confirm_delete: 'Are you sure you want to delete this item?',
+  //end new
   charts: {
     top_clients_purchases: 'Top clients purchases',
     confirm_sales_in: 'Confirmed sales in',
@@ -113,6 +128,27 @@ const messages = {
     select_cargo: 'Please chose a cargo',
     cbm_used_vs_free: 'used out of',
     confirm_settings: 'Confirm settings',
+    please_confirm: 'Please confirm',
+    changing_incoterm_confirmation_text: 'Changing the incoterm on started orders will result in the loss of all the products in your cart. Are you sure you want to proceed?',
+    cart: 'Cart',
+    clear_cart: 'Clear cart',
+    create_order: 'Create order',
+    order_incoterm: 'Order incoterm',
+    public_url: 'Public link',
+    cbm_per_carton: 'CBM per carton',
+    box_size: 'Box size',
+    subtotal: 'Subtotal',
+    distribution_cost: 'Distribution cost',
+    available: 'available',
+    estimated_departure: 'Estimated departure',
+    //new
+    add_design: 'Add design',
+    edit_product: 'Edit Product',
+    product_design_name: 'File title',
+    product_design_file: 'Select file',
+    design_uploaded: 'Design uploaded',
+    design_deleted: 'Design deleted'
+    //end new
   },
   validation: {
     this_field_required: 'This field is required',
@@ -163,7 +199,10 @@ const messages = {
     orders: {
       order_settings: 'Order settings',
       add_items: 'Select items',
-      confirm_order: 'Confirm'
+      confirm_order: 'Confirm order',
+      start_new_order: 'Start new order',
+      continue_order: 'Continue order',
+      confirm_order_pay: 'Confirm & take deposit',
     },
     lists: {
       no_lists_text: 'Seems you do not have any lists yet. Please go to the catalogue and create your first list from there.',
@@ -177,10 +216,28 @@ const messages = {
       new_sequence_saved: 'Sequence saved'
     },
     catalogue: {
-      catalogue_subheader: 'Full list of products available. Please note that prices are filterd according to the delivery date.'
+      catalogue_subheader: 'Full list of products available. Please note that prices are filterd according to the delivery date.',
+      page_size: 'Products per page',
     }
+  },
+  payment: {
+    create_payment: 'Create new payment request',
+    payment_updated_successfully: 'Payment updated',
+    payment_created_successfully: 'Payment created',
+    deposit: 'Deposit',
+    balance: 'Balance',
+    pay_now: 'Pay now',
+    full_name: 'Full name',
+    secure_payments: 'Secure payments powered by',
+    pay_by_credit_card: 'Pay by credit card',
+    pay_by_transfer: 'Pay by transfer',
+    payment_options: 'Payment options',
+    payment_successful: 'Payment was successful',
+    payment_type: 'Payment type',
+    notify_client_payment_done: 'Notify client of payment received?',
+    notify_client_payment_request: 'Notify client of this new request?',
+    confirm_payment: 'Confirm payment',
   }
-
 }
 
 export default messages

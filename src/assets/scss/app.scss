@@ -2,6 +2,11 @@
 
 $mainColor: #B71C1C;
 
+body.stop-scroll {
+  height: 100vh;
+  overflow-y: hidden;
+}
+
 .v-application {
   background-color: #f5f6f7 !important;
 }
@@ -80,4 +85,18 @@ div.toasted-message {
 
 .mColor-text {
   color: $mainColor;
+}
+
+/* Enter and leave animations can use different */
+/* durations and timing functions.              */
+.slide-fade-enter-active {
+  transition: all .3s ease;
+}
+.slide-fade-leave-active {
+  transition: all .3s ease;
+}
+.slide-fade-enter, .slide-fade-leave-to
+/* .slide-fade-leave-active below version 2.1.8 */ {
+  transform: translateX(10px);
+  opacity: 0;
 }

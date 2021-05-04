@@ -18,15 +18,8 @@
     </div>
     <v-container class="mt-8" fluid>
       <v-row class="justify-end">
-        <v-select
-          :items="[{ text: 'Confirm', value: 'confirm' }, { text: 'Confirm and pay', value: 'confirm_pay' }]"
-          filled
-          label="Submit type"
-          v-model="submit_type"
-          dense
-        ></v-select>
         <v-btn
-          :color="vColor"
+          color="green"
           elevation="2"
           x-large
           type="submit"
@@ -34,7 +27,19 @@
           :disabled="count == 0"
           @click.prevent="submitOrder()"
         >
-          <span class="white--text">{{ count == 0 ? 'No items' : 'Confirm Order' }}</span>
+          <span class="white--text">{{ count == 0 ? $t('no_items') : $t('views.orders.confirm_order') }}</span>
+        </v-btn>
+        <v-btn
+          class="ml-3"
+          :color="vColor"
+          elevation="2"
+          x-large
+          type="submit"
+          :loading="loading"
+          :disabled="count == 0"
+          @click.prevent="submitOrder(true)"
+        >
+          <span class="white--text">{{ count == 0 ? $t('no_items') : $t('views.orders.confirm_order_pay') }}</span>
         </v-btn>
         <v-btn
           v-if="false"
@@ -48,41 +53,55 @@
         </v-btn>
       </v-row>
     </v-container>
-    <order-pay :order="pay"></order-pay>
+    <v-dialog 
+      v-model="paymentModal"
+      max-width="720"
+      persistent
+    >
+      <payment-edit
+        v-if="paymentModal"
+        :order="order"
+        :id="payment_id"
+        @onClose="backToOrders"
+        @save="backToOrders"
+        :disabled="false"
+      ></payment-edit>
+    </v-dialog>
   </div>
 </template>
 
 <script>
 import { mapActions, mapGetters } from 'vuex'
 import cartContent from './cartContent.vue'
-import OrderPay from './orderPay'
+import paymentEdit from './paymentEdit'
 
 export default {
-  components: { cartContent, OrderPay },
+  name: 'OrderCheckout',
+  components: { cartContent, paymentEdit },
   data() {
     return {
       loading: false,
-      submit_type: 'confirm_pay',
       pay: null,
+      paymentModal: false,
+      order: {},
+      payment_id: ''
     }
   },
   computed: {
-    totals() {
-      var totals = [
-        {
-          name: 'Order Subtotal:',
-          value: this.getCurrencyText + this.formattedNumber(this.subtotal),
-        },
-        ...(this.incoterm !== 'FOB' ? {
-          name: 'Distribution:',
-          value: this.getCurrencyText + this.formattedNumber(this.distribution.cost_total)
-        } : ''),
-        {
-          name: 'Total:',
-          value: this.getCurrencyText + this.formattedNumber(this.total)
-        }
-      ]
-      return totals
+    totals: function() {
+      const subtotal = {
+        name: `${this.$t('orders.subtotal')}:`,
+        value: this.getCurrencyText + this.formattedNumber(this.subtotal),
+      }
+      const distribution = {
+        name: `${this.$t('orders.distribution_cost')}:`,
+        value: this.getCurrencyText + this.formattedNumber(this.distribution.cost_total)
+      }
+      const total = {
+        name: `${this.$t('total')}:`,
+        value: this.getCurrencyText + this.formattedNumber(this.total)
+      }
+      return this.incoterm === 'REVOOLOOP' ? [subtotal, distribution, total] : [subtotal, total]
     },
     ...mapGetters('cart', [
       'count',
@@ -102,29 +121,29 @@ export default {
       'confirmOrder',
       'clearCart'
     ]),
-    submitOrder() {
+    submitOrder(updatePayment = false) {
       this.loading = true
       this.confirmOrder()
       .then( resp => {
-        if(this.submit_type == 'confirm_pay') {
-          this.pay = resp.data.data
+        if(updatePayment) {
+          this.paymentModal = true
+          this.order = resp.data.data.order
+          this.payment_id = resp.data.data.payment.protected_id
           return
         }
-        this.clearCart()
-        this.$router.push({ name: 'Orders'})
-      }).catch((result) => {
-        console.log(result)
+        this.backToOrders()
+      }).catch(() => {
         this.$toasted.error(this.$t('something_wrong'))
         this.loading = false
       })
     },
-    debug() {
-      this.pay = 88
-      console.log(this.$store.state.cart)
+    backToOrders() {
+      this.clearCart()
+      this.$router.push({ name: 'Orders'})
     }
   },
   mounted() {
-    if(this.incoterm !== 'FOB') {
+    if(this.incoterm === 'REVOOLOOP') {
       this.getDistribution()
     }
   }

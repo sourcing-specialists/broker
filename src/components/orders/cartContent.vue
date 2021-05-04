@@ -4,9 +4,14 @@
       v-if="company.id"
       fluid
     >
-      <h4 :style="`color: ${$store.getters.hexColor}`">{{ company.name }}</h4>
-      <p><span class="font-weight-bold">BR:</span> {{ company.br_number }}
-      <br><span class="font-weight-bold">Zone:</span> {{ company.zone ? company.zone.name : '' }}</p>
+      <h1 class="mColor-text mb-3">{{ company.name }}</h1>
+      <p class="ps-3">
+        <span class="font-weight-bold">{{ $t('orders.order_incoterm') }}:</span> {{ incoterm }}
+        <br>
+        <span class="font-weight-bold">{{ $t('orders.transport') }}:</span> {{ $store.getters['cart/transport'] }}
+        <br>
+        <span class="font-weight-bold">{{ $t('currency') }}:</span> {{ getCurrency }}
+      </p>
     </v-container>
     <v-divider></v-divider>
     <cargo-bar v-if="incoterm !== 'FOB'"></cargo-bar>
@@ -18,6 +23,12 @@
         v-for="p in products"
         :key="p.id"
       >
+        <v-list-item-avatar
+          width="120"
+          height="120"
+        >
+          <v-img :src="p.image"></v-img>
+        </v-list-item-avatar>
         <v-list-item-content
           class="product_content"
         >
@@ -31,8 +42,8 @@
           <v-list-item-subtitle>
             <span class="font-weight-bold">{{ p.option_group_name }}: </span>{{ p.option_group_value }}
           </v-list-item-subtitle>
-          <p><strong>Cbm per carton:</strong> {{ p.cbm_per_carton }}</p>
-          <p><strong>MEAS:</strong> {{ p.meas }}</p>
+          <p><strong>{{ $t('orders.cbm_per_carton') }}:</strong> {{ p.cbm_per_carton }}</p>
+          <p><strong>{{ $t('orders.box_size') }}:</strong> {{ p.meas }}</p>
           <ul
             class="product_details"
           >
@@ -43,7 +54,6 @@
                 @blur="updateQuantity({ id: p.id, quantity: p.quantity })"
               >
                 <v-btn
-                  :title="p.quantity === p.min_order ? '2 is the minimum order' : 'Reduce quantity'"
                   slot="prepend"
                   fab
                   small
@@ -54,7 +64,6 @@
                   <v-icon>mdi-minus</v-icon>
                 </v-btn>
                 <v-btn
-                  :title="!cargoHasSpace(cargoAvCbm, { cbm_per_carton: p.cbm_per_carton, quantity: 1 }, incoterm) ? 'Container is full' : 'Add quantity'"
                   slot="append-outer"
                   fab
                   small

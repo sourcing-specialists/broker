@@ -16,6 +16,7 @@ import Account from '../views/Account.vue'
 import OrderView from '../views/orders/OrderView'
 import CustomLists from '../views/CustomLists'
 import CustomCatalogue from '../views/public/customCatalogue'
+import PublicOrder from '../views/public/PublicOrder'
 
 Vue.use(VueRouter)
 Vue.use(VuePageTransition)
@@ -39,6 +40,15 @@ const routes = [
     name: 'showPublicCatalogue',
     props: true,
     component: CustomCatalogue,
+    meta: {
+      requiresAuth: false
+    }
+  },
+  {
+    path: '/public/order/:id',
+    name: 'showPublicOrder',
+    props: true,
+    component: PublicOrder,
     meta: {
       requiresAuth: false
     }

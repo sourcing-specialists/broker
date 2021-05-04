@@ -9,6 +9,7 @@
   },
   "dependencies": {
     "@chenfengyuan/vue-number-input": "^1.2.1",
+    "@stripe/stripe-js": "^1.13.2",
     "axios": "^0.21.1",
     "chart.js": "^2.9.4",
     "core-js": "^3.6.5",
@@ -25,6 +26,7 @@
     "vue-toasted": "^1.1.28",
     "vue-toastr": "^2.1.2",
     "vuedraggable": "^2.24.3",
+    "vuescroll": "^4.17.3",
     "vuetify": "^2.2.11",
     "vuex": "^3.6.0",
     "vuex-persistedstate": "^4.0.0-beta.2"

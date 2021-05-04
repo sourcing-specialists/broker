@@ -1,42 +1,55 @@
 <template>
-  <div
-    :class="['cart-floating', { hidden: !value }]"
-  >
-    <v-card
-      v-touch="{
-        left: () => swipe('left'),
-        right: () => swipe('right'),
-      }"
-      elevation="4"
+    <div
+      :class="['cart-floating', { hidden: !value }]"
     >
-      <v-card-title>Cart</v-card-title>
-      <v-btn v-if="count > 0" @click="$emit('clearCart')">Clear</v-btn>
-      <v-divider></v-divider>
-      <v-btn
-        class="close_cart"
-        color="secondary"
-        x-small
-        @click="hide()"
+      <v-card
+        tile
+        v-touch="{
+          left: () => swipe('left'),
+          right: () => swipe('right'),
+        }"
+        elevation="4"
       >
-        <v-icon>fa-long-arrow-alt-right</v-icon>
-      </v-btn>
-      <cart-content></cart-content>
-      <v-divider></v-divider>
-      <v-card-actions class="checkout-button">
-        <v-btn
-          :color="$store.getters.vColor"
-          elevation="2"
-          :disabled="count == 0"
-          @click="toCheckout()"
+        <v-toolbar
+          flat
+          dark
         >
-          <span class="white--text">{{ count == 0 ? 'Please add items' : 'Checkout' }}</span>
-        </v-btn>
-      </v-card-actions>
-    </v-card>
-  </div>
+          <v-btn
+            icon
+            dark
+            @click="hide()"
+          >
+            <v-icon>mdi-close</v-icon>
+          </v-btn>
+          <v-toolbar-title>{{ $t('orders.cart') }}</v-toolbar-title>
+          <v-spacer></v-spacer>
+          <v-btn
+            text
+            @click="clearCart"
+          >{{ $t('orders.clear_cart') }}</v-btn>
+        </v-toolbar>
+        <v-card-text>
+          <vuescroll :ops="ops">
+            <cart-content></cart-content>
+          </vuescroll>
+        </v-card-text>
+        <v-divider></v-divider>
+        <v-card-actions class="checkout-button">
+          <v-btn
+            :color="$store.getters.vColor"
+            elevation="2"
+            :disabled="count == 0"
+            @click="toCheckout()"
+          >
+            <span class="white--text">{{ count == 0 ? 'Please add items' : 'Checkout' }}</span>
+          </v-btn>
+        </v-card-actions>
+      </v-card>
+    </div>
 </template>
 
 <script>
+import vuescroll from 'vuescroll';
 import cartContent from './cartContent'
 import { mapGetters } from 'vuex'
 
@@ -44,14 +57,40 @@ export default {
   name: 'cartFloat',
   props: ['value'],
   components: {
-    cartContent
+    cartContent,
+    vuescroll
+  },
+  data() {
+    return {
+      ops: {
+        vuescroll: {},
+        scrollPanel: {},
+        rail: {},
+        bar: {
+          background: this.$store.getters.hexColor
+        }
+      }
+    }
   },
   computed: {
     ...mapGetters('cart', [
       'count'
     ])
   },
+  watch: {
+    value(val) {
+      if(val) {
+        document.body.classList.add('stop-scroll')
+      } else {
+        document.body.classList.remove('stop-scroll')
+      }
+    }
+  },
   methods: {
+    clearCart() {
+      this.$emit('clearCart')
+      this.hide()
+    },
     hide() {
       this.$emit('input', false)
     },
@@ -72,14 +111,15 @@ export default {
 <style lang="scss" scoped>
   .cart-floating {
     position: absolute;
-    right: 12px;
-    top: 25px;
+    padding-top: 0px;
+    right: 0;
+    top: 0px;
     z-index: 1;
-    width: 480px;
+    width: 100%;
     transition: 0.5s ease-in-out;
     transform: translateX(0px);
     &.hidden {
-      transform: translateX(500px);
+      transform: translateX(100%);
     }
     .close_cart {
       position: absolute;
@@ -90,6 +130,18 @@ export default {
       display: flex;
       justify-content: flex-end;
       padding: 15px;
+    }
+    .v-card {
+      height: calc(100vh - 76px);
+      display: flex;
+      flex-direction: column;
+    }
+    .v-card__text {
+      overflow: hidden;
+      flex: 1;
+    }
+    .v-toolbar {
+      flex: 0;
     }
   }
 </style>

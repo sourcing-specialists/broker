@@ -28,19 +28,19 @@
           v-if="!isForOrders && listIncoterm !== 'FOB'"
           :lg="3"
         >
-          <cargos-selection
-            :inOrders="true"
-            @cargoChanged="cargoChanged"
-          />
+          <cargo-select
+            v-model="selectedCargo"
+            @change="cargoChanged"
+          ></cargo-select>
         </v-col>
         <v-col
           :lg="isForOrders ? 5 : (listIncoterm !== 'FOB' ? 3 : 4)"
         >
           <categories-selection
             :listIncoterm="listIncoterm"
-            :cargo_id="selectedCargo"
+            :inOrders="isForOrders"
             @categoriesChanged="categoriesChanged"
-           />
+          ></categories-selection>
         </v-col>
         <v-col
           :lg="isForOrders ? 5 : (listIncoterm !== 'FOB' ? 3 : 4)"
@@ -75,6 +75,31 @@
         </v-col>
       </v-row>
     </v-container>
+    <!--Pagination-->
+    <v-container
+      class="pagination_container"
+      fluid
+      v-if="products.length > 0"
+    >
+      <v-row>
+        <v-col class="d-flex justify-end">
+          <div style="width: 75px;">
+            <v-select
+              v-model="pageSize"
+              :items="[5,10,25,50,100]"
+              outlined
+              dense
+            ></v-select>
+          </div>
+          <v-pagination
+            v-model="page"
+            :length="totalPages"
+            :total-visible="totalPages >= 6 ? 7 : totalPages"
+          ></v-pagination>
+        </v-col>
+      </v-row>
+    </v-container>
+    <!--END Pagination-->
     <v-container
       fluid
       v-if="$store.getters.catView == 'list'"
@@ -134,6 +159,30 @@
         </div>
       </v-row>
     </v-container>
+    <!--Pagination-->
+    <v-container
+      v-if="products.length > 0"
+      fluid
+    >
+      <v-row>
+        <v-col class="d-flex justify-end">
+          <div style="width: 75px;">
+            <v-select
+              v-model="pageSize"
+              :items="[5,10,25,50,100]"
+              outlined
+              dense
+            ></v-select>
+          </div>
+          <v-pagination
+            v-model="page"
+            :length="totalPages"
+            :total-visible="totalPages >= 6 ? 7 : totalPages"
+          ></v-pagination>
+        </v-col>
+      </v-row>
+    </v-container>
+    <!--END Pagination-->
     <div
       class="no-results"
       v-if="products.length === 0 && isLoading === false"
@@ -164,7 +213,7 @@
 <script>
 import ProductAsList from './ProductAsList.vue'
 import ProductAsTile from './ProductAsTile.vue'
-import CargosSelection from '../CargosSelection.vue'
+import cargoSelect from '../cargoSelect'
 import CategoriesSelection from '../CategoriesSelection.vue'
 import CustomCatalogueSelection from '../CustomCatalogueSelection'
 import SelectionOptions from './selectionOptions'
@@ -179,20 +228,23 @@ export default {
   data: function() {
     return {
       search: '',
-      selectedCargo: this.$store.getters.catalogueCargo,
+      selectedCargo: this.forOrders !== undefined ? this.$store.getters['cart/cargo'] : this.$store.getters.catalogueCargo,
       selectedCategories: [],
       products: [],
       activateSelection: false,
       listHeader: [],
       catalogue: '',
       isLoading: true,
-      error: ''
+      error: '',
+      page: 1,
+      totalPages: 1,
+      pageSize: 25
     }
   },
   components: {
     ProductAsList,
     ProductAsTile,
-    CargosSelection,
+    cargoSelect,
     CategoriesSelection,
     CustomCatalogueSelection,
     SelectionOptions,
@@ -215,7 +267,13 @@ export default {
     },
     getLanguage: function() {
       this.loadProducts()
-    }
+    },
+    page() {
+      this.loadProducts()
+    },
+    pageSize() {
+      this.loadProducts()
+    },
   },
   computed: {
     ...mapGetters('cart', [
@@ -225,6 +283,7 @@ export default {
     ...mapGetters([
       'getLanguage',
       'getIncoterm',
+      'catalogueCargo'
     ]),
     currency() {
       return this.$store.getters.getCurrency
@@ -271,11 +330,12 @@ export default {
 
       this.products = []
       this.isLoading = true
+
       this.$http.post(this.endpoint(`catalogue/get`), { 
-        cargo_id: this.isForOrders ? this.cargo.id : this.selectedCargo.id,
+        cargo_id: this.selectedCargo.id,
         currency: this.$store.getters.getCurrency,
-        pageSize: '25',
-        pageNumber: 1,
+        pageSize: this.pageSize,
+        pageNumber: this.page,
         incoterm: this.listIncoterm,
         filter: [
           {
@@ -295,7 +355,8 @@ export default {
       .then( resp => {
         if(resp.data.result == true) {
           this.$emit('loaded')
-          this.products = resp.data.data
+          this.products = resp.data.data.items
+          this.totalPages = resp.data.data.pagination.totalPages
         }
         this.isLoading = false
       }).catch( error => {
@@ -352,5 +413,8 @@ export default {
   display: flex;
   flex-direction: column;
   justify-content: flex-end;
+}
+.pagination_container {
+  margin-bottom: -25px;
 }
 </style>

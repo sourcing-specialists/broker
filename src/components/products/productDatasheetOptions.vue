@@ -1,69 +1,101 @@
 <template>
   <v-container>
     <v-form ref="params">
-    <v-row>
-      <v-col>
-        <v-select
-          :label="$t('components.hide_price')"
-          v-model="no_price"
-          :items="[{text: $t('yes'), value: 1},{text: 'No', value: 0}]"
-        ></v-select>
-      </v-col>
-      <v-col>
-        <v-select
-          :label="$t('components.select_incoterm')"
-          v-model="inco"
-          :items="incoterms"
-        ></v-select>
-      </v-col>
-      <v-col>
-        <v-select
-          :label="$t('components.select_currency')"
-          v-model="currency"
-          :items="currencies"
-        ></v-select>
-      </v-col>
-      <v-col>
-        <v-select
-          :label="$t('components.select_language')"
-          v-model="language"
-          item-text="name"
-          item-value="code"
-          :items="languages"
-        ></v-select>
-      </v-col>
-      <v-col v-if="inco === 'REVOOLOOP'">
-        <v-select
-          :label="$t('components.delivery_date')"
-          v-model="cargo"
-          item-text="eta"
-          item-value="id"
-          :items="cargos"
-          @change="cargoChange"
-        >
-        </v-select>
-      </v-col>
-      <v-col v-if="inco !== 'FOB'">
-        <v-text-field
-          :disabled="inco === 'REVOOLOOP'"
-          :label="`${$t('price')} USD`"
-          v-model="selectedCargo.cost"
-          :rules="requiredRules"
-        ></v-text-field>
-      </v-col>
-      <v-col>
-        <v-row>
-          <v-col>
-          <v-btn
-            elevation="2"
-            :color="vColor"
-            dark
-            @click="openDatasheet()"
-          >{{ $t('export') }}</v-btn>
-          </v-col>
-        </v-row>
-      </v-col>
-    </v-row>
+      <v-row>
+        <v-col>
+          <v-select
+            :label="$t('components.hide_price')"
+            v-model="no_price"
+            :items="[{text: $t('yes'), value: 1},{text: 'No', value: 0}]"
+          ></v-select>
+        </v-col>
+      </v-row>
+      <v-row>
+        <v-col>
+          <v-select
+            :label="$t('components.select_incoterm')"
+            v-model="inco"
+            :items="incoterms"
+          ></v-select>
+        </v-col>
+        <v-col>
+          <v-select
+            :label="$t('components.select_currency')"
+            v-model="currency"
+            :items="currencies"
+          ></v-select>
+        </v-col>
+      </v-row>
+      <v-row>
+        <v-col>
+          <v-select
+            :label="$t('components.select_language')"
+            v-model="language"
+            item-text="name"
+            item-value="code"
+            :items="languages"
+          ></v-select>
+        </v-col>
+      </v-row>
+      <v-row>
+        <v-col v-if="inco === 'REVOOLOOP'">
+          <v-select
+            :label="$t('components.delivery_date')"
+            v-model="cargo"
+            item-text="eta"
+            item-value="id"
+            :items="cargos"
+            @change="cargoChange"
+          >
+          </v-select>
+        </v-col>
+      </v-row>
+      <v-row>
+        <v-col v-if="inco !== 'FOB'">
+          <v-text-field
+            :disabled="inco === 'REVOOLOOP'"
+            :label="`${$t('cargo_price')} USD`"
+            v-model="selectedCargo.cost"
+            :rules="requiredRules"
+          >
+            <template v-slot:append>
+              <v-tooltip
+                bottom
+                max-width="450"
+              >
+                <template v-slot:activator="{ on, attrs }">
+                  <v-btn
+                    color="secondary"
+                    v-bind="attrs"
+                    v-on="on"
+                    fab
+                    x-small
+                  >
+                    <v-icon>mdi-help-circle-outline</v-icon>
+                  </v-btn>
+                </template>
+                <span>{{ $t('cargo_price_explain')}}</span>
+              </v-tooltip>
+            </template>
+          </v-text-field>
+        </v-col>
+      </v-row>
+      <v-row
+        class="mt-3"
+      >
+        <v-col>
+          <v-row>
+            <v-col>
+            <v-btn
+              elevation="2"
+              :color="vColor"
+              dark
+              @click="openDatasheet()"
+            >{{ $t('export') }}</v-btn>
+            </v-col>
+          </v-row>
+        </v-col>
+      </v-row>
     </v-form>
   </v-container>
 </template>
@@ -88,7 +120,8 @@ export default {
       selectedCargo: {},
       requiredRules: [
         v => !!v || this.$t('field_required'),
-      ],
+        v => /^\d*\.?\d*$/.test(v) || this.$t('no_number')
+      ]
     }
   },
   computed: {

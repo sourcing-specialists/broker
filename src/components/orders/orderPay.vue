@@ -9,8 +9,7 @@
       class="pa-8"
       :loading="loading"
     >
-      <v-card-title>Payments</v-card-title>
-      <v-card-subtitle>Record payments from customers.</v-card-subtitle>
+      <v-card-title>{{ $t('payments') }}</v-card-title>
       <v-form
         ref="paymentForm"
         @submit.prevent="validate()"
@@ -31,14 +30,14 @@
                 <v-row>
                   <v-col>
                     <v-text-field
-                      label="Reference"
+                      :label="$t('ref')"
                       :value="payment.reference"
                     >
                     </v-text-field>
                   </v-col>
                   <v-col>
                     <v-text-field
-                      label="Amount"
+                      :label="$t('amount')"
                       :value="payment.amount"
                     >
                     </v-text-field>
@@ -54,14 +53,14 @@
           <v-btn
             @click="cancelPayment()"
             x-large
-          ><v-icon>mdi-close-thick</v-icon> Cancel</v-btn>
+          ><v-icon>mdi-close-thick</v-icon> {{ $t('cancel') }}</v-btn>
           <v-btn
             :color="$store.getters.vColor"
             elevation="2"
             x-large
             @click="loadPayments()"
             dark
-          >Confirm Payment</v-btn>
+          >{{ $t('payment.confirm_payment') }}</v-btn>
         </v-card-actions>
       </v-form>
     </v-card>
@@ -106,6 +105,8 @@ export default {
         console.log(resp.data.data)
         this.loading = false
         this.payments = resp.data.data
+      }).catch( error => {
+        this.$toasted.error(error.errors)
       })
     },
     cancelPayment() {
