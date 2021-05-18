@@ -85,6 +85,11 @@ const messages = {
   remarks: 'Comentarios',
   refresh: 'Refrescar',
   link_copied: 'Direccion copiada',
+  view_file: 'Ver archivo',
+  designs: 'Diseños',
+  confirm_delete: 'Estas seguro de eliminar esto?',
+  quotations: 'Cotizaciones',
+  shipping: 'Envios',
   charts: {
     top_clients_purchases: 'Compras mejores clientes',
     confirm_sales_in: 'Compras confirmadas en',
@@ -137,6 +142,21 @@ const messages = {
     distribution_cost: 'Costo distribución',
     available: 'disponible',
     estimated_departure: 'Salida estimada',
+    add_design: 'Agregar diseños',
+    edit_product: 'Edit producto',
+    product_design_name: 'Título del documento',
+    product_design_file: 'Seleccionar documento',
+    design_uploaded: 'Diseño actualizado',
+    design_deleted: 'Desiño eliminado',
+    logistics_details: 'Información logistica',
+    order_assigned_to: 'Esta orden no esta asignada a ningun contenedor | Esta orden esta asignada a 1 contenedor | Esta order esta asiganada a {n} contenedores',
+    quantity_exceed: 'La cantidad excede el espacio del contenedor',
+    no_cargos_assigned: 'No hay cargos asignados',
+    expiring_at: 'Vencimiento',
+    expired: 'Vencida',
+    all_orders: 'Todas',
+    only_active: 'Solo activas',
+    save_as_quotation: 'Guardar como cotizacion'
   },
   validation: {
     this_field_required: 'Este campo es obligatorio',
@@ -206,6 +226,20 @@ const messages = {
     catalogue: {
       catalogue_subheader: 'Lista completa de productos disponibles de acuerdo a la fecha de entrega.',
       page_size: 'Productos por página',
+    },
+    companies: {
+      create_new: 'Crear nueva compañía',
+      editing: 'Editar compañía',
+      companies: 'Companías',
+      subtitle: 'Administrar companías y usuarios',
+      br_number: 'Numero de registro',
+      zone: 'Zona',
+      create_user: 'Crear usuario',
+      edit_user: 'Editar usuario',
+      set_new_password: 'Nueva contraseña',
+      notify_user: 'Notificar usuario?',
+      update_user: 'Actualizar usuario',
+      add_user: 'Agregar usuario',
     }
   },
   payment: {
@@ -225,6 +259,15 @@ const messages = {
     notify_client_payment_done: 'Notificar cliente que el pago esta completado?',
     notify_client_payment_request: 'Notificar cliente de este requisito de pago_',
     confirm_payment: 'Confirmar pago',
+  },
+  notifications: {
+    notifications_center: 'Centro de notificaciones',
+    orders_notifications: 'Órdenes',
+    payments_notifications: 'Pagos',
+    catalogue_notifications: 'Catalogo',
+    order_product_updated_title: 'El producto <strong class="mColor-text">{product_name}</strong> ha sido actualizado.',
+    done_by: 'Por {user}.',
+    clear_all: 'Omitir todas'
   }
 }
 

@@ -100,3 +100,9 @@ div.toasted-message {
   transform: translateX(10px);
   opacity: 0;
 }
+
+.v-tooltip__content.menuable__content__active {
+  opacity: 1!important;
+  -webkit-box-shadow: 0px 1px 5px 1px rgba(0,0,0,0.5); 
+  box-shadow: 0px 1px 5px 1px rgba(0,0,0,0.5);
+}

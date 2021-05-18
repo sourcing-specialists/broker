@@ -55,16 +55,16 @@ import PageHeader from '@/components/PageHeader.vue'
 
 export default {
   name: 'Companies',
-  data: () => {
+  data() {
     return {
-      title: 'Companies',
-      subheader: 'Manage companies and users',
+      title: this.$t('views.companies.companies'),
+      subheader: this.$t('views.companies.subtitle'),
       table: {
         headers: [
           { text: 'ID', align: 'start', sortable: true, value: 'id' },
-          { text: 'Company', align: 'start', sortable: true, value: 'name' },
-          { text: 'BR Number', align: 'start', sortable: true, value: 'br_number' },
-          { text: 'Zone', align: 'start', sortable: true, value: 'zone' },
+          { text: this.$t('company'), align: 'start', sortable: true, value: 'name' },
+          { text: this.$t('views.companies.br_number'), align: 'start', sortable: true, value: 'br_number' },
+          { text: this.$t('views.companies.zone'), align: 'start', sortable: true, value: 'zone' },
           { text: '', align: 'end', value: 'actions' }
         ],
         companies: [],

@@ -3,18 +3,16 @@
     v-model="cargo"
     :items="cargos"
     :label="$t('orders.select_cargo')"
-    item-text="name"
-    item-value="id"
     @change="setCargo"
     :rules="requiredRuleCargo"
     :loading="loading"
   >
     <template v-slot:selection="data">
-      {{ data.item.name }}
+      #{{ data.item.id }} - {{ data.item.name }}
     </template>
     <template v-slot:item="data">
       <v-list-item-content>
-        <v-list-item-title><strong class="mColor-text">{{ data.item.name }}</strong></v-list-item-title>
+        <v-list-item-title><strong class="mColor-text">#{{ data.item.id }} - {{ data.item.name }}</strong></v-list-item-title>
         <v-list-item-subtitle class="mt-1">
           <strong>{{ $t('cost') }}:</strong> {{ numberToNiceString(data.item.cost) }} | 
           <strong>{{ $t('cutoff_date') }}:</strong> {{ formatDate(data.item.cutoff_date) }} |  
@@ -65,7 +63,8 @@ export default {
   },
   watch: {
     cargo(v) {
-      this.$emit('input', v)
+      const cargo = this.cargos.find( c => c.id === v)
+      this.$emit('input', cargo)
     }
   },
   methods: {

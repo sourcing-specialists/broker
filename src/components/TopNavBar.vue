@@ -19,6 +19,9 @@
     </ul>
     <ul class="d-flex justify-end">
       <li>
+        <notifications-alert></notifications-alert>
+      </li>
+      <li>
         <language-selection />
       </li>
       <li>
@@ -55,6 +58,7 @@
 <script>
 import currencySelect from './currencySelect'
 import languageSelection from './langSelection'
+import notificationsAlert from './notifications/notificationsAlert'
 
 export default {
   name: 'TopNavBar',
@@ -63,10 +67,7 @@ export default {
       this.$store.dispatch('logout')
     }
   },
-  components: {
-    currencySelect,
-    languageSelection,
-  },
+  components: { currencySelect, languageSelection, notificationsAlert },
   computed: {
     isInverted() {
       return this.$store.getters.menuOpen ? true : false

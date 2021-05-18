@@ -14,6 +14,14 @@
         lg="9"
       >
         <order-header :loading="loading" :order="order"></order-header>
+        <v-row class="mt-6">
+          <v-col>
+            <order-logistics
+              ref="orderLogisticsComponent"
+              :order-id="order.id"
+            ></order-logistics>
+          </v-col>
+        </v-row>
         <v-card
           class="mt-8"
         >
@@ -52,7 +60,7 @@
                   edit
                   :order="order"
                   :products="products"
-                  @productUpdated="loadOrder"
+                  @productUpdated="reload"
                 ></order-products-list>
               </v-card>
             </v-tab-item>
@@ -99,12 +107,13 @@ import orderPayments from '../../components/orders/payments'
 import orderInspections from '../../components/orders/inspections'
 import orderHeader from '../../components/orders/orderHeader'
 import orderProductsList from '../../components/orders/orderProductsList'
+import orderLogistics from '../../components/orders/orderLogistics'
 
 export default {
   name: 'Order',
   props: ['id'],
   components: {
-    OrderTimeline, orderPayments, orderInspections, orderHeader, orderProductsList
+    OrderTimeline, orderPayments, orderInspections, orderHeader, orderProductsList, orderLogistics
   },
   data: function() {
     return {
@@ -117,14 +126,23 @@ export default {
     }
   },
   methods: {
+    reload() {
+      this.loadOrder()
+      this.$refs.orderLogisticsComponent.loadLogistics()
+    },
     loadOrder() {
       this.loading = true
       this.$http.get(this.endpoint(`order/get/${this.id}`))
       .then( resp => {
-        this.company = resp.data.data.order.company
-        this.order = resp.data.data.order
-        this.products = resp.data.data.order_items
-        this.stage = resp.data.data.order.stage.slug
+        //console.log(resp.data)
+        if(resp.data.result) {
+          this.company = resp.data.data.order.company
+          this.order = resp.data.data.order
+          this.products = resp.data.data.order_items
+          this.stage = resp.data.data.order.stage.slug
+        } else {
+          this.$t('friendly_error')
+        }
         this.loading = false
       })
     }

@@ -307,6 +307,43 @@ const mixins = {
         document.body.removeChild(el);
         this.$toasted.success(this.$t('link_copied'))
       }
+    },
+    buildNotification(n) {
+      const data = JSON.parse(n.data)
+      const d = n.raw_data
+      let text = ''
+      let order = ''
+      let details = ''
+      let by = n.done_by.name
+      switch(n.type) {
+        case 'order_product_updated':
+          order = data['#3'].text
+          text = this.$t('notifications.order_product_updated_title', {product_name: data['#1'].text })
+          details = ''
+          break
+        case 'order_product_created':
+          order = data['#3'].text
+          text = this.$t('notifications.order_product_created_title', {product_name: data['#1'].text })
+          details = ''
+          break
+        case 'order_product_deleted':
+          order = data['#3'].text
+          text = this.$t('notifications.order_product_deleted_title', {product_name: data['#1'].text })
+          details = ''
+          break
+        case 'order_payment_created':
+          order = d[0].parent.data.orderNumber
+          text = this.$t('notifications.order_payment_created')
+          details = ''
+          break
+      }
+      return {
+        id: n.id,
+        order: order,
+        text: text,
+        details: details,
+        by: by
+      }
     }
   },
 }

@@ -1,8 +1,7 @@
 <template>
   <v-container fluid>
     <PageHeader 
-      :title="!this.id ? 'Create new company' : `Editing company`"
-      :subheader="!this.id ? 'Add a new company to later place orders.' : ''"
+      :title="!this.id ? $t('views.companies.create_new') : $t('views.companies.editing')"
     />
     <v-row>
       <v-col

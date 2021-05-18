@@ -21,7 +21,7 @@
       </v-card-title>
       <v-divider></v-divider>
       <v-card-text>
-        <ul>
+        <ul class="order-info pl-3">
           <li><strong>{{ $t('orders.place_at') }}:</strong> {{ formatDate(order.date) }}</li>
           <li v-if="order.eta != null"><strong>{{ $t('orders.estimated_delivery') }}:</strong> {{ formatDate(order.eta) }}</li>
           <li><strong>{{ $t('orders.terms') }}:</strong> {{ order.incoterm }} - {{ order.transport_description }}</li>
@@ -42,3 +42,13 @@ export default {
   }
 }
 </script>
+
+<style scoped lang="scss">
+.order-info {
+  display: flex;
+  li {
+    margin-right: 15px;
+    font-size: 13px;
+  }
+}
+</style>

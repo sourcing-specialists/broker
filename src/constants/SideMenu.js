@@ -27,6 +27,24 @@ const SideMenu = [
     title: 'order', 
     to: '/orders', 
     icon: 'mdi-file-cog-outline', 
+    children: [
+      {
+        title: 'order',
+        to: '/orders',
+        icon: 'fa-list',
+        exact: true
+      },
+      {
+        title: 'quotations',
+        to: '/quotations',
+        icon: ''
+      }
+    ]
+  },
+  { 
+    title: 'shipping', 
+    to: '/shipping', 
+    icon: 'mdi-ferry', 
     children: []
   },
   { 

@@ -17,7 +17,18 @@
       </v-simple-table>
     </div>
     <v-container class="mt-8" fluid>
-      <v-row class="justify-end">
+      <v-row>
+        <v-btn
+          color="blue-grey"
+          elevation="2"
+          type="submit"
+          :loading="loading"
+          :disabled="count == 0"
+          @click.prevent="submitOrder(false, 'order')"
+        >
+          <span class="white--text">{{ count == 0 ? $t('no_items') : $t('orders.save_as_quotation') }}</span>
+        </v-btn>
+        <v-spacer></v-spacer>
         <v-btn
           color="green"
           elevation="2"
@@ -25,7 +36,7 @@
           type="submit"
           :loading="loading"
           :disabled="count == 0"
-          @click.prevent="submitOrder()"
+          @click.prevent="submitOrder(false, 'order')"
         >
           <span class="white--text">{{ count == 0 ? $t('no_items') : $t('views.orders.confirm_order') }}</span>
         </v-btn>
@@ -37,7 +48,7 @@
           type="submit"
           :loading="loading"
           :disabled="count == 0"
-          @click.prevent="submitOrder(true)"
+          @click.prevent="submitOrder(true, 'order')"
         >
           <span class="white--text">{{ count == 0 ? $t('no_items') : $t('views.orders.confirm_order_pay') }}</span>
         </v-btn>
@@ -121,9 +132,9 @@ export default {
       'confirmOrder',
       'clearCart'
     ]),
-    submitOrder(updatePayment = false) {
+    submitOrder(updatePayment = false, type) {
       this.loading = true
-      this.confirmOrder()
+      this.confirmOrder(type)
       .then( resp => {
         if(updatePayment) {
           this.paymentModal = true

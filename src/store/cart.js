@@ -157,9 +157,10 @@ const cart = {
         commit('setCargo', cargo)
       }
     },
-    confirmOrder({state, getters, rootGetters}) {
+    confirmOrder({state, getters, rootGetters}, type) {
       return new Promise((resolve, reject) => {
         Axios.post(mixins.methods.endpoint('order/create'), {
+          type: type,
           reference: '',
           customer_id: getters.company.id,
           currency: rootGetters.getCurrency,

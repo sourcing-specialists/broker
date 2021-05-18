@@ -5,6 +5,7 @@
       :headers="table.headers"
       :items="products"
       :items-per-page="10"
+      :hide-default-footer="isPreview"
     >
       <template v-slot:[`item.name`]="{ item }">
         <h4>{{ item.name }} - <strong class="mColor-text">{{ item.option.key }}:</strong> {{ item.option.value }}</h4>
@@ -29,6 +30,7 @@
       </template>
       <template v-slot:[`item.actions`]="{ item }">
         <v-btn
+          v-if="canEdit"
           :color="$store.getters.vColor"
           @click="editProduct(item.id)"
           fab
@@ -37,7 +39,7 @@
           elevation="1"
         ><v-icon>mdi-pencil</v-icon></v-btn>
       </template>
-      <template v-slot:[`body.append`]>
+      <template v-if="isPreview === false" v-slot:[`body.append`]>
         <tr>
           <td colspan="3"></td>
           <td>{{ round(order.total_cbm) }}</td>
@@ -78,6 +80,9 @@ export default {
     },
     edit: {
       default: null
+    },
+    isPreview: {
+      default: false
     }
   },
   data() {

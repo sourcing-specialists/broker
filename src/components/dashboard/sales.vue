@@ -161,7 +161,7 @@
           }
         })
         .then( resp => {
-          console.log(resp.data)
+          //console.log(resp.data)
           this.loading = false
           this.labels = [ this.$t('charts.confirmed'), this.$t('charts.pending')]
           this.data = [resp.data.data.sales.total_sales_confirmed, resp.data.data.sales.total_sales_pending]

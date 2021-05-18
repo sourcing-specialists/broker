@@ -17,7 +17,7 @@
     </v-card-title>
     <v-divider></v-divider>
     <v-form ref="productEditForm">
-      <v-card-text>
+      <v-card-text class="pa-6">
         <v-row>
           <v-col>
             <v-text-field
@@ -31,9 +31,21 @@
                   @click="save"
                   dark
                   icon
+                  :disabled="quantityDisabled"
                 ><v-icon>fa-save</v-icon></v-btn>
               </template>
             </v-text-field>
+            <v-progress-linear
+              v-if="filled"
+              :value="filled"
+              striped
+              height="20"
+              color="light-green lighten-1"
+            >
+              <template v-slot:default>
+                {{ round(filled, 2) }}%
+              </template>
+            </v-progress-linear>
           </v-col>
         </v-row>
       </v-card-text>
@@ -68,20 +80,54 @@ export default {
   computed: {
     item() {
       return this.product
+    },
+    cargo() {
+      if(this.product.cargos.length === 0) {
+        return null
+      }
+      if(this.product.cargos.length === 1) {
+        return this.product.cargos[0].id
+      }
+      return false
+    },
+    quantityDisabled() {
+      if(this.cargo === false) {
+        return true
+      }
+      if(this.quantity == 0) {
+        return true
+      }
+      if(this.quantity === '') {
+        return true
+      }
+      return false
+    },
+    filled() {
+      if(this.product.cargos.length === 0 || this.product.cargos.length > 1) {
+        return false
+      }
+      var pCbm = this.product.cbm_per_carton*this.quantity
+      return pCbm*100/this.product.cargos[0].cbm_limit
     }
   },
   methods: {
     save() {
       this.$http.post(this.endpoint(`orders/edit/${this.order.id}/product/${this.product.id}/update`), {
         order_product_id: this.product.id,
-        quantity: this.quantity
+        quantity: this.quantity,
+        cargo: this.cargo
       })
       .then( resp => {
         if(resp.data.result) {
           this.$emit('quantityUpdated')
+        } else {
+          this.$toasted.error(this.$t('orders.quantity_exceed'))
         }
       })
     }
+  },
+  mounted() {
+    console.log(this.product.cargos[0])
   }
 }
 </script>

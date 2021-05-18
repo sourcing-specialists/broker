@@ -84,11 +84,11 @@ const messages = {
   remarks: 'Remarks',
   refresh: 'Refresh',
   link_copied: 'Link copied',
-  //new
   view_file: 'View file',
   designs: 'Designs',
   confirm_delete: 'Are you sure you want to delete this item?',
-  //end new
+  quotations: 'Quotations',
+  shipping: 'Shipping orders',
   charts: {
     top_clients_purchases: 'Top clients purchases',
     confirm_sales_in: 'Confirmed sales in',
@@ -141,14 +141,21 @@ const messages = {
     distribution_cost: 'Distribution cost',
     available: 'available',
     estimated_departure: 'Estimated departure',
-    //new
     add_design: 'Add design',
     edit_product: 'Edit Product',
     product_design_name: 'File title',
     product_design_file: 'Select file',
     design_uploaded: 'Design uploaded',
-    design_deleted: 'Design deleted'
-    //end new
+    design_deleted: 'Design deleted',
+    logistics_details: 'Logistics details',
+    order_assigned_to: 'This order is not assigned to any cargo | This order is assigned to 1 cargo | This order is assigned to {n} cargos',
+    quantity_exceed: 'Quantity exceeds container space',
+    no_cargos_assigned: 'This order has no cargos assigned',
+    expiring_at: 'Expiring at',
+    expired: 'Expired',
+    all_orders: 'All orders',
+    only_active: 'Only active orders',
+    save_as_quotation: 'Save as quotation'
   },
   validation: {
     this_field_required: 'This field is required',
@@ -218,6 +225,20 @@ const messages = {
     catalogue: {
       catalogue_subheader: 'Full list of products available. Please note that prices are filterd according to the delivery date.',
       page_size: 'Products per page',
+    },
+    companies: {
+      create_new: 'Create a new company',
+      editing: 'Edit company',
+      companies: 'Companies',
+      subtitle: 'Manage companies and users',
+      br_number: 'Br Number',
+      zone: 'Zone',
+      create_user: 'Create user',
+      edit_user: 'Edit user',
+      set_new_password: 'Set new password',
+      notify_user: 'Notify user?',
+      update_user: 'Update user',
+      add_user: 'Add user',
     }
   },
   payment: {
@@ -237,6 +258,16 @@ const messages = {
     notify_client_payment_done: 'Notify client of payment received?',
     notify_client_payment_request: 'Notify client of this new request?',
     confirm_payment: 'Confirm payment',
+  },
+  notifications: {
+    notifications_center: 'Notifications center',
+    orders_notifications: 'Order notifications',
+    payments_notifications: 'Payment notifications',
+    catalogue_notifications: 'Catalogue notifications',
+    order_product_updated_title: 'Product <strong class="mColor-text">{product_name}</strong> has been updated.',
+    done_by: 'By {user}.',
+    clear_all: 'Clear all',
+    order_payment_created: 'New payment request'
   }
 }
 

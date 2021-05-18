@@ -49,21 +49,21 @@
         v-click-outside="closeOverlay"
         :loading="loading"
       >
-        <v-card-title class="ps-0">{{ !editing ? 'Create User' : 'Edit User' }}</v-card-title>
+        <v-card-title class="ps-0">{{ !editing ? $t('views.companies.create_user') : $t('views.companies.edit_user') }}</v-card-title>
         <v-form
           ref="form"
         >
           <v-text-field
             v-model="form.user_name"
             name="user_name"
-            label="User Name"
+            :label="$t('components.companies.user_name')"
             required
             :rules="requiredRules"
           ></v-text-field>
           <v-text-field
             v-model="form.user_email"
             name="user_email"
-            label="User Email"
+            :label="$t('email')"
             required
             :rules="emailRules"
           ></v-text-field>
@@ -72,13 +72,14 @@
             type="password"
             v-model="form.user_password"
             name="user_password"
-            label="Set new password"
+            autocomplete="false"
+            :label="$t('views.companies.set_new_password')"
           ></v-text-field>
           <v-switch
             v-if="!editing"
             v-model="form.notify_user"
             inset
-            label="Notify User?"
+            :label="$t('views.companies.notify_user')"
           ></v-switch>
           <v-btn
             color="red darken-4"
@@ -88,7 +89,7 @@
             :loading="loading"
             @click.prevent="validate()"
           >
-            <span class="white--text">{{ !editing ? 'Add User' : 'Update User' }}</span>
+            <span class="white--text">{{ !editing ? $t('views.companies.add_user') : $t('views.companies.update_user') }}</span>
           </v-btn>
         </v-form>
       </v-card>
@@ -128,8 +129,8 @@ export default {
       table: {
         headers: [
           { text: 'ID', align: 'start', sortable: true, value: 'id' },
-          { text: 'Name', align: 'start', sortable: true, value: 'name' },
-          { text: 'Email', align: 'start', sortable: true, value: 'email' },
+          { text: this.$t('components.companies.user_name'), align: 'start', sortable: true, value: 'name' },
+          { text: this.$t('email'), align: 'start', sortable: true, value: 'email' },
           { text: '', align: 'end', value: 'actions' }
         ],
         users: []
