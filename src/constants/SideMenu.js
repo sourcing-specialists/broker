@@ -43,9 +43,12 @@ const SideMenu = [
   },
   { 
     title: 'shipping', 
-    to: '/shipping', 
+    to: '/shipments', 
     icon: 'mdi-ferry', 
-    children: []
+    children: [],
+    meta: {
+      onlyAdmin: true
+    }
   },
   { 
     title: 'client', 

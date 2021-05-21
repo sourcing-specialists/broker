@@ -62,7 +62,6 @@ export default {
   data: function() {
     return {
       logo: logoIcon,
-      items: SideMenu,
       isDisabled: false
     }
   },
@@ -77,6 +76,18 @@ export default {
       set: function() {
         this.$emit('input', 1)
       }
+    },
+    items() {
+      var menu = []
+      for(var m in SideMenu) {
+        if(SideMenu[m].meta !== undefined) {
+          if(SideMenu[m].meta.onlyAdmin && !this.$store.getters.user.is_admin) {
+            continue
+          }
+        }
+        menu.push(SideMenu[m])
+      }
+      return menu
     }
   }
 }

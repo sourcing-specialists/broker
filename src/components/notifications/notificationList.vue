@@ -9,6 +9,7 @@
             v-for="item in items"
             :key="item.id"
             class="mb-5 px-0"
+            @click="goTo(item.link, type)"
           >
             <v-card
               class="notification-holder"
@@ -24,13 +25,18 @@
                 x-small
               ><v-icon>mdi-close</v-icon></v-btn>
               <v-card-subtitle
-                v-if="type === 'order' || type === 'payment'"
                 class="pb-0"
-              ><strong>{{ $tc('order', 1) }}: </strong>{{ item.order }}</v-card-subtitle>
+              >
+                <strong>{{ type === 'payment' ? $tc('order', 1) : $t('ref') }}: </strong>{{ item.order }}
+              </v-card-subtitle>
               <v-card-text
                 class="py-0 main-text"
                 v-html="item.text"
               ></v-card-text>
+              <v-card-subtitle
+                class="py-0 details-text"
+                v-html="item.details"
+              ></v-card-subtitle>
               <v-card-text class="py-0">
                 <p><i>{{ $t('notifications.done_by', { user: item.by }) }}</i></p>
               </v-card-text>
@@ -65,6 +71,20 @@ export default {
     list() {
       this.items = this.list
     }
+  },
+  methods: {
+    goTo(ref, type) {
+      this.$emit('close')
+      if(type === 'order') {
+        this.$router.push({ name: 'viewOrder', params: { id: ref }}).catch(() => {})
+      }
+      if(type === 'payment') {
+        this.$router.push({ name: 'viewOrder', params: { id: ref }, query: { tab: 'payments'} }).catch(() => {})
+      }
+      if(type === 'catalogue') {
+        this.$router.push({ name: 'Catalogue', query: { search: ref } }).catch(() => {})
+      }
+    }
   }
 }
 </script>
@@ -89,6 +109,10 @@ export default {
   width: 100%;
   .main-text {
     color: #000;
+    font-weight: 700;
+  }
+  .details-text {
+    font-size: 13px;
   }
   .dismiss-btn {
     position: absolute;

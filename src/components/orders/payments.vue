@@ -90,7 +90,7 @@ import loader from '../loadingBox'
 export default {
   name: 'OrderPayments',
   props: {
-    'order': {
+    order: {
       default: null
     },
     canPay: {
@@ -121,6 +121,9 @@ export default {
   watch: {
     paymentEditDialog(v) {
       if(!v) this.paymentId = ''
+    },
+    order() {
+      this.loadAllPayments()
     }
   },
   computed: {
@@ -166,7 +169,9 @@ export default {
     }
   },
   mounted() {
-    this.loadAllPayments()
+    if(this.order.id) {
+      this.loadAllPayments()
+    }
   }
 }
 </script>

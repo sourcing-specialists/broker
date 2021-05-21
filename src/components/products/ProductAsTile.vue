@@ -15,6 +15,11 @@
         >
           {{ mainOption.group_name }}: {{ mainOption.group_value }}
         </span>
+        <v-btn
+          color="indigo"
+          v-if="product.certifications.length > 0"
+          @click="showCertificationsModal = true"
+        ><v-icon>mdi-certificate</v-icon></v-btn>
       </h4>
       <v-divider></v-divider>
       <p>{{ product.description.length >= 30 ? `${product.description.substring(0,30)}...` : product.description }}</p>
@@ -47,18 +52,30 @@
         :product="product"
       />
     </v-dialog>
+    <v-dialog
+      v-model="showCertificationsModal"
+      transition="dialog-bottom-transition"
+      max-width="720"
+    >
+      <product-certifications
+        :product="product"
+        :certifications="product.certifications"
+      ></product-certifications> 
+    </v-dialog>
   </v-card>
 </template>
 
 <script> 
 import ProductHiddenOptions from './ProductHiddenOptions.vue'
 import ProductDetailsModal from './ProductDetailsModal'
+import productCertifications from './ProductCertifications'
 
 export default {
   name: 'ProductAsTile',
   components: {
     ProductHiddenOptions,
-    ProductDetailsModal
+    ProductDetailsModal,
+    productCertifications
   },
   props: {
     product: {
@@ -81,7 +98,8 @@ export default {
   },
   data() {
     return {
-      showFullDetails: false
+      showFullDetails: false,
+      showCertificationsModal: false
     }
   },
   computed: {

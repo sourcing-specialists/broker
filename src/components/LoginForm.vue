@@ -7,7 +7,7 @@
         <img width="250" src="../assets/images/logo-original.png" alt="Sourcing Specialists Logo"><br>
         <h1>Brokers Login</h1>
       </div>
-      <v-form ref="loginForm">
+      <v-form ref="loginForm" v-on:submit.prevent="login">
         <v-container>
             <v-text-field
               v-model="email"
@@ -52,6 +52,7 @@
                 x-large
                 @click.prevent="login"
                 dark
+                type="submit"
               >{{ $t('login') }}</v-btn>
             </v-col>
             <v-col

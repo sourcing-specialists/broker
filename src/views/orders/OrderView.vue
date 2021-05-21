@@ -46,6 +46,11 @@
               {{ $t('inspections') }}
               <v-icon>mdi-magnify-scan</v-icon>
             </v-tab>
+            <v-spacer></v-spacer>
+            <v-tab href="#documents">
+              {{ $t('documents') }}
+              <v-icon>mdi-file-document-outline</v-icon>
+            </v-tab>
           </v-tabs>
 
           <v-tabs-items v-model="tab">
@@ -76,7 +81,7 @@
                 </v-card>
               </keep-alive>
             </v-tab-item>
-             <v-tab-item
+            <v-tab-item
               value="inspections"
             >
               <keep-alive>
@@ -85,6 +90,19 @@
                   flat
                 >
                   <order-inspections :order-id="order.id"></order-inspections>
+                </v-card>
+              </keep-alive>
+            </v-tab-item>
+            <v-tab-item
+              v-if="$store.getters.user.is_admin"
+              value="documents"
+            >
+              <keep-alive>
+                <v-card
+                  class="pa-3"
+                  flat
+                >
+                  <order-documents :order-id="order.id"></order-documents>
                 </v-card>
               </keep-alive>
             </v-tab-item>
@@ -108,12 +126,13 @@ import orderInspections from '../../components/orders/inspections'
 import orderHeader from '../../components/orders/orderHeader'
 import orderProductsList from '../../components/orders/orderProductsList'
 import orderLogistics from '../../components/orders/orderLogistics'
+import orderDocuments from '../../components/orders/orderDocuments'
 
 export default {
   name: 'Order',
   props: ['id'],
   components: {
-    OrderTimeline, orderPayments, orderInspections, orderHeader, orderProductsList, orderLogistics
+    OrderTimeline, orderPayments, orderInspections, orderHeader, orderProductsList, orderLogistics, orderDocuments
   },
   data: function() {
     return {
@@ -123,6 +142,13 @@ export default {
       products: [],
       stage: 'pending',
       tab: 'products'
+    }
+  },
+  watch: {
+    id(new_val, old_val) {
+      if(new_val !== old_val) {
+        this.reload()
+      }
     }
   },
   methods: {
@@ -149,6 +175,9 @@ export default {
   },
   mounted() {
     this.loadOrder()
+    if(this.$route.query.tab) {
+      this.tab = this.$route.query.tab
+    }
   }
 }
 </script>

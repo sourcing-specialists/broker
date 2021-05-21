@@ -60,6 +60,7 @@
                 :list="orders"
                 type="order"
                 @dismiss="notificationDismiss"
+                @close="showNotifications = false"
               ></notification-list>
             </v-col>
             <v-col
@@ -78,6 +79,7 @@
                 :list="payments"
                 type="payment"
                 @dismiss="notificationDismiss"
+                @close="showNotifications = false"
               ></notification-list>
             </v-col>
             <v-col
@@ -96,6 +98,7 @@
                 :list="catalogue"
                 type="catalogue"
                 @dismiss="notificationDismiss"
+                @close="showNotifications = false"
               ></notification-list>
             </v-col>
           </v-row>

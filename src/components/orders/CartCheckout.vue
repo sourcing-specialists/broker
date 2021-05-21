@@ -24,7 +24,7 @@
           type="submit"
           :loading="loading"
           :disabled="count == 0"
-          @click.prevent="submitOrder(false, 'order')"
+          @click.prevent="submitOrder(false, 'quotation')"
         >
           <span class="white--text">{{ count == 0 ? $t('no_items') : $t('orders.save_as_quotation') }}</span>
         </v-btn>
@@ -140,6 +140,11 @@ export default {
           this.paymentModal = true
           this.order = resp.data.data.order
           this.payment_id = resp.data.data.payment.protected_id
+          return
+        }
+        if(type === 'quotation') {
+          this.clearCart()
+          this.$router.push({ name: 'Quotations'})
           return
         }
         this.backToOrders()

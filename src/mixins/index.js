@@ -308,37 +308,83 @@ const mixins = {
         this.$toasted.success(this.$t('link_copied'))
       }
     },
+    paymentStatusString(n) {
+      if(n == 1) {
+        return this.$t('payment.pending')
+      } else if(n == 2) {
+        return this.$t('payment.paid')
+      }
+      return ''
+    },
     buildNotification(n) {
+      if(n.group_key == 'payments') {
+        //console.log(n)
+      }
       const data = JSON.parse(n.data)
       const d = n.raw_data
       let text = ''
       let order = ''
+      let link = ''
       let details = ''
-      let by = n.done_by.name
+      let by = (n.done_by !== null ? n.done_by.name : '') + ', ' + this.formatDate(n.system_date)
       switch(n.type) {
         case 'order_product_updated':
+          link = d[0] ? d[0].parent.model_id : ''
           order = data['#3'].text
           text = this.$t('notifications.order_product_updated_title', {product_name: data['#1'].text })
           details = ''
           break
         case 'order_product_created':
+          link = d[0] ? d[0].parent.model_id : ''
           order = data['#3'].text
           text = this.$t('notifications.order_product_created_title', {product_name: data['#1'].text })
           details = ''
           break
         case 'order_product_deleted':
+          link = d[0] ? d[0].parent.model_id : ''
           order = data['#3'].text
           text = this.$t('notifications.order_product_deleted_title', {product_name: data['#1'].text })
           details = ''
           break
         case 'order_payment_created':
-          order = d[0].parent.data.orderNumber
+          link = d[0].parent.model_id
+          order = d[0].parent.title
           text = this.$t('notifications.order_payment_created')
           details = ''
+          break
+        case 'order_payment_status_changed':
+          link = d[0].parent.model_id
+          order = d[0].parent.title
+          text = this.$t('notifications.order_payment_status_changed')
+          details = `${this.$t('notifications.from')} <strong>${this.paymentStatusString(d[0].original_value)}</strong> ${this.$t('notifications.to')} <strong>${this.paymentStatusString(d[0].new_value)}</strong>`
+          break
+        case 'order_created':
+          link = d[0].model.id
+          order = d[0].model.type === 'order' ? d[0].model.sku : d[0].model.id
+          text = this.$t('notifications.order_created', { type: d[0].model.type })
+          details = ``
+          break
+        case 'order_status_changed':
+          link = d[0].model.id
+          order = d[0].model.sku
+          text = this.$t('notifications.order_status_changed')
+          details = `${this.$t('notifications.from')} <strong>${d[0].original_value}</strong> ${this.$t('notifications.to')} <strong>${d[0].new_value}</strong>`
+          break
+        case 'order_documents_uploaded':
+          order = d[0].parent.title
+          text = this.$t('notifications.order_documents_uploaded', { document: d[0].model.key_id })
+          details = ``
+          break
+        case 'product_created':
+          link = d[0].model_id
+          order = d[0].model_id
+          text = this.$t('notifications.product_created', { product_name: d[0].model.name.en })
+          details = ``
           break
       }
       return {
         id: n.id,
+        link: link,
         order: order,
         text: text,
         details: details,

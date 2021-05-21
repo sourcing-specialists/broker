@@ -12,6 +12,7 @@ import crudCompany from '../views/Companies/Crud.vue'
 import Catalogue from '../views/Catalogue.vue'
 import Orders from '../views/orders/Orders.vue'
 import OrdersNew from '../views/orders/OrdersNew.vue'
+import Quotations from '../views/orders/Quotations.vue'
 import Account from '../views/Account.vue'
 import OrderView from '../views/orders/OrderView'
 import CustomLists from '../views/CustomLists'
@@ -136,6 +137,23 @@ const routes = [
     }
   },
   {
+    path: '/quotations',
+    name: 'Quotations',
+    component: Quotations,
+    meta: {
+      requiresAuth: true
+    }
+  },
+  {
+    path: '/shipments',
+    name: 'Shipments',
+    component: () => import(/* webpackChunkName: "about" */ '../views/ShippingOrders.vue'),
+    meta: {
+      requiresAuth: true,
+      onlyAdmin: true
+    }
+  },
+  {
     path: '/account',
     name: 'Account',
     component: Account,
@@ -161,10 +179,18 @@ const router = new VueRouter({
 
 //validate routes and check sessions
 router.beforeEach( function(to, from, next) {
+  //redirect login to dashboard
   if (to.name === 'Login' && store.getters.isAuthenticated) next({ name: 'Dashboard' })
+  //confirm if there is not auth require
   if(to.meta.requiresAuth === false) {
     return next()
   }
+  //check if route is for only admins
+  //console.log(store.getters.user)
+  if(to.meta.onlyAdmin && !store.getters.user.is_admin) {
+    return next(from.path)
+  }
+  //logout on session expired
   if (to.name !== 'Login' && !store.getters.isAuthenticated) next({ name: 'Login' })
   else next()
 })

@@ -89,6 +89,7 @@ const messages = {
   confirm_delete: 'Are you sure you want to delete this item?',
   quotations: 'Quotations',
   shipping: 'Shipping orders',
+  documents: 'Documents',
   charts: {
     top_clients_purchases: 'Top clients purchases',
     confirm_sales_in: 'Confirmed sales in',
@@ -155,7 +156,12 @@ const messages = {
     expired: 'Expired',
     all_orders: 'All orders',
     only_active: 'Only active orders',
-    save_as_quotation: 'Save as quotation'
+    save_as_quotation: 'Save as quotation',
+    //enew
+    select_delivery_date: 'Delivery date',
+    order_before: 'Order before',
+    
+    //endnew
   },
   validation: {
     this_field_required: 'This field is required',
@@ -258,6 +264,8 @@ const messages = {
     notify_client_payment_done: 'Notify client of payment received?',
     notify_client_payment_request: 'Notify client of this new request?',
     confirm_payment: 'Confirm payment',
+    pending: 'Pending',
+    paid: 'Paid'
   },
   notifications: {
     notifications_center: 'Notifications center',
@@ -267,7 +275,17 @@ const messages = {
     order_product_updated_title: 'Product <strong class="mColor-text">{product_name}</strong> has been updated.',
     done_by: 'By {user}.',
     clear_all: 'Clear all',
-    order_payment_created: 'New payment request'
+    order_payment_created: 'New payment request',
+    //new
+    order_status_changed: 'Order status has changed',
+    order_documents_uploaded: 'A new <strong class="mColor-text">{document}</strong> has been uploaded.',
+    order_created: 'New {type} created',
+    from: 'From',
+    to: 'to',
+    order_payment_status_changed: 'Payment status has changed',
+    order_product_created_title: 'Product <strong class="mColor-text">{product_name}</strong> has been added.',
+    product_created: '<strong class="mColor-text">{product_name}</strong> has been added to the system'
+    //end new
   }
 }
 

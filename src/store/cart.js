@@ -158,9 +158,14 @@ const cart = {
       }
     },
     confirmOrder({state, getters, rootGetters}, type) {
+      //pass correct type
+      var is_quotation = 0
+      if(type === 'quotation') {
+        is_quotation = 1
+      }
       return new Promise((resolve, reject) => {
         Axios.post(mixins.methods.endpoint('order/create'), {
-          type: type,
+          quotation: is_quotation,
           reference: '',
           customer_id: getters.company.id,
           currency: rootGetters.getCurrency,

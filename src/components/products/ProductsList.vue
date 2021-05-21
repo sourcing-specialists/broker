@@ -319,6 +319,9 @@ export default {
       return true
     },
     loadProducts() {
+      if(this.selectedCargo === undefined) {
+        this.selectedCargo = this.$store.getters.catalogueCargo
+      }
       //must rebuild header because deeper nodes do not react
       this.listHeader = [
         { text: 'input', inOrders: true, col: 1 },
@@ -366,6 +369,7 @@ export default {
     },
     cargoChanged(e) {
       this.selectedCargo = e
+      this.page = 1
       this.loadProducts()
     },
     categoriesChanged(e) {
@@ -378,6 +382,9 @@ export default {
     }
   },
   mounted() {
+    if(this.$route.query.search) {
+      this.search = this.$route.query.search
+    }
     this.loadProducts()
   }
 }
