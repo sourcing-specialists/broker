@@ -1,13 +1,27 @@
 <template>
-  <div>
+  <v-container>
     <loader v-model="loading"></loader>
     <v-data-table
       v-if="files.length > 0"
       :headers="tableHeaders"
       :items="files"
       :hide-default-footer="true"
-    ></v-data-table>
-  </div>
+    >
+      <template v-slot:[`item.actions`]="{ item }">
+        <v-btn
+          fab
+          dark
+          elevation="1"
+          :color="$store.getters.vColor"
+          :href="item.original"
+          target="_blank"
+          x-small
+        >
+          <v-icon>mdi-eye</v-icon>
+        </v-btn>
+      </template>
+    </v-data-table>
+  </v-container>
 </template>
 
 <script>

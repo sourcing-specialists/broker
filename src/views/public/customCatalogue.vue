@@ -35,7 +35,8 @@
       <table
         v-if="list.display_price === 1"
         :style="{
-          margin: '10px'
+          margin: '10px',
+          textAlign: 'left'
         }"
       >
         <tbody>
@@ -44,6 +45,12 @@
           </tr>
           <tr>
             <th>{{ $t('currency') }}:</th><td>{{ $route.query.currency }}</td>
+          </tr>
+          <tr>
+            <th>{{ $t('orders.order_before') }}:</th><td>{{ formatDate(cargo.cutoff_date) }}</td>
+          </tr>
+          <tr>
+            <th>{{ $t('orders.estimated_delivery')}}:</th><td>{{ formatDate(cargo.eta) }}</td>
           </tr>
         </tbody>
       </table>
@@ -155,7 +162,8 @@ export default {
   props: ['id'],
   data() {
     return {
-      list: {}
+      list: {},
+      cargo: {}
     }
   },
   computed: {
@@ -189,8 +197,9 @@ export default {
     })
     .then( resp => {
       this.list = resp.data.data.catalogue
-      //console.log(this.list)
+      this.cargo = resp.data.data.cargo
     })
+    document.getElementById('app').style.backgroundColor = '#FFF';
   }
 }
 </script>

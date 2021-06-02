@@ -55,7 +55,10 @@ export default {
     ]),
     ...mapGetters([
       'catalogueCargo'
-    ])
+    ]),
+    lang() {
+      return this.$store.getters.getLanguage
+    }
   },
   watch: {
     categoriesSelected: function(val) {
@@ -68,6 +71,9 @@ export default {
       this.loadCategories()
     },
     catalogueCargo() {
+      this.loadCategories()
+    },
+    lang() {
       this.loadCategories()
     }
   },

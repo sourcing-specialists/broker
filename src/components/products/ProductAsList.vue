@@ -96,6 +96,9 @@
         <div class="options-trigger" v-if="!canSelect">
           <v-btn
             @click="swipe('left')"
+            text
+            dark
+            :color="$store.getters.vColor"
           >
             <v-icon v-if="!swiped">fa-long-arrow-alt-left</v-icon>
             <v-icon v-if="swiped">fa-long-arrow-alt-right</v-icon>
@@ -115,15 +118,11 @@
       ></product-as-list-options>
     </vue-page-transition>
     <v-divider />
-    <v-dialog
-      v-model="showFullDetails"
-      transition="dialog-bottom-transition"
-      max-width="1080"
-    >
-      <product-details-modal
-        :product="productData"
-      />
-    </v-dialog>
+    <product-details-modal
+      :product="productData"
+      v-if="showFullDetails"
+      @toggleDialogStatus="showFullDetails = false"
+    ></product-details-modal>
     <v-dialog
       v-model="showCertificationsModal"
       transition="dialog-bottom-transition"
@@ -141,7 +140,7 @@
 import ProductImage from './ProductImage.vue'
 import ProductAsListOptions from './ProductAsListOptions.vue'
 import ProductHiddenOptions from './ProductHiddenOptions'
-import ProductDetailsModal from './ProductDetailsModal'
+import ProductDetailsModal from '../orders/productModal'
 import productCertifications from './ProductCertifications'
 import { mapMutations, mapGetters } from 'vuex'
 
@@ -188,36 +187,6 @@ export default {
       showCertificationsModal: false
     }
   },
-  methods: {
-    ...mapMutations([
-      'addToSelection'
-    ]),
-    showCertifications() {
-      this.showCertificationsModal = true
-    },
-    fullDetailsToggle(val) {
-      this.showFullDetails = val
-    },
-    swipe(direction) {
-      if(this.canSelect) {
-        return
-      }
-      if(direction == 'right') {
-        this.swiped = false
-        return
-      }
-      this.swiped = !this.swiped
-    },
-    toggleOptions() {
-      this.showOptions = !this.showOptions
-    },
-    select(id) {
-      if(!this.canSelect) {
-        return
-      }
-      this.addToSelection(id)
-    }
-  },
   computed: {
     ...mapGetters([
       'selected',
@@ -248,6 +217,36 @@ export default {
       }
       return str
     }
+  },
+  methods: {
+    ...mapMutations([
+      'addToSelection'
+    ]),
+    showCertifications() {
+      this.showCertificationsModal = true
+    },
+    fullDetailsToggle(val) {
+      this.showFullDetails = val
+    },
+    swipe(direction) {
+      if(this.canSelect) {
+        return
+      }
+      if(direction == 'right') {
+        this.swiped = false
+        return
+      }
+      this.swiped = !this.swiped
+    },
+    toggleOptions() {
+      this.showOptions = !this.showOptions
+    },
+    select(id) {
+      if(!this.canSelect) {
+        return
+      }
+      this.addToSelection(id)
+    }
   }
 }
 </script>
@@ -261,9 +260,6 @@ export default {
       top: 0px;
       right: 0px;
       z-index: 2;
-      i {
-        color: #E2E2E2 !important;
-      }
     }
     .options-toggle {
       position: absolute;

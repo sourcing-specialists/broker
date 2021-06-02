@@ -51,7 +51,7 @@
         <v-card-title>{{ $t('export_options') }}</v-card-title>
         <v-divider></v-divider>
         <v-card-text>
-          <product-datasheet-options :datasheet_url="datasheet"></product-datasheet-options>
+          <product-datasheet-options :datasheet_url="datasheet" :product_id="id"></product-datasheet-options>
         </v-card-text>
       </v-card>
     </v-dialog>

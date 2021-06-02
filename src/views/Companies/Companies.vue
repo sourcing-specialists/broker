@@ -14,10 +14,10 @@
     <v-skeleton-loader
       class="mx-auto"
       type="table"
-      v-if="table.companies.length == 0"
+      v-if="loading"
     />
     <v-data-table
-      v-if="table.companies.length > 0"
+      v-if="!loading"
       :search="table.search"
       :headers="table.headers"
       :items="table.companies"
@@ -68,8 +68,9 @@ export default {
           { text: '', align: 'end', value: 'actions' }
         ],
         companies: [],
-        search: ''
-      }
+        search: '',
+      },
+      loading: true
     }
   },
   components: {
@@ -80,6 +81,7 @@ export default {
     .then( resp => {
       //console.log(resp)
       this.table.companies = resp.data.data
+      this.loading = false
     })
   }
 }

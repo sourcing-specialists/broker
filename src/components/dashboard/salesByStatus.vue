@@ -72,7 +72,7 @@
         >
           <div>
             <h4>Total Sales</h4>
-            <h1 class="mColor-text">{{ numberToNiceString(totalSales, $store.getters.getCurrency) }}</h1>
+            <h1 class="mColor-text">{{ numberToNiceString(totalSales, $store.getters.getCurrency, 2) }}</h1>
             <ul class="labels">
               <li
                 v-for="(label, index) in chartLabelsSlugs"
@@ -122,16 +122,6 @@
           legend: {
             display: false
           },
-          /*tooltips: {
-            callbacks: {
-              label: function(tooltipItem) {
-                console.log(tooltipItem)
-                return "$" + Number(tooltipItem.yLabel).toFixed(0).replace(/./g, function(c, i, a) {
-                    return i > 0 && c !== "." && (a.length - i) % 3 === 0 ? "," + c : c;
-                });
-              }
-            }
-          }*/
         },
         dates: [
           new Date(new Date().getFullYear(), 0, 2).toISOString().substr(0, 10),//first day of the year

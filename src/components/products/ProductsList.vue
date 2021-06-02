@@ -75,6 +75,14 @@
         </v-col>
       </v-row>
     </v-container>
+    <v-alert
+      v-if="isForOrders && incoterm !== 'FOB'"
+      type="warning"
+      icon="mdi-ferry"
+      border="left"
+    >
+      {{ $t('orders.estimated_delivery') }}: {{ formatDate(selectedCargo.eta) }} | {{ $t('orders.order_before') }}: {{ formatDate(selectedCargo.cutoff_date) }}
+    </v-alert>
     <!--Pagination-->
     <v-container
       class="pagination_container"

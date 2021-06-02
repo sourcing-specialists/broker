@@ -18,7 +18,7 @@ export default {
   },
   data() {
     return {
-      title: this.$t('quotations'),
+      title: this.$tc('quotation', 2),
       subheader: '',
     }
   }

@@ -1,17 +1,38 @@
 <template>
   <v-container fluid>
-    <v-btn
-      :to="{ name: 'Orders' }"
-      class="mb-5"
-      color="blue-grey"
-      elevation="2"
-      dark
-    >
-      <v-icon>mdi-chevron-left</v-icon>
-    </v-btn>
     <v-row>
       <v-col
-        lg="9"
+        xl="9"
+        md="12"
+        class="d-flex mb-1"
+      >
+        <v-btn
+          :to="{ name: order.type === 'order' ? 'Orders' : 'Quotations' }"
+          class="mb-5"
+          color="blue-grey"
+          elevation="2"
+          dark
+        >
+          <v-icon>mdi-chevron-left</v-icon>
+        </v-btn>
+        <v-spacer></v-spacer>
+        <v-btn
+          v-if="order.type === 'quotation'"
+          class="mb-5"
+          color="indigo"
+          elevation="2"
+          dark
+          :loading="convertingToOrder"
+          @click="convertToOrder"
+        >
+          {{ $t('orders.convert_to_order') }}
+        </v-btn>
+      </v-col>
+    </v-row>
+    <v-row>
+      <v-col
+        xl="9"
+        md="12"
       >
         <order-header :loading="loading" :order="order"></order-header>
         <v-row class="mt-6">
@@ -47,7 +68,10 @@
               <v-icon>mdi-magnify-scan</v-icon>
             </v-tab>
             <v-spacer></v-spacer>
-            <v-tab href="#documents">
+            <v-tab
+              href="#documents"
+              v-if="$store.getters.user.is_admin"
+            >
               {{ $t('documents') }}
               <v-icon>mdi-file-document-outline</v-icon>
             </v-tab>
@@ -111,7 +135,7 @@
       </v-col>
       <v-col
         lg="3"
-        class="overflow-hidden"
+        class="overflow-hidden d-none d-xl-block"
       >
         <order-timeline :status="stage"></order-timeline>
       </v-col>
@@ -141,7 +165,8 @@ export default {
       company: {},
       products: [],
       stage: 'pending',
-      tab: 'products'
+      tab: 'products',
+      convertingToOrder: false
     }
   },
   watch: {
@@ -170,6 +195,15 @@ export default {
           this.$t('friendly_error')
         }
         this.loading = false
+      })
+    },
+    convertToOrder() {
+      this.convertingToOrder = true
+      this.$http.post(this.endpoint(`order/${this.order.id}/convert_to_order`), {
+        notify_client: 1
+      }).then( () => {
+        this.$router.push({ name: 'viewOrder', params: { id: this.order.id } })
+        this.reload()
       })
     }
   },

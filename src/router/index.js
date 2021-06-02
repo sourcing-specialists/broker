@@ -46,6 +46,15 @@ const routes = [
     }
   },
   {
+    path: '/public/catalogue/custom-datasheet/:product_id',
+    name: 'customDatasheet',
+    props: true,
+    component: () => import('../views/public/customDatasheet.vue'),
+    meta: {
+      requiresAuth: false
+    }
+  },
+  {
     path: '/public/order/:id',
     name: 'showPublicOrder',
     props: true,
@@ -140,6 +149,15 @@ const routes = [
     path: '/quotations',
     name: 'Quotations',
     component: Quotations,
+    meta: {
+      requiresAuth: true
+    }
+  },
+  {
+    path: '/quotations/view/:id',
+    name: 'viewQuotation',
+    component: OrderView,
+    props: true,
     meta: {
       requiresAuth: true
     }

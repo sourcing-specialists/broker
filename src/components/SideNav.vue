@@ -9,6 +9,7 @@
     clipped
     :mini-variant.sync="menu"
     :expand-on-hover="menu"
+    stateless
   >
     <v-list
       dense

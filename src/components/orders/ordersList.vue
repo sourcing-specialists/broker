@@ -12,7 +12,7 @@
         <v-col>
           <v-select
             :items="[{text: $t('orders.all_orders'), value: 'all' }, { text: $t('orders.only_active'), value: '' }]"
-            :label="type === 'orders' ? $tc('order', 2) : $t('quotations')"
+            :label="type === 'orders' ? $tc('order', 2) : $tc('quotation', 2)"
             v-model="ordersType"
             @change="loadOrders()"
           >
@@ -144,7 +144,7 @@
             fab
             elevation="2"
             :color="$store.getters.vColor"
-            @click="$router.push({ name: 'viewOrder', params: { id: item.id }})"
+            @click="$router.push(viewPush(item.id))"
           >
             <span class="white--text"><v-icon>mdi-pencil</v-icon></span>
           </v-btn>
@@ -205,7 +205,7 @@ export default {
         }
       })
       .then((resp) => {
-        console.log(resp.data)
+        //console.log(resp.data.data)
         this.table.orders = resp.data.data
         this.loading = false
       })
@@ -215,6 +215,9 @@ export default {
         return true
       }
       return false
+    },
+    viewPush(id) {
+      return this.type === 'quotations' ? { name: 'viewQuotation', params: { id: id }} : { name: 'viewOrder', params: { id: id }}
     }
   },
   mounted() {

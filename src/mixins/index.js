@@ -82,7 +82,7 @@ const mixins = {
       if(this.$route.name === 'OrdersNew') {
         thisIncoterm = this.cartIncoterm
       }
-      if(thisIncoterm === 'REVOOLOOP') {
+      if(thisIncoterm === 'REVOOLOOP' && option.tiers) {
         option.tiers.map(function(t) {
           highlighted = (vue.checkTier(t, option.quantity) && hightlight) ? 'highlight' : ''
           if(t.to === 'onwards') {
@@ -185,21 +185,24 @@ const mixins = {
       // String Does Not Contain Decimal
       return 0
     },
-    numberToNiceString(n, currency = 'USD') {
+    numberToNiceString(n, currency = 'USD', maxDecimals = null) {
       //get the nice decimals
-      let decimals = 2
-      if(this.countDecimals(n) >= 4) {
-        decimals = 4
-      }
-      if(this.countDecimals(n) == 3) {
-        decimals = 3
+      let decimals = maxDecimals
+      if(maxDecimals === null) {
+        decimals = 2
+        if(this.countDecimals(n) >= 4) {
+          decimals = 4
+        }
+        if(this.countDecimals(n) == 3) {
+          decimals = 3
+        }
       }
       var formatter = new Intl.NumberFormat('en', {
         style: 'currency',
         currency: currency,
         minimumFractionDigits: decimals
       })
-      return `${currency} ${formatter.format(n)}`
+      return `${formatter.format(n)}`
     },
     formattedNumber(n) {
       const num = this.fixDigits(n)

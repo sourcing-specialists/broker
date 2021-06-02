@@ -35,7 +35,7 @@ const SideMenu = [
         exact: true
       },
       {
-        title: 'quotations',
+        title: 'quotation',
         to: '/quotations',
         icon: ''
       }

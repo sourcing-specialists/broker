@@ -87,9 +87,11 @@ const messages = {
   view_file: 'View file',
   designs: 'Designs',
   confirm_delete: 'Are you sure you want to delete this item?',
-  quotations: 'Quotations',
+  quotation: 'Quotation | Quotations',
   shipping: 'Shipping orders',
   documents: 'Documents',
+  customize: 'Customize',
+  options: 'Options',
   charts: {
     top_clients_purchases: 'Top clients purchases',
     confirm_sales_in: 'Confirmed sales in',
@@ -157,11 +159,10 @@ const messages = {
     all_orders: 'All orders',
     only_active: 'Only active orders',
     save_as_quotation: 'Save as quotation',
-    //enew
     select_delivery_date: 'Delivery date',
     order_before: 'Order before',
-    
-    //endnew
+    convert_to_order: 'Convert to order',
+    products_in_cart: 'Products in cart'
   },
   validation: {
     this_field_required: 'This field is required',
@@ -194,7 +195,7 @@ const messages = {
       company_updated: 'Company updated'
     },
     products: {
-      total_units_carton: 'Total units in carton',
+      total_units_carton: 'Total units',
       cartons_onwards: 'cartons onwards',
       carton: 'carton | cartons',
       unit: 'unit | units',
@@ -276,7 +277,6 @@ const messages = {
     done_by: 'By {user}.',
     clear_all: 'Clear all',
     order_payment_created: 'New payment request',
-    //new
     order_status_changed: 'Order status has changed',
     order_documents_uploaded: 'A new <strong class="mColor-text">{document}</strong> has been uploaded.',
     order_created: 'New {type} created',
@@ -285,7 +285,13 @@ const messages = {
     order_payment_status_changed: 'Payment status has changed',
     order_product_created_title: 'Product <strong class="mColor-text">{product_name}</strong> has been added.',
     product_created: '<strong class="mColor-text">{product_name}</strong> has been added to the system'
-    //end new
+  },
+  customDatasheet: {
+    show_header: 'Show header',
+    image_for_reference_only: 'This image is for reference only',
+    created_by: 'Created by',
+    phone: 'Phone',
+    email: 'Email'
   }
 }
 

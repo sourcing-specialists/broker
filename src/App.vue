@@ -1,6 +1,6 @@
 <template>
   <!-- App.vue -->
-  <v-app>
+  <v-app :style="{ backgroundColor: '#f5f6f7' }">
 
     <Loader />
 

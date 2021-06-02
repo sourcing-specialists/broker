@@ -85,13 +85,20 @@
       >
         <v-col>
           <v-row>
-            <v-col>
-            <v-btn
-              elevation="2"
-              :color="vColor"
-              dark
-              @click="openDatasheet()"
-            >{{ $t('export') }}</v-btn>
+            <v-col class="d-flex">
+              <v-btn
+                elevation="2"
+                color="indigo"
+                dark
+                @click="customDatasheetValidate()"
+              >{{ $t('customize') }}</v-btn>
+              <v-spacer></v-spacer>
+              <v-btn
+                elevation="2"
+                :color="vColor"
+                dark
+                @click="openDatasheet()"
+              >{{ $t('export') }}</v-btn>
             </v-col>
           </v-row>
         </v-col>
@@ -105,7 +112,7 @@ import { mapGetters } from 'vuex'
 import { getCurrencies, getIncoterms, getLanguages, getCargos } from '../../endpoints'
 
 export default {
-  props: ['datasheet_url'],
+  props: ['datasheet_url', 'product_id'],
   data() {
     return {
       no_price: 0,
@@ -131,9 +138,30 @@ export default {
       'vColor',
       'getLanguage',
       'user'
-    ])
+    ]),
+    customDatasheet() {
+      return { 
+        name: 'customDatasheet', 
+        params: { 
+          product_id: this.product_id 
+        },
+        query: {
+          incoterm: this.inco,
+          currency: this.currency,
+          language: this.language,
+          cargo_id: this.cargo !== 'custom' ? this.cargo : null,
+          cargo_price: this.inco === 'DDP' ? this.selectedCargo.cost : null
+        } 
+      }
+    }
   },
   methods: {
+    customDatasheetValidate() {
+      if(!this.$refs.params.validate()) {
+        return false
+      }
+      this.$router.push(this.customDatasheet)
+    },
     openDatasheet() {
       if(!this.$refs.params.validate()) {
         return false

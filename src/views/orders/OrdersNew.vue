@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="newOrder">
     <v-container fluid>
       <PageHeader :title="$t('orders.create_order')" subheader="" />
       <v-btn
@@ -73,6 +73,7 @@
         :product="productInModal"
         v-if="showProductModal"
         @toggleDialogStatus="toggleDialog()"
+        :can-order="true"
       />
     </v-container>
     <cart-float

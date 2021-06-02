@@ -72,9 +72,9 @@
         >
           <div>
             <h4>{{ $t('charts.total_confirmed') }}</h4>
-            <h1 class="indigo--text mb-3">{{ numberToNiceString(totalSalesConfirmed, $store.getters.getCurrency) }}</h1>
+            <h1 class="indigo--text mb-3">{{ numberToNiceString(totalSalesConfirmed, $store.getters.getCurrency, 2) }}</h1>
             <h4>{{ $t('charts.total_pending') }}</h4>
-            <h1 class="red--text text--darken-4">{{ numberToNiceString(totalSalesPending, $store.getters.getCurrency) }}</h1>
+            <h1 class="red--text text--darken-4">{{ numberToNiceString(totalSalesPending, $store.getters.getCurrency, 2) }}</h1>
           </div>
         </v-col>
         <v-col

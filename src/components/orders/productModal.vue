@@ -42,17 +42,26 @@
             <v-divider></v-divider>
             <v-container>
               <v-row>
-                <v-col lg="3" md="3" class="d-flex align-center">
+                <v-col
+                  :lg="canOrder ? 3 : 5"
+                  :md="canOrder ? 3 : 5"
+                  class="d-flex align-center"
+                >
                   <div>
                     <ul>
-                      <li><span class="font-weight-bold">Ref:</span> {{ option.ref }}</li>
-                      <li><span class="font-weight-bold">Carton Size:</span> {{ mxMeas(option) }}</li>
-                      <li><span class="font-weight-bold">MOQ:</span> {{ option.min_order }} Cartons</li>
+                      <li><span class="font-weight-bold">{{ $t('ref') }}:</span> {{ option.ref }}</li>
+                      <li><span class="font-weight-bold">{{ $t('components.products.carton_size') }}:</span> {{ mxMeas(option) }}</li>
+                      <li><span class="font-weight-bold">{{ $t('moq') }}:</span> {{ option.min_order }} {{ $t('components.products.carton') }}</li>
                     </ul>
                     <ul v-html="mxPacking(option)"></ul>
                   </div>
                 </v-col>
-                <v-col lg="2" md="2" class="d-flex align-center">
+                <v-col
+                  v-if="canOrder"
+                  lg="2"
+                  md="2"
+                  class="d-flex align-center"
+                >
                   <div>
                     <v-select
                       v-for="(attrs, index) in option.attributes_grouped"
@@ -63,14 +72,27 @@
                       :rules="requiredRules"
                       :label="attrs[0].group_name"
                       v-model="attrs.selected"
-                    ></v-select>
-                    <div class="i-exist" v-if="inCart(option)">Product in cart: {{ inCartQuantity(option) }} Cartons</div>
+                      full-width
+                    >
+                      <template v-slot:selection="{ item }">
+                        <div>{{ item.value }}</div>
+                      </template>
+                    </v-select>
+                    <div class="i-exist" v-if="inCart(option)">{{ $t('orders.products_in_cart') }}: {{ inCartQuantity(option) }} {{ $tc('components.products.carton', 2) }}</div>
                   </div>
                 </v-col>
-                <v-col lg="4" md="4" class="d-flex align-center">
+                <v-col 
+                  :lg="canOrder ? 4 : 7"
+                  :md="canOrder ? 4 : 7"
+                  class="d-flex align-center"
+                >
                   <ul class="price-tiers" v-html="mxPriceTiers(option, true)"></ul>
                 </v-col>
-                <v-col lg="3" md="3" class="d-flex align-center">
+                <v-col
+                  v-if="canOrder"
+                  lg="3" md="3"
+                  class="d-flex align-center"
+                >
                   <vue-number-input v-model="option.quantity" :min="0" center controls />
                   <v-btn
                     class="ma-2"
@@ -99,7 +121,11 @@ import { mapActions, mapGetters } from 'vuex'
 
 export default {
   name: 'productModal',
-  props: ['product'],
+  props: ['product', 'can-order'],
+  components: {
+    ProductImage,
+    VueNumberInput
+  },
   data() {
     return {
       dialog: true,
@@ -124,9 +150,14 @@ export default {
       this.$emit('toggleDialogStatus')
     }
   },
-  components: {
-    ProductImage,
-    VueNumberInput
+  computed: {
+    ...mapGetters('cart', [
+      'products',
+      'cargoAvCbm'
+    ]),
+    image() {
+      return this.product.images[0] ? this.product.images[0].thumb : ''
+    },
   },
   methods: {
     addOption(index) {
@@ -153,15 +184,8 @@ export default {
     ...mapActions('cart', [
       'addToCart'
     ])
-  },
-  computed: {
-    ...mapGetters('cart', [
-      'products',
-      'cargoAvCbm'
-    ]),
-    image() {
-      return this.product.images[0].thumb ? this.product.images[0].thumb : ''
-    },
   }
 }
 </script>
+
+

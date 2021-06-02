@@ -88,8 +88,10 @@ const messages = {
   view_file: 'Ver archivo',
   designs: 'Diseños',
   confirm_delete: 'Estas seguro de eliminar esto?',
-  quotations: 'Cotizaciones',
+  quotation: 'Cotización | Cotizaciones',
   shipping: 'Envios',
+  customize: 'Personalizar',
+  options: 'Opciones',
   charts: {
     top_clients_purchases: 'Compras mejores clientes',
     confirm_sales_in: 'Compras confirmadas en',
@@ -156,7 +158,11 @@ const messages = {
     expired: 'Vencida',
     all_orders: 'Todas',
     only_active: 'Solo activas',
-    save_as_quotation: 'Guardar como cotizacion'
+    save_as_quotation: 'Guardar como cotización',
+    select_delivery_date: 'Fecha de entrega',
+    order_before: 'Pedir antes del',
+    convert_to_order: 'Convertir a orden',
+    products_in_cart: 'Productos en el carrito'
   },
   validation: {
     this_field_required: 'Este campo es obligatorio',
@@ -189,7 +195,7 @@ const messages = {
       company_updated: 'Compañia actualizada'
     },
      products: {
-      total_units_carton: 'Total unidades por carton',
+      total_units_carton: 'Total unidades',
       cartons_onwards: 'cartones en adelante',
       carton: 'cartón | cartones',
       unit: 'unidad | unidades',
@@ -267,7 +273,22 @@ const messages = {
     catalogue_notifications: 'Catalogo',
     order_product_updated_title: 'El producto <strong class="mColor-text">{product_name}</strong> ha sido actualizado.',
     done_by: 'Por {user}.',
-    clear_all: 'Omitir todas'
+    clear_all: 'Omitir todas',
+    order_status_changed: 'El estado de la orden ha cambiado',
+    order_documents_uploaded: 'Nuevo <strong class="mColor-text">{document}</strong> se ha subido.',
+    order_created: 'Nueva {type} creada',
+    from: 'De',
+    to: 'a',
+    order_payment_status_changed: 'El estado del pago ha cambiado',
+    order_product_created_title: 'Producto <strong class="mColor-text">{product_name}</strong> ha sido agregado a la orden.',
+    product_created: '<strong class="mColor-text">{product_name}</strong> ha sido agregado al sistema.'
+  },
+  customDatasheet: {
+    show_header: 'Mostrar encabezado',
+    image_for_reference_only: 'Las imagenes son de referencia unicamente',
+    created_by: 'Creado por',
+    phone: 'Tel',
+    email: 'Correo'
   }
 }
 

@@ -61,6 +61,18 @@ new Vue({
   vuetify,
   store,
   i18n,
+  computed: {
+    lang() {
+      return this.$store.getters.getLanguage
+    }
+  },
+  watch: {
+    lang(new_lang, old_lang) {
+      if(new_lang !== old_lang) {
+        this.$http.defaults.headers.common['lang'] = new_lang
+      }
+    }
+  },
   created: function () {
     //check the status of the session on the server before doing any request
     this.$http.interceptors.response.use(undefined, (err) => {

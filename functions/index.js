@@ -28,7 +28,7 @@ exports.generateListPdf = functions.runWith({memory: '1GB'}).https.onRequest(asy
   const list = req.query.list_id
   
   let str = objectToUrlString(req.query)
-  console.log(`${app_url}public/catalogue/${list}?${str}`)
+  //console.log(`${app_url}public/catalogue/${list}?${str}`)
 
   const browser = await puppeteer.launch({ headless: true });
   const page = await browser.newPage();
@@ -42,6 +42,25 @@ exports.generateListPdf = functions.runWith({memory: '1GB'}).https.onRequest(asy
   const pdf = await page.pdf({ 
     printBackground: true,
     preferCSSPageSize: true 
+  })
+  await browser.close();
+
+  res.type('application/pdf').send(pdf);
+})
+
+exports.generateProductPdf = functions.runWith({memory: '1GB'}).https.onRequest(async (req, res) => {
+
+  res.set('Access-Control-Allow-Origin', '*');
+  res.set('Access-Control-Allow-Headers', '*')
+
+  const browser = await puppeteer.launch({ headless: true });
+  const page = await browser.newPage();
+  const dom = req.body.html
+  await page.setContent(dom)
+  await page.emulateMediaType('screen')
+  const pdf = await page.pdf({ 
+    printBackground: true,
+    preferCSSPageSize: true,
   })
   await browser.close();
 

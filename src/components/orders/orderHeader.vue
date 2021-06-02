@@ -3,7 +3,17 @@
     <loader v-model="loading"></loader>
     <div v-if="!loading">
       <v-card-title class="justify-space-between">
-        <h2><span class="mColor-text pr-2">{{ `${ $tc('order', 1) } #${ order.orderNumber }` }}</span> - {{ order.company.name }}</h2>
+        <h2>
+          <span
+            v-if="order.type === 'order'"
+            class="mColor-text pr-2"
+          >{{ `${ $tc('order', 1) } #${ order.orderNumber }` }}</span>
+          <span
+            v-else
+            class="mColor-text pr-2"
+          >{{ `${ $tc('quotation', 1) } #${ order.id }` }}</span>
+          - {{ order.company.name }}
+        </h2>
         <div>
           <v-btn
             v-if="$store.getters.isAuthenticated"
@@ -12,7 +22,7 @@
             {{ $t('orders.public_url') }}<v-icon class="pl-3">mdi-content-copy</v-icon>
           </v-btn>
           <v-btn
-            :href="order.download_url"
+            :href="order.download_url+`?lang=${this.$store.getters.getLanguage}`"
             target="_blank"
           >
             {{ $t('download') }}<v-icon class="pl-3">mdi-download</v-icon>

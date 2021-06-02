@@ -44,14 +44,13 @@
         v-on="$listeners"
       ></product-hidden-options>
     </v-card-actions>
-    <v-dialog
-      v-model="showFullDetails"
-      transition="dialog-bottom-transition"
-    >
-      <product-details-modal
-        :product="product"
-      />
-    </v-dialog>
+    
+    <product-details-modal
+      :product="product"
+      v-if="showFullDetails"
+      @toggleDialogStatus="showFullDetails = false"
+    ></product-details-modal>
+
     <v-dialog
       v-model="showCertificationsModal"
       transition="dialog-bottom-transition"
@@ -67,7 +66,7 @@
 
 <script> 
 import ProductHiddenOptions from './ProductHiddenOptions.vue'
-import ProductDetailsModal from './ProductDetailsModal'
+import ProductDetailsModal from '../orders/productModal'
 import productCertifications from './ProductCertifications'
 
 export default {
