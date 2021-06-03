@@ -140,6 +140,12 @@ const mixins = {
     buildCartProduct(product, option, attrs) {
       const idd = `${option.id}-${attrs.join('-')}` //product + attributes
       var image = (product.images[0]) ? product.images[0].small : ''
+      var attributes = []
+      option.attributes.map( a => {
+        if(attrs.includes(a.attribute_id)) {
+          attributes.push(a)
+        }
+      })
       return {
         id: idd,
         product_id: product.id,
@@ -154,6 +160,7 @@ const mixins = {
         cbm_per_carton: option.cbm_per_carton,
         quantity: option.quantity,
         attributes: attrs,
+        attributes_data: attributes,
         tiers: option.tiers,
         cost_per_carton: this.cartIncoterm === 'DDP' ? option.ddp_carton_sale_price : option.carton_price,
         image: image

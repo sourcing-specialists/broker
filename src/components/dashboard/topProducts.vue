@@ -1,6 +1,6 @@
 <template>
   <v-card>
-    <v-card-title>{{ $t('charts.top_product_sales') }}</v-card-title>
+    <v-card-title>{{ $t('charts.top_product_sales') }}<v-btn @click="reload"><v-icon>mdi-refresh</v-icon></v-btn></v-card-title>
     <v-card-subtitle>
       <v-row>
         <v-col
@@ -164,6 +164,9 @@
           }
 
         })
+      },
+      reload() {
+        this.getData()
       }
     },
     mounted() {

@@ -40,7 +40,8 @@
             </h4>
           </v-list-item-title>
           <v-list-item-subtitle>
-            <span class="font-weight-bold">{{ p.option_group_name }}: </span>{{ p.option_group_value }}
+            <span><strong>{{ p.option_group_name }}:</strong> {{ p.option_group_value }}</span>
+            <span v-for="attr in p.attributes_data" :key="attr.id"> - <strong>{{ attr.group_name }}:</strong> {{ attr.value }}</span>
           </v-list-item-subtitle>
           <p><strong>{{ $t('orders.cbm_per_carton') }}:</strong> {{ p.cbm_per_carton }}</p>
           <p><strong>{{ $t('orders.box_size') }}:</strong> {{ p.meas }}</p>
@@ -138,6 +139,9 @@ export default {
       'updateQuantity',
       'confirmOrder'
     ])
+  },
+  mounted() {
+    console.log(this.products)
   }
 }
 </script>

@@ -9,12 +9,12 @@
     >
       <v-row>
         <v-col
-          lg="1"
+          lg="4"
         >
-          <ProductImage :src="image" />
+          <image-slider :images="images"></image-slider>
         </v-col>
         <v-col
-          lg="11"
+          lg="6"
         >
           <h2 class="mColor-text">{{ product.name }}</h2>
           <p class="ps-2">{{ product.description }}</p>
@@ -23,7 +23,7 @@
       <div
         class="pa-3"
       >
-        <h4>Options</h4>
+        <h4>{{ $t('options') }}</h4>
         <v-form
           v-for="(option, option_index) in options"
           :key="option.id"
@@ -115,7 +115,8 @@
 </template>
 
 <script>
-import ProductImage from '../products/ProductImage'
+
+import imageSlider from '../imageSlider'
 import VueNumberInput from '@chenfengyuan/vue-number-input'
 import { mapActions, mapGetters } from 'vuex'
 
@@ -123,7 +124,7 @@ export default {
   name: 'productModal',
   props: ['product', 'can-order'],
   components: {
-    ProductImage,
+    imageSlider,
     VueNumberInput
   },
   data() {
@@ -158,6 +159,12 @@ export default {
     image() {
       return this.product.images[0] ? this.product.images[0].thumb : ''
     },
+    images() {
+      var images = this.product.images.map( i => {
+        return i.large
+      })
+      return images
+    }
   },
   methods: {
     addOption(index) {

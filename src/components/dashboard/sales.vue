@@ -2,6 +2,7 @@
   <v-card>
     <v-card-title>
       {{ $t('charts.sales') }}
+      <v-btn @click="reload"><v-icon>mdi-refresh</v-icon></v-btn>
     </v-card-title>
     <v-card-subtitle>
       <v-row>
@@ -161,7 +162,7 @@
           }
         })
         .then( resp => {
-          //console.log(resp.data)
+          console.log(resp.data)
           this.loading = false
           this.labels = [ this.$t('charts.confirmed'), this.$t('charts.pending')]
           this.data = [resp.data.data.sales.total_sales_confirmed, resp.data.data.sales.total_sales_pending]
@@ -186,6 +187,9 @@
             })
           }
         })
+      },
+      reload() {
+        this.getData()
       }
     },
     mounted() {

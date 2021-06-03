@@ -102,7 +102,8 @@ const messages = {
     orders_status: 'Ventas por estado de orden',
     top_product_sales: 'Mejores ventas por producto',
     total_confirmed: 'Total confirmadas',
-    total_pending: 'Total Pendientes'
+    total_pending: 'Total Pendientes',
+    total_sales: 'Ventas totales'
   },
   dashboard: {
     coming_events: 'Próximos eventos',
@@ -192,7 +193,8 @@ const messages = {
       notify_user: 'Notificar',
       create_company: 'Crear compañia',
       company_created_successfully: 'Compañia creada exitosamente',
-      company_updated: 'Compañia actualizada'
+      company_updated: 'Compañia actualizada',
+      categories_interest: 'Interés por categorías'
     },
      products: {
       total_units_carton: 'Total unidades',

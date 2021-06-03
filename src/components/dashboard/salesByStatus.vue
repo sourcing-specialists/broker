@@ -1,7 +1,7 @@
 <template>
   <v-card>
     <v-card-title>
-      {{ $t('charts.orders_status') }}
+      {{ $t('charts.orders_status') }}<v-btn @click="reload"><v-icon>mdi-refresh</v-icon></v-btn>
     </v-card-title>
     <v-card-subtitle>
       <v-row>
@@ -71,7 +71,7 @@
           class="total_sales"
         >
           <div>
-            <h4>Total Sales</h4>
+            <h4>{{ $t('charts.total_sales') }}</h4>
             <h1 class="mColor-text">{{ numberToNiceString(totalSales, $store.getters.getCurrency, 2) }}</h1>
             <ul class="labels">
               <li
@@ -197,6 +197,9 @@
             })
           }
         })
+      },
+      reload() {
+        this.getData()
       }
     },
     mounted() {

@@ -120,7 +120,34 @@
             required
           ></v-select>
         </v-col>
-    </v-row>
+      </v-row>
+      <v-row>
+        <v-col
+          lg="12"
+          sm="12"
+        >
+          <v-select
+            v-model="form.category_ids"
+            :items="categories"
+            :label="$t('components.companies.categories_interest')"
+            :rules="requiredRules"
+            required
+            multiple
+          >
+            <template v-slot:selection="{ item, index }">
+              <v-chip outlined v-if="index === 0 || index === 1">
+                <span>{{ item.text }}</span>
+              </v-chip>
+              <span
+                v-if="index === 2"
+                class="grey--text text-caption"
+              >
+                (+{{ form.category_ids.length - 2 }} others)
+              </span>
+            </template>
+          </v-select>
+        </v-col>
+      </v-row>
       <v-text-field
         v-if="!id"
         v-model="form.user_name"
@@ -177,7 +204,8 @@ export default {
         pref_currency: 'USD',
         user_name: '',
         user_email: '',
-        notify_user: false
+        notify_user: false,
+        category_ids: []
       },
       emailTaken: false,
       requiredRules: [
@@ -190,7 +218,8 @@ export default {
       ],
       currencies: ['USD'],
       zones: [],
-      warehouses: []
+      warehouses: [],
+      categories: []
     }
   },
   methods: {
@@ -231,30 +260,51 @@ export default {
         resolve()
       })
     },
+    loadCategories() {
+      this.$http.get(this.endpoint(`category/get`), { 
+        params: {
+          incoterm: 'FOB'
+        } 
+      }).then( resp => {
+        var cats = []
+        resp.data.data.map( c => {
+          if(c.header) {
+            cats.push({
+              text: c.header,
+              value: c.id
+            })
+            if(!this.id) {
+              this.form.category_ids.push(c.id)
+            }
+          }
+        })
+        this.categories = cats
+      })
+    },
     validate() {
       if(this.$refs.form.validate()) {
         this.$store.commit('isLoading', true) //ON loading
         //define if editing or creating
         var endp = 'customer/create'
         if(this.id) endp = `customer/${this.id}/update`
-          this.$http.post(this.endpoint(endp), this.form)
-          .then( resp => {
-            if(resp.data.result == false) {
-              this.emailTaken = true
-              this.$refs.form.validate()
-              this.emailTaken = false
-              this.$toasted.error(resp.data.message.message)
-            }
-            if(resp.data.result == true) {
-              this.$toasted.success(!this.id ? '' : '')
-              if(!this.id) this.$router.push({ name: 'Companies' })
-            }
-            this.$store.commit('isLoading', false) //OFF loading
-          })
-          .catch( (error) => {
-            this.$toasted.error('ERROR: ' + error.response.data.message.message)
-            this.$store.commit('isLoading', false) //OFF loading
-          })
+        this.$http.post(this.endpoint(endp), this.form)
+        .then( resp => {
+          if(resp.data.result == false) {
+            this.emailTaken = true
+            this.$refs.form.validate()
+            this.emailTaken = false
+            this.$toasted.error(resp.data.message.message)
+          }
+          if(resp.data.result == true) {
+            this.$toasted.success(!this.id ? '' : '')
+            if(!this.id) this.$router.push({ name: 'Companies' })
+          }
+          this.$store.commit('isLoading', false) //OFF loading
+        })
+        .catch( (error) => {
+          this.$toasted.error('ERROR: ' + error.response.data.message.message)
+          this.$store.commit('isLoading', false) //OFF loading
+        })
       }
     }
   },
@@ -266,6 +316,7 @@ export default {
           this.$http.get(this.endpoint(`customer/get/${this.id}`))
             .then(resp => {
               this.form = resp.data.data
+              this.form.category_ids = resp.data.data.categories.map( c => c.id )
               this.loading = false
             })
         })
@@ -275,6 +326,7 @@ export default {
   },
   mounted() {
     this.$store.commit('isLoading', false) //OFF loading
+    this.loadCategories()
   }
 }
 </script>

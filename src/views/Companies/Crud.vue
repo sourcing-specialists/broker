@@ -9,14 +9,14 @@
         md="6"
         sm="12"
       >
-        <CompanyDetailsForm :id="id" />
+        <company-details-form :id="id"></company-details-form>
       </v-col>
       <v-col
         lg="6"
         md="6"
         sm="12"
       >
-        <CompanyUsersList v-if="id" :id="id" />
+        <company-users-list v-if="id" :id="id"></company-users-list>
       </v-col>
     </v-row>
   </v-container>
