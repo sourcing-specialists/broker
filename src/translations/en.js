@@ -25,6 +25,7 @@ const messages = {
   ref: 'Reference',
   ref_ab: 'Ref',
   origin: 'Origin',
+  destination: 'Destination',
   production_time: 'Production time',
   hs_code: 'HS Code',
   carton: 'Carton | Cartons',
@@ -163,7 +164,10 @@ const messages = {
     select_delivery_date: 'Delivery date',
     order_before: 'Order before',
     convert_to_order: 'Convert to order',
-    products_in_cart: 'Products in cart'
+    products_in_cart: 'Products in cart',
+    arrival_date: 'Arrival date',
+    bl_number: 'Bill of landing',
+    departure_date: 'Departure date'
   },
   validation: {
     this_field_required: 'This field is required',

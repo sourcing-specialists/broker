@@ -28,14 +28,12 @@
         <currency-select />
       </li>
       <li>
-        <router-link to="/account">
-          <v-btn
-            dark
-            color="secondary"
-          >
-            <span>{{ $store.state.auth.user.name }}</span>
-          </v-btn>
-        </router-link>
+        <v-btn
+          dark
+          color="secondary"
+        >
+          <span>{{ $store.state.auth.user.name }}</span>
+        </v-btn>
       </li>
       <li>
         <v-btn

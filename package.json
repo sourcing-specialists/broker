@@ -9,6 +9,7 @@
   },
   "dependencies": {
     "@chenfengyuan/vue-number-input": "^1.2.1",
+    "@meilisearch/instant-meilisearch": "^0.5.0",
     "@stripe/stripe-js": "^1.13.2",
     "axios": "^0.21.1",
     "chart.js": "^2.9.4",
@@ -21,6 +22,7 @@
     "vue": "^2.6.11",
     "vue-chartjs": "^3.5.1",
     "vue-i18n": "^8.22.4",
+    "vue-instantsearch": "^3.7.0",
     "vue-page-transition": "^0.2.2",
     "vue-pdf": "^4.2.0",
     "vue-router": "^3.2.0",

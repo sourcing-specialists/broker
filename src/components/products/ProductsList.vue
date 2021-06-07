@@ -3,14 +3,7 @@
     <v-container fluid>
       <v-row>
         <v-col>
-          <v-text-field
-            append-icon="mdi-magnify"
-            v-model="search"
-            :label="$t('search')"
-            clearable
-            @input="filterSearch"
-            @keyup="filterSearch"
-          ></v-text-field>
+          <search-bar v-model="search"></search-bar>
         </v-col>
       </v-row>
     </v-container>
@@ -227,6 +220,7 @@ import CustomCatalogueSelection from '../CustomCatalogueSelection'
 import SelectionOptions from './selectionOptions'
 import IncoSelection from '../incoSelection'
 import loadingBox from '../loadingBox'
+import searchBar from './searchBar'
 import { mapGetters } from 'vuex'
 import _ from 'lodash'
 
@@ -246,7 +240,7 @@ export default {
       error: '',
       page: 1,
       totalPages: 1,
-      pageSize: 25
+      pageSize: 25,
     }
   },
   components: {
@@ -257,7 +251,8 @@ export default {
     CustomCatalogueSelection,
     SelectionOptions,
     IncoSelection,
-    loadingBox
+    loadingBox,
+    searchBar
   },
   watch: {
     getIncoterm: function(val, old) {
@@ -282,6 +277,9 @@ export default {
     pageSize() {
       this.loadProducts()
     },
+    search() {
+      this.loadProducts()
+    }
   },
   computed: {
     ...mapGetters('cart', [
@@ -364,6 +362,7 @@ export default {
         ]
       }, { headers: { lang: this.getLanguage }})
       .then( resp => {
+        console.log(resp.data.data)
         if(resp.data.result == true) {
           this.$emit('loaded')
           this.products = resp.data.data.items
