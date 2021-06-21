@@ -14,8 +14,6 @@
       </p>
     </v-container>
     <v-divider></v-divider>
-    <cargo-bar v-if="incoterm !== 'FOB'"></cargo-bar>
-    <v-divider v-if="incoterm !== 'FOB'"></v-divider>
     <v-list
       v-if="products.length > 0"
     >
@@ -51,8 +49,9 @@
             <li>
               <v-text-field
                 class="text-center"
-                v-model="p.quantity"
-                @blur="updateQuantity({ id: p.id, quantity: p.quantity })"
+                :value="p.quantity"
+                @keyup.enter="updQty(p.id, $event)"
+                @blur="updQty(p.id, $event)"
               >
                 <v-btn
                   slot="prepend"
@@ -69,7 +68,6 @@
                   fab
                   small
                   color="red darken-4"
-                  :disabled="!cargoHasSpace(cargoAvCbm, { cbm_per_carton: p.cbm_per_carton, quantity: 1 }, incoterm)"
                   @click="p.quantity++ && updateQuantity({ id: p.id, quantity: p.quantity })"
                 >
                   <v-icon>mdi-plus</v-icon>
@@ -108,13 +106,14 @@
 
 <script>
 import { mapActions, mapGetters } from 'vuex'
-import cargoBar from '../cargoBar'
 
 export default {
   name: 'cartContent',
   props: ['checkout'],
-  components: {
-    cargoBar
+  data() {
+    return {
+      qty: 0
+    }
   },
   computed: {
     isCheckout() {
@@ -126,7 +125,6 @@ export default {
       'subtotal',
       'cbm',
       'distribution',
-      'cargoAvCbm',
       'incoterm'
     ]),
     ...mapGetters([
@@ -138,10 +136,17 @@ export default {
     ...mapActions('cart', [
       'updateQuantity',
       'confirmOrder'
-    ])
-  },
-  mounted() {
-    console.log(this.products)
+    ]),
+    updQty(id, event) {
+      this.updateQuantity({ 
+        id: id, 
+        quantity: event.target.value,
+        valueChanged: true 
+      }).then(qty => {
+        event.target.value = qty
+        event.target.dispatchEvent(new Event('input'))
+      })
+    }
   }
 }
 </script>

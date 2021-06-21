@@ -93,6 +93,7 @@ const messages = {
   documents: 'Documents',
   customize: 'Customize',
   options: 'Options',
+  search_categories: 'Search categories',
   charts: {
     top_clients_purchases: 'Top clients purchases',
     confirm_sales_in: 'Confirmed sales in',
@@ -132,6 +133,7 @@ const messages = {
     air: 'Air',
     select_cargo: 'Please chose a cargo',
     cbm_used_vs_free: 'used out of',
+    weight_used_vs_free: 'kg out of',
     confirm_settings: 'Confirm settings',
     please_confirm: 'Please confirm',
     changing_incoterm_confirmation_text: 'Changing the incoterm on started orders will result in the loss of all the products in your cart. Are you sure you want to proceed?',
@@ -167,7 +169,15 @@ const messages = {
     products_in_cart: 'Products in cart',
     arrival_date: 'Arrival date',
     bl_number: 'Bill of landing',
-    departure_date: 'Departure date'
+    departure_date: 'Departure date',
+    transportation: 'Transportation',
+    notes: 'Notes',
+    //new
+    add_product: 'Add product',
+    search_your_product: 'Search your product',
+    product_added: 'Product has been added',
+    deleting_confirmation_text: 'The product will be deleted from the order, are you sure?'
+    //end new
   },
   validation: {
     this_field_required: 'This field is required',
@@ -290,7 +300,10 @@ const messages = {
     to: 'to',
     order_payment_status_changed: 'Payment status has changed',
     order_product_created_title: 'Product <strong class="mColor-text">{product_name}</strong> has been added.',
-    product_created: '<strong class="mColor-text">{product_name}</strong> has been added to the system'
+    order_product_deleted_title: 'Product <strong class="mColor-text">{product_name}</strong> has been deleted.',
+    product_created: '<strong class="mColor-text">{product_name}</strong> has been added to the system',
+    product_price_updated: 'The PRICE of <strong class="mColor-text">{product_name}</strong> has been updated',
+    product_updated: 'Product <strong class="mColor-text">{product_name}</strong> has been modified'
   },
   customDatasheet: {
     show_header: 'Show header',

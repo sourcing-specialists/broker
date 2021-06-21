@@ -5,7 +5,6 @@ import Axios from 'axios'
 
 const defaultState = () => {
   return {
-    cargo: {},
     products: [],
     company: {},
     distribution: {},
@@ -37,7 +36,14 @@ const cart = {
       Vue.toasted.success('Product added')
     },
     update(state, { product, addUp, failedUpdate }) {
+
       const existing = state.products.find(x => x.id === product.id)
+
+      if(failedUpdate === 'min') {
+        Vue.toasted.error('Product quantity must be greater or equal to '+product.quantity)
+        return
+      }
+
       const quantity = addUp === true ? existing.quantity+product.quantity : product.quantity 
       var price = {
         cost_per_carton: existing.cost_per_carton
@@ -50,14 +56,7 @@ const cart = {
       existing.price = price
       existing.subtotal = mixins.methods.round((price.cost_per_carton*quantity), 2)
       existing.formatted_subtotal = mixins.methods.round((price.cost_per_carton*quantity), 2)
-      if(failedUpdate === 'min') {
-        Vue.toasted.error('Product quantity must be greater or equal to '+product.quantity)
-        return
-      }
-      if(failedUpdate === 'capacity') {
-        Vue.toasted.error('Quantity exceed cargo capacity.')
-        return
-      }
+
       Vue.toasted.success('Quantity updated')
     },
     remove(state, id) {
@@ -83,9 +82,6 @@ const cart = {
     setDistribution(state, dist) {
       state.distribution = dist
     },
-    setCargo(state, cargo) {
-      state.cargo = cargo
-    },
     setIncoterm(state, incoterm) {
       state.incoterm = incoterm
     },
@@ -100,13 +96,8 @@ const cart = {
     setTransport({commit}, transport) {
       commit('setTransport', transport)
     },
-    addToCart({state, commit, dispatch, getters}, product) {
-      
-      //check if cargo has space with the quantities that want to be add || IGNORE ON FOB
-      if(!mixins.methods.cargoHasSpace(getters.cargoAvCbm, product, state.incoterm)) {
-        Vue.toasted.error('Quantity exceed cargo capacity.')
-        return
-      }
+    addToCart({state, commit, dispatch}, product) {
+
       //check if exist already in cart
       const existing = state.products.find(x => x.id === product.id)
       if(existing) {
@@ -128,34 +119,25 @@ const cart = {
     clearCartItems({commit}) {
       commit('clear', true)
     },
-    updateQuantity({state, commit, dispatch, getters}, updates) {
+    updateQuantity({state, commit, dispatch}, updates) {
+      return new Promise((resolve) => {
+        const item = state.products.find(i => i.id === updates.id)
 
-      const item = state.products.find(i => i.id === updates.id)
-
-      if(!mixins.methods.cargoHasSpace(getters.cargoAvCbm, { cbm_per_carton: item.cbm_per_carton, quantity: Math.abs(item.quantity-updates.quantity) }, state.incoterm)) {
-        commit('update', { product: { id: updates.id, quantity: item.quantity }, failedUpdate: 'capacity' })
-        return
-      }
-
-      if(updates.quantity == 0 || updates.quantity == '') {
-        commit('remove', updates.id)
-      } else if(updates.quantity < item.min_order) {
-        commit('update', { product: { id: updates.id, quantity: item.min_order }, failedUpdate: 'min' })
-      } else {
-        commit('update', { product: { id: updates.id, quantity: updates.quantity }})
-        if(state.incoterm === 'REVOOLOOP') {
-          dispatch('getDistribution')
+        if(updates.quantity == 0 || updates.quantity == '') {
+          commit('remove', updates.id)
+        } else if(updates.quantity < item.min_order) {
+          commit('update', { product: { id: updates.id, quantity: item.min_order }, failedUpdate: 'min' })
+          resolve(item.quantity)
+        } else {
+          commit('update', { product: { id: updates.id, quantity: updates.quantity }})
+          if(state.incoterm === 'REVOOLOOP') {
+            dispatch('getDistribution')
+          }
         }
-      }
+      })
     },
     setCompany({commit}, company) {
       commit('company', company)
-    },
-    cargoSelection({state, commit}, cargo) {
-      if(state.cargo != cargo) {
-        commit('clearProducts')
-        commit('setCargo', cargo)
-      }
     },
     confirmOrder({state, getters, rootGetters}, type) {
       //pass correct type
@@ -169,7 +151,6 @@ const cart = {
           reference: '',
           customer_id: getters.company.id,
           currency: rootGetters.getCurrency,
-          cargo_id: state.cargo.id,
           products: state.products,
           incoterm: state.incoterm
         }).then(resp => {
@@ -217,13 +198,15 @@ const cart = {
       })
       return sum.reduce((a, b) => a + b, 0)
     },
+    weight: state => {
+      const sum = state.products.map(function(p) {
+        return p.weight_per_carton*p.quantity
+      })
+      return sum.reduce((a, b) => a + b, 0)
+    },
     origin_zone: state => state.company.warehouse.zone.id,
     destination_zone: state => state.company.zone.id,
     distribution: state => state.distribution,
-    cargo: state => state.cargo,
-    cargoAvCbm: (state, getters) => {
-      return state.cargo.cbm_free-getters.cbm
-    },
     total: (state, getters) => {
       var total = getters.subtotal
       if(getters.incoterm === 'REVOOLOOP') {

@@ -113,26 +113,52 @@
                 small
               >
                 <v-avatar left>
-                  <v-icon>{{ stageIcon(item.stage.slug) }}</v-icon>
+                  <v-icon small>{{ stageIcon(item.stage.slug) }}</v-icon>
                 </v-avatar>
                 {{ item.stage.description }} 
                 <div v-if="item.stage.slug === 'shipped'">
                   . ETA: {{ item.eta }}
                 </div>
-            </v-chip>
+              </v-chip>
             </td>
           </tr>
           <tr>
             <td>
               <v-chip-group>
                 <v-chip
-                  v-if="item.stage.slug === 'pending' && item.expired_at !== null"
+                  v-if="item.expired_at !== null && item.expired_at !== ''"
                   label
                   :color="isExpired(item.expired_at) ? 'warning' : 'success'"
                   x-small
                 >
                   <strong class="mr-1 ">{{ isExpired(item.expired_at) ? $t('orders.expired') : $t('orders.expiring_at') }}: </strong> {{ formatDate(item.expired_at) }}
                 </v-chip>
+                <v-tooltip
+                  bottom
+                  color="rgba(255, 255, 255, 1)"
+                  v-for="payment in item.payments"
+                  :key="payment.id"
+                >
+                  <template v-slot:activator="{ on, attrs }">
+                    <v-chip
+                      v-bind="attrs"
+                      v-on="on"
+                      label
+                      :color="payment.status === 'Pending' ? 'red' : 'green'"
+                      dark
+                      x-small
+                    >
+                      <v-icon x-small>{{ payment.status === 'Pending' ? 'mdi-currency-usd-off' : 'mdi-currency-usd' }}</v-icon>
+                    </v-chip>
+                  </template>
+                  <v-card class="py-2" flat>
+                    <div><strong>{{ $t('created') }}:</strong> {{ formatDate(payment.created_at) }}</div>
+                    <div><strong>{{ $t('reason') }}:</strong> {{ payment.reason }}</div>
+                    <div><strong>{{ $t('amount') }}:</strong> {{ payment.amount_string }}</div>
+                    <div v-if="payment.status === 'Pending'"><strong>{{ $t('orders.expiring_at') }}:</strong> {{ formatDate(payment.expired_at) }}</div>
+                    <div v-else><strong>{{ $t('paid_at') }}:</strong> {{ formatDate(payment.paid_at) }}</div>
+                  </v-card>
+                </v-tooltip>
               </v-chip-group>
             </td>
           </tr>

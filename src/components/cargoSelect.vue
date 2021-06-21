@@ -30,6 +30,17 @@
                 <strong>{{ data.item.cbm_in_use }} {{ $t('orders.cbm_used_vs_free') }}  {{ data.item.cbm_limit }} </strong>
               </template>
             </v-progress-linear>
+            <v-progress-linear
+              class="mt-1"
+              v-model="data.item.weightPercent"
+              color="blue-grey lighten-3"
+              height="10"
+              striped
+            >
+              <template v-slot:default>
+                <p class="ma-0" style="font-size: 9px;"><strong>{{ data.item.weight_in_use }} {{ $t('orders.weight_used_vs_free') }}  {{ data.item.weight_limit }} </strong></p>
+              </template>
+            </v-progress-linear>
             <h4 class="mt-3 ml-3 text-center">
               <v-icon>mdi-ferry</v-icon><strong class="mColor-text ml-3">{{ $t('orders.estimated_delivery') }}: </strong>{{ formatDate(data.item.eta) }}
             </h4>
@@ -100,6 +111,7 @@ export default {
                   c.value = c.id
                   c.text = `${ vue.formatDate(c.eta) } (${c.name})`
                   c.percent = c.cbm_in_use/c.cbm_limit*100
+                  c.weightPercent = c.weight_in_use/c.weight_limit*100
                 })
                 this.cargos = resp.data.data
               }

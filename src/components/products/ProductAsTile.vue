@@ -8,6 +8,9 @@
     <div
       class="pa-4"
     >
+      <ul>
+        <li><span class="font-weight-bold">{{ $t('components.products.ref_number') }}:</span> {{ mainOption.ref }}</li>
+      </ul>
       <h4>
         <span :style="`color: ${$store.getters.hexColor}`">{{ product.name }}</span> 
         <span
@@ -21,16 +24,19 @@
           @click="showCertificationsModal = true"
         ><v-icon>mdi-certificate</v-icon></v-btn>
       </h4>
-      <v-divider></v-divider>
-      <p>{{ product.description.length >= 30 ? `${product.description.substring(0,30)}...` : product.description }}</p>
-      <ul>
+      <p>{{ product.description.length >= 40 ? `${product.description.substring(0,40)}...` : product.description }}</p>
+      <!--<ul>
         <li><span class="font-weight-bold">{{ $t('components.products.ref_number') }}:</span> {{ mainOption.ref }}</li>
         <li><span class="font-weight-bold">{{ $t('components.products.carton_size') }}:</span> {{ mxMeas(mainOption) }}</li>
         <li><span class="font-weight-bold">{{ $t('moq') }}:</span> {{ mainOption.min_order }} {{ $tc('carton',mainOption.min_order) }}</li>
       </ul>
-      <ul v-html="mxPacking(mainOption)"></ul>
-      <h5>{{ $t('price_tiers') }}</h5>
-      <ul class="price-tiers" v-html="mxPriceTiers(mainOption)"></ul>
+      <ul v-html="mxPacking(mainOption)"></ul>-->
+      <h5>{{ $t('price') }}</h5>
+      <v-divider></v-divider>
+      <ul 
+        v-html="mxPriceTiers(mainOption, false, $store.getters.getIncoterm, true)"
+        :class="[ { ['price-tiers']: $store.getters.getIncoterm === 'REVOOLOOPPP' }, 'mt-1' ]"
+      ></ul>
     </div>
     <v-card-actions
       :class="['asTile']"

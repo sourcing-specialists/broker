@@ -93,6 +93,7 @@ const messages = {
   shipping: 'Envios',
   customize: 'Personalizar',
   options: 'Opciones',
+  search_categories: 'Buscar categorías',
   charts: {
     top_clients_purchases: 'Compras mejores clientes',
     confirm_sales_in: 'Compras confirmadas en',
@@ -132,6 +133,7 @@ const messages = {
     air: 'Aire',
     select_cargo: 'Seleccionar cargo',
     cbm_used_vs_free: 'usado de',
+    weight_used_vs_free: 'kg de',
     confirm_settings: 'Confirmar configuración',
     please_confirm: 'Por favor confirmar',
     changing_incoterm_confirmation_text: 'Cambiar el incoterm en una orden ya empezada borrara todos los products agregados hasta el momento. Esta seguro que desea proceder?',
@@ -167,7 +169,9 @@ const messages = {
     products_in_cart: 'Productos en el carrito',
     arrival_date: 'Fecha de llegada',
     bl_number: 'Bill of landing',
-    departure_date: 'Fecha de salida'
+    departure_date: 'Fecha de salida',
+    transportation: 'Transporte',
+    notes: 'Notas'
   },
   validation: {
     this_field_required: 'Este campo es obligatorio',
@@ -287,7 +291,9 @@ const messages = {
     to: 'a',
     order_payment_status_changed: 'El estado del pago ha cambiado',
     order_product_created_title: 'Producto <strong class="mColor-text">{product_name}</strong> ha sido agregado a la orden.',
-    product_created: '<strong class="mColor-text">{product_name}</strong> ha sido agregado al sistema.'
+    product_created: '<strong class="mColor-text">{product_name}</strong> ha sido agregado al sistema.',
+    product_price_updated: 'El PRECIO de <strong class="mColor-text">{product_name}</strong> ha sido cambiado',
+    product_updated: 'El producto <strong class="mColor-text">{product_name}</strong> ha sido modificado'
   },
   customDatasheet: {
     show_header: 'Mostrar encabezado',

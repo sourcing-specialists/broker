@@ -14,7 +14,18 @@
       striped
     >
       <template v-slot:default>
-        {{ filledUpTo }}% - {{ cbmLeft }}cbm {{ $t('orders.available') }}.
+        <strong>{{ filledUpTo }}% - {{ cbmLeft }}cbm {{ $t('orders.available') }}.</strong>
+      </template>
+    </v-progress-linear>
+    <v-progress-linear
+      class="mt-1"
+      v-model="weightPercent"
+      color="blue-grey lighten-3"
+      height="10"
+      striped
+    >
+      <template v-slot:default>
+        <p class="ma-0" style="font-size: 9px;"><strong>{{ weightUpTo }} {{ $t('orders.weight_used_vs_free') }}  {{ cargo.weight_limit }} </strong></p>
       </template>
     </v-progress-linear>
     <h2 class="mt-3 ml-3 text-center">
@@ -30,15 +41,30 @@ export default {
   computed: {
     ...mapGetters('cart', [
       'cbm',
-      'cargo'
+      'cargo',
+      'weight',
+      'products'
     ]),
-    filledUpTo() {
+    filledUpTo() {//cbms
       return this.round(((this.cargo.cbm_in_use+this.cbm)*100)/this.cargo.cbm_limit,2)
     },
     cbmLeft() {
       var left =  this.cargo.cbm_limit - (this.cargo.cbm_in_use+this.cbm)
       return this.round(left)
+    },
+    weightPercent() {
+      return this.round(((this.cargo.weight_in_use+this.weight)*100)/this.cargo.weight_limit,2)
+    },
+    weightUpTo() {
+      return this.round((this.cargo.weight_in_use+this.weight),2)
+    },
+    weightLeft() {
+      var left =  this.cargo.weight_limit - (this.cargo.weight_in_use+this.weight)
+      return this.round(left)
     }
-  }
+  },
+    mounted() {
+      console.log(this.products)
+    }
 }
 </script>

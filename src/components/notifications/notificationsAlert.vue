@@ -72,7 +72,7 @@
                 <v-btn
                   text
                   small
-                  @click="clearAll(orders, 'payment')"
+                  @click="clearAll(payments, 'payment')"
                 >{{ $t('notifications.clear_all') }}</v-btn>
               </div>
               <notification-list
@@ -91,7 +91,7 @@
                 <v-btn
                   text
                   small
-                  @click="clearAll(orders, 'catalogue')"
+                  @click="clearAll(catalogue, 'catalogue')"
                 >{{ $t('notifications.clear_all') }}</v-btn>
               </div>
               <notification-list
@@ -133,14 +133,20 @@ export default {
           mode: 'unseen'
         }
       }).then(resp => {
-        this.orders = resp.data.data.orders.map( n => {
-          return this.buildNotification(n)
+        resp.data.data.orders.map( n => {
+          if(this.buildNotification(n) !== null) {
+            this.orders.push(this.buildNotification(n))
+          }
         })
-        this.catalogue = resp.data.data.catalogue.map( n => {
-          return this.buildNotification(n)
+        resp.data.data.catalogue.map( n => {
+          if(this.buildNotification(n) !== null) {
+            this.catalogue.push(this.buildNotification(n))
+          }
         })
-        this.payments = resp.data.data.payments.map( n => {
-          return this.buildNotification(n)
+        resp.data.data.payments.map( n => {
+          if(this.buildNotification(n) !== null) {
+            this.payments.push(this.buildNotification(n))
+          }
         })
       })
     },

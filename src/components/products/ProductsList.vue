@@ -11,23 +11,14 @@
       <v-row>
         <v-col
           v-if="!isForOrders"
-          :lg="listIncoterm === 'FOB' ? 2 : 1"
+          :lg="2"
         >
           <inco-selection
             :forOrders="isForOrders"
           ></inco-selection>
         </v-col>
         <v-col
-          v-if="!isForOrders && listIncoterm !== 'FOB'"
-          :lg="3"
-        >
-          <cargo-select
-            v-model="selectedCargo"
-            @change="cargoChanged"
-          ></cargo-select>
-        </v-col>
-        <v-col
-          :lg="isForOrders ? 5 : (listIncoterm !== 'FOB' ? 3 : 4)"
+          :lg="isForOrders ? 5 : 4"
         >
           <categories-selection
             :listIncoterm="listIncoterm"
@@ -36,7 +27,7 @@
           ></categories-selection>
         </v-col>
         <v-col
-          :lg="isForOrders ? 5 : (listIncoterm !== 'FOB' ? 3 : 4)"
+          :lg="isForOrders ? 5 : 4"
         >
           <custom-catalogue-selection
             v-model="catalogue"
@@ -68,39 +59,7 @@
         </v-col>
       </v-row>
     </v-container>
-    <v-alert
-      v-if="isForOrders && incoterm !== 'FOB'"
-      type="warning"
-      icon="mdi-ferry"
-      border="left"
-    >
-      {{ $t('orders.estimated_delivery') }}: {{ formatDate(selectedCargo.eta) }} | {{ $t('orders.order_before') }}: {{ formatDate(selectedCargo.cutoff_date) }}
-    </v-alert>
-    <!--Pagination-->
-    <v-container
-      class="pagination_container"
-      fluid
-      v-if="products.length > 0"
-    >
-      <v-row>
-        <v-col class="d-flex justify-end">
-          <div style="width: 75px;">
-            <v-select
-              v-model="pageSize"
-              :items="[5,10,25,50,100]"
-              outlined
-              dense
-            ></v-select>
-          </div>
-          <v-pagination
-            v-model="page"
-            :length="totalPages"
-            :total-visible="totalPages >= 6 ? 7 : totalPages"
-          ></v-pagination>
-        </v-col>
-      </v-row>
-    </v-container>
-    <!--END Pagination-->
+    <v-divider></v-divider>
     <v-container
       fluid
       v-if="$store.getters.catView == 'list'"
@@ -136,54 +95,54 @@
         :canSelect="activateSelection"
         @productAdd="$emit('addModal', product)"
       />
+      <!--Pagination-->
+      <products-list-pagination
+        v-model="page"
+        :totalPages="totalPages"
+        @pageSizeChange="pageSize = $event"
+      ></products-list-pagination>
+      <!--END Pagination-->
     </v-container>
     <v-container
       fluid
       v-if="$store.getters.catView == 'tiles'"
     >
-      <loading-box v-model="isLoading"></loading-box>
-      <v-row
-        :class="['product-tile-row', $vuetify.breakpoint.name]"
-      >
-        <div
-          class="tile-item"
-          v-for="(product, index) in products"
-          :key="index" 
-          lg="3"
-          md="4"
-        >
-          <product-as-tile 
-            :product="product"
-            :addCart="isForOrders"
-            @productAdd="$emit('addModal', product)"
-          />
-        </div>
-      </v-row>
-    </v-container>
-    <!--Pagination-->
-    <v-container
-      v-if="products.length > 0"
-      fluid
-    >
       <v-row>
-        <v-col class="d-flex justify-end">
-          <div style="width: 75px;">
-            <v-select
-              v-model="pageSize"
-              :items="[5,10,25,50,100]"
-              outlined
-              dense
-            ></v-select>
-          </div>
-          <v-pagination
+        <v-col lg="3">
+          <categories-tree
+            :listIncoterm="listIncoterm"
+            :selectedCategories="selectedCategories"
+            @categoriesChanged="categoriesChanged"
+          ></categories-tree>
+        </v-col>
+        <v-col>
+          <!--END Pagination-->
+          <v-row :class="['product-tile-row', $vuetify.breakpoint.name]">
+            <loading-box v-model="isLoading"></loading-box>
+            <div
+              class="tile-item"
+              v-for="(product, index) in products"
+              :key="index" 
+              lg="3"
+              md="4"
+            >
+              <product-as-tile 
+                :product="product"
+                :addCart="isForOrders"
+                @productAdd="$emit('addModal', product)"
+              />
+            </div>
+          </v-row>
+          <!--Pagination-->
+          <products-list-pagination
             v-model="page"
-            :length="totalPages"
-            :total-visible="totalPages >= 6 ? 7 : totalPages"
-          ></v-pagination>
+            :totalPages="totalPages"
+            @pageSizeChange="pageSize = $event"
+          ></products-list-pagination>
+          <!--END Pagination-->
         </v-col>
       </v-row>
     </v-container>
-    <!--END Pagination-->
     <div
       class="no-results"
       v-if="products.length === 0 && isLoading === false"
@@ -214,23 +173,35 @@
 <script>
 import ProductAsList from './ProductAsList.vue'
 import ProductAsTile from './ProductAsTile.vue'
-import cargoSelect from '../cargoSelect'
 import CategoriesSelection from '../CategoriesSelection.vue'
 import CustomCatalogueSelection from '../CustomCatalogueSelection'
 import SelectionOptions from './selectionOptions'
 import IncoSelection from '../incoSelection'
 import loadingBox from '../loadingBox'
 import searchBar from './searchBar'
+import categoriesTree from '../categoriesTree'
+import productsListPagination from './productsListPagination'
 import { mapGetters } from 'vuex'
 import _ from 'lodash'
 
 export default {
   name: 'ProductsList',
   props: ['forOrders'],
+  components: {
+    ProductAsList,
+    ProductAsTile,
+    CategoriesSelection,
+    CustomCatalogueSelection,
+    SelectionOptions,
+    IncoSelection,
+    loadingBox,
+    searchBar,
+    categoriesTree,
+    productsListPagination
+  },
   data: function() {
     return {
       search: '',
-      selectedCargo: this.forOrders !== undefined ? this.$store.getters['cart/cargo'] : this.$store.getters.catalogueCargo,
       selectedCategories: [],
       products: [],
       activateSelection: false,
@@ -240,19 +211,8 @@ export default {
       error: '',
       page: 1,
       totalPages: 1,
-      pageSize: 25,
+      pageSize: 15
     }
-  },
-  components: {
-    ProductAsList,
-    ProductAsTile,
-    cargoSelect,
-    CategoriesSelection,
-    CustomCatalogueSelection,
-    SelectionOptions,
-    IncoSelection,
-    loadingBox,
-    searchBar
   },
   watch: {
     getIncoterm: function(val, old) {
@@ -283,24 +243,17 @@ export default {
   },
   computed: {
     ...mapGetters('cart', [
-      'incoterm',
-      'cargo'
+      'incoterm'
     ]),
     ...mapGetters([
       'getLanguage',
-      'getIncoterm',
-      'catalogueCargo'
+      'getIncoterm'
     ]),
     currency() {
       return this.$store.getters.getCurrency
     },
     isForOrders() {
       return this.forOrders == '' ? true : false
-    },
-    canSelectCargo() {
-      if(this.isForOrders) return false
-      if(this.getIncoterm !== 'FOB') return true
-      return false
     },
     listIncoterm() {
       if(this.isForOrders) return this.incoterm
@@ -325,9 +278,6 @@ export default {
       return true
     },
     loadProducts() {
-      if(this.selectedCargo === undefined) {
-        this.selectedCargo = this.$store.getters.catalogueCargo
-      }
       //must rebuild header because deeper nodes do not react
       this.listHeader = [
         { text: 'input', inOrders: true, col: 1 },
@@ -341,7 +291,6 @@ export default {
       this.isLoading = true
 
       this.$http.post(this.endpoint(`catalogue/get`), { 
-        cargo_id: this.selectedCargo.id,
         currency: this.$store.getters.getCurrency,
         pageSize: this.pageSize,
         pageNumber: this.page,
@@ -362,7 +311,6 @@ export default {
         ]
       }, { headers: { lang: this.getLanguage }})
       .then( resp => {
-        console.log(resp.data.data)
         if(resp.data.result == true) {
           this.$emit('loaded')
           this.products = resp.data.data.items
@@ -374,12 +322,8 @@ export default {
         this.error = `${error.response.data.message.message}`
       })
     },
-    cargoChanged(e) {
-      this.selectedCargo = e
-      this.page = 1
-      this.loadProducts()
-    },
     categoriesChanged(e) {
+      this.page = 1
       this.selectedCategories = e
       this.loadProducts()
     },
@@ -401,19 +345,20 @@ export default {
   background-color: #CCC;
 }
 .product-tile-row {
+  position: relative;
   padding: 25px;
   display: grid;
-  grid-template-columns: repeat(5, 1fr);
+  grid-template-columns: repeat(4, 1fr);
   grid-column-gap: 15px;
   grid-row-gap: 15px;
   &.lg {
-    grid-template-columns: repeat(4, 1fr);
-  }
-  &.md {
     grid-template-columns: repeat(3, 1fr);
   }
-  &.sm {
+  &.md {
     grid-template-columns: repeat(2, 1fr);
+  }
+  &.sm {
+    grid-template-columns: repeat(1, 1fr);
   }
   &.xs {
     grid-template-columns: repeat(1, 1fr);

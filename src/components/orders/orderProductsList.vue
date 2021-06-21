@@ -58,7 +58,9 @@
         v-if="productEditDialog"
         :order="order"
         :product="editingProduct"
-        @quantityUpdated="$emit('productUpdated')"
+        :can-modify="canModify"
+        v-on="$listeners"
+        @productDeleted="productEditDialog = false"
       ></order-product-edit>
     </v-dialog>
   </div>
@@ -78,10 +80,13 @@ export default {
     products: {
       default: []
     },
-    edit: {
+    edit: {//define if should display the edit buttons or not
       default: null
     },
     isPreview: {
+      default: false
+    },
+    canModify: {//define if the order is paid or not to allow any change
       default: false
     }
   },

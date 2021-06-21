@@ -24,6 +24,7 @@
               v-model="quantity"
               :label="$t('quantity')"
               type="number"
+              :disabled="!canModify"
             >
               <template v-slot:append>
                  <v-btn
@@ -33,6 +34,14 @@
                   icon
                   :disabled="quantityDisabled"
                 ><v-icon>fa-save</v-icon></v-btn>
+              </template>
+              <template v-slot:append-outer>
+                 <v-btn
+                  color="error"
+                  @click="deleteProduct()"
+                  dark
+                  icon
+                ><v-icon>mdi-delete</v-icon></v-btn>
               </template>
             </v-text-field>
             <v-progress-linear
@@ -61,6 +70,7 @@
         </v-row>
       </v-card-text>
     </v-form>
+    <confirmation-dialog ref="confirm"></confirmation-dialog>
   </v-card>
 </template>
 <script>
@@ -68,9 +78,10 @@ import orderProductDesigns from './orderProductDesigns'
 
 export default {
   name: 'orderProductEdit',
-  props: ['product', 'order'],
+  props: ['product', 'order', 'can-modify'],
   components: {
-    orderProductDesigns
+    orderProductDesigns,
+    confirmationDialog: () => import("../confirmationDialog"),
   },
   data() {
     return  {
@@ -124,10 +135,20 @@ export default {
           this.$toasted.error(this.$t('orders.quantity_exceed'))
         }
       })
+    },
+    async deleteProduct() {
+      var confirmation = await this.$refs.confirm.open(
+        this.$t('orders.please_confirm'),
+        this.$t('orders.deleting_confirmation_text')
+      )
+      if(confirmation) {
+        this.$http.post(this.endpoint(`orders/edit/${this.order.id}/product/${this.product.id}/delete`))
+        .then( resp => {
+          console.log(resp)
+          this.$emit('productDeleted')
+        })
+      }
     }
-  },
-  mounted() {
-    console.log(this.product.cargos[0])
   }
 }
 </script>

@@ -37,49 +37,6 @@
           ></v-select>
         </v-col>
       </v-row>
-      <v-row>
-        <v-col v-if="inco === 'REVOOLOOP'">
-          <v-select
-            :label="$t('components.delivery_date')"
-            v-model="cargo"
-            item-text="eta"
-            item-value="id"
-            :items="cargos"
-            @change="cargoChange"
-          >
-          </v-select>
-        </v-col>
-      </v-row>
-      <v-row>
-        <v-col v-if="inco !== 'FOB'">
-          <v-text-field
-            :disabled="inco === 'REVOOLOOP'"
-            :label="`${$t('cargo_price')} USD`"
-            v-model="selectedCargo.cost"
-            :rules="requiredRules"
-          >
-            <template v-slot:append>
-              <v-tooltip
-                bottom
-                max-width="450"
-              >
-                <template v-slot:activator="{ on, attrs }">
-                  <v-btn
-                    color="secondary"
-                    v-bind="attrs"
-                    v-on="on"
-                    fab
-                    x-small
-                  >
-                    <v-icon>mdi-help-circle-outline</v-icon>
-                  </v-btn>
-                </template>
-                <span>{{ $t('cargo_price_explain')}}</span>
-              </v-tooltip>
-            </template>
-          </v-text-field>
-        </v-col>
-      </v-row>
       <v-row
         class="mt-3"
       >
@@ -109,7 +66,7 @@
 
 <script>
 import { mapGetters } from 'vuex'
-import { getCurrencies, getIncoterms, getLanguages, getCargos } from '../../endpoints'
+import { getCurrencies, getIncoterms, getLanguages } from '../../endpoints'
 
 export default {
   props: ['datasheet_url', 'product_id'],
@@ -122,9 +79,6 @@ export default {
       currencies: [],
       language: '',
       languages: [],
-      cargo: '',
-      cargos: [],
-      selectedCargo: {},
       requiredRules: [
         v => !!v || this.$t('field_required'),
         v => /^\d*\.?\d*$/.test(v) || this.$t('no_number')
@@ -148,9 +102,7 @@ export default {
         query: {
           incoterm: this.inco,
           currency: this.currency,
-          language: this.language,
-          cargo_id: this.cargo !== 'custom' ? this.cargo : null,
-          cargo_price: this.inco === 'DDP' ? this.selectedCargo.cost : null
+          language: this.language
         } 
       }
     }
@@ -167,17 +119,7 @@ export default {
         return false
       }
       var params = [`lang=${this.language}`, `incoterm=${this.inco}`, `currency=${this.currency}`, `no_price=${this.no_price}`, `broker_id=${this.user.id}`]
-      if(this.inco === 'DDP') {
-        params.push(`cargo_price=${this.selectedCargo.cost}`)
-      }
-      if(this.inco === 'REVOOLOOP') {
-        params.push(`cargo_id=${this.cargo}`)
-      }
       window.open(`${this.datasheet_url}?${params.join('&')}`, '_blank')
-    },
-    cargoChange() {
-      const cargo = this.cargos.find( c => c.id === this.cargo)
-      this.selectedCargo = cargo
     }
   },
   mounted() {
@@ -193,20 +135,6 @@ export default {
     .then( resp => {
       this.languages = resp
       this.language = this.getLanguage
-    })
-    getCargos()
-    .then(resp => {
-      var vue = this
-      this.cargos = resp.map( c => {
-        c.eta = vue.formatDate(c.eta) + `(${c.name})`
-        return c
-      })
-      if(this.inco === 'REVOOLOOP') {
-        this.cargo = resp[0].id
-        this.selectedCargo = resp[0]
-      } else {
-        this.cargo = 'custom'
-      }
     })
   }
 }

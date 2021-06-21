@@ -9,8 +9,10 @@
           :label="$t('search')"
           v-model="search"
           clearable
+          class="d-block"
           @input="refine(search)"
           @keydown="aNav($event, indices)"
+          @click:clear="clear()"
         ></v-text-field>
 
         <ais-hits v-if="currentRefinement && displayResults">
@@ -45,9 +47,11 @@
 </template>
 
 <script>
+
 import Vue from 'vue'
 import InstantSearch from 'vue-instantsearch';
 import { instantMeiliSearch } from '@meilisearch/instant-meilisearch';
+
 //searching tool
 Vue.use(InstantSearch);
 
@@ -73,6 +77,7 @@ export default {
   },
   watch: {
     search() {
+      this.currentActive = 0
       this.displayResults = true
     }
   },
@@ -94,15 +99,14 @@ export default {
         }
       }
       if(e.keyCode === 13) {
-        this.search = indices[0].hits[this.currentActive][`name_${this.$store.getters.getLanguage}`]
-        this.$emit('input', this.search)
-        this.$nextTick(function() {
-          this.displayResults = false
-        })
+        this.goSearch(indices[0].hits[this.currentActive])
       }
     },
+    clear() {
+      this.$emit('input', null)
+    },
     goSearch(hit) {
-      this.search = hit[`name_${this.$store.getters.getLanguage}`]
+      this.search = this.search !== '' ? hit[`name_${this.$store.getters.getLanguage}`] : this.search
       this.$emit('input', this.search)
       this.$nextTick(function() {
         this.displayResults = false

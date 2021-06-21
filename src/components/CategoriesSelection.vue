@@ -38,7 +38,6 @@
   </v-autocomplete>
 </template>
 <script>
-import { mapGetters } from 'vuex'
 export default {
   name: 'CategoriesSelection',
   props: ['listIncoterm', 'inOrders'],
@@ -50,12 +49,6 @@ export default {
     }
   },
   computed: {
-    ...mapGetters('cart', [
-      'cargo'
-    ]),
-    ...mapGetters([
-      'catalogueCargo'
-    ]),
     lang() {
       return this.$store.getters.getLanguage
     }
@@ -65,12 +58,6 @@ export default {
       this.$emit('categoriesChanged', val)
     },
     listIncoterm: function() {//reset on incoterm change
-      this.loadCategories()
-    },
-    cargo: function() {//reset on cargo change
-      this.loadCategories()
-    },
-    catalogueCargo() {
       this.loadCategories()
     },
     lang() {
@@ -90,8 +77,7 @@ export default {
       return new Promise((resolve/*, reject*/) => {
         this.$http.get(this.endpoint(`category/get`), {
           params: {
-            incoterm: this.listIncoterm,
-            cargo_id: this.inOrders ? this.cargo.id : this.catalogueCargo.id
+            incoterm: this.listIncoterm
           }
         }).then( resp => {
           if(resp.data.result == true) {

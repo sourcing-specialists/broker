@@ -177,6 +177,7 @@
                 <strong style="color: #B71C1C;">{{ option.group_name }}:</strong> {{ option.group_value }} ({{ option.ref }})
                 <li><strong>{{ $t('components.products.carton_size') }}:</strong> {{ mxMeas(option) }}</li>
                 <li><strong>{{ $t('moq') }}:</strong> {{ option.min_order }} {{ $tc('components.products.carton', 1) }}</li>
+                <li><strong>{{ $t('components.products.weight') }}:</strong> {{ option.weight_per_carton }}</li>
               </ul>
               <ul
                 v-html="mxPacking(option)"
@@ -465,7 +466,6 @@ export default {
   mounted() {
     this.loadProduct()
     document.getElementById('app').style.backgroundColor = '#FFF'
-    console.log(this.user)
   }
 }
 </script>

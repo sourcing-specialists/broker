@@ -81,6 +81,17 @@
             <v-tab-item
               value="products"
             >
+              <v-container v-if="canEditOrder" fluid>
+                <v-row class="pa-3">
+                  <v-spacer></v-spacer>
+                  <v-btn
+                    color="second"
+                    dark
+                    elevation="1"
+                    @click="addProductModal = true"
+                  >{{ $t('orders.add_product') }}</v-btn>
+                </v-row>
+              </v-container>
               <v-card
                 class="pa-3"
                 flat
@@ -89,7 +100,9 @@
                   edit
                   :order="order"
                   :products="products"
-                  @productUpdated="reload"
+                  :can-modify="canEditOrder"
+                  @quantityUpdated="reload"
+                  @productDeleted="reload"
                 ></order-products-list>
               </v-card>
             </v-tab-item>
@@ -140,6 +153,16 @@
         <order-timeline :status="stage"></order-timeline>
       </v-col>
     </v-row>
+    <v-dialog
+      v-model="addProductModal"
+    >
+      <add-product-to-order
+        :order-id="order.id"
+        :currency="order.currency"
+        :order-incoterm="order.incoterm"
+        @productAdded="loadOrder"
+      ></add-product-to-order>
+    </v-dialog>
   </v-container>
 </template>
 
@@ -151,12 +174,13 @@ import orderHeader from '../../components/orders/orderHeader'
 import orderProductsList from '../../components/orders/orderProductsList'
 import orderLogistics from '../../components/orders/orderLogistics'
 import orderDocuments from '../../components/orders/orderDocuments'
+import addProductToOrder from '../../components/orders/addProductToOrder'
 
 export default {
   name: 'Order',
   props: ['id'],
   components: {
-    OrderTimeline, orderPayments, orderInspections, orderHeader, orderProductsList, orderLogistics, orderDocuments
+    OrderTimeline, orderPayments, orderInspections, orderHeader, orderProductsList, orderLogistics, orderDocuments, addProductToOrder
   },
   data: function() {
     return {
@@ -166,7 +190,21 @@ export default {
       products: [],
       stage: 'pending',
       tab: 'products',
-      convertingToOrder: false
+      convertingToOrder: false,
+      addProductModal: false
+    }
+  },
+  computed: {
+    canEditOrder() {
+      if(this.order.type === 'quotation') {
+        return true
+      }
+      for(var payment in this.order.payments) {
+        if(this.order.payments[payment].reason === 'deposit' && this.order.payments[payment].status !== 'Completed') {
+          return true
+        }
+      }
+      return false
     }
   },
   watch: {
@@ -185,7 +223,7 @@ export default {
       this.loading = true
       this.$http.get(this.endpoint(`order/get/${this.id}`))
       .then( resp => {
-        //console.log(resp.data)
+        console.log(resp.data)
         if(resp.data.result) {
           this.company = resp.data.data.order.company
           this.order = resp.data.data.order

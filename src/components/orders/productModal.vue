@@ -118,11 +118,12 @@
 
 import imageSlider from '../imageSlider'
 import VueNumberInput from '@chenfengyuan/vue-number-input'
+import { ADD_PRODUCT_TO_ORDER } from '@/constants/endpoints.js'
 import { mapActions, mapGetters } from 'vuex'
 
 export default {
   name: 'productModal',
-  props: ['product', 'can-order'],
+  props: ['product', 'can-order', 'add-to-order', 'order-id'],
   components: {
     imageSlider,
     VueNumberInput
@@ -153,8 +154,7 @@ export default {
   },
   computed: {
     ...mapGetters('cart', [
-      'products',
-      'cargoAvCbm'
+      'products'
     ]),
     image() {
       return this.product.images[0] ? this.product.images[0].thumb : ''
@@ -174,8 +174,24 @@ export default {
         
         var cartProduct = this.buildCartProduct(this.product, this.options[index], attrs)
 
+        if(this.addToOrder) {
+          this.addDirectlyToOrder(cartProduct)
+          return
+        }
+
         this.addToCart(cartProduct)
       }
+    },
+    addDirectlyToOrder(product) {
+      this.$http.post(this.buildEndpoint(ADD_PRODUCT_TO_ORDER, { order_id: this.orderId }), {
+        quantity: product.quantity,
+        product_id: product.product_id,
+        option_id: product.option_id,
+        attributes: product.attributes
+      }).then( () => {
+        this.$toasted.success(this.$t('orders.product_added'))
+        this.$emit('productAdded')
+      })
     },
     inCart(option) {
       var attrs = this.getSelectedAttributes(option)

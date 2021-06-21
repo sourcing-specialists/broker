@@ -44,16 +44,6 @@
             </v-select>
           </v-col>
         </v-row>
-        <v-row
-          v-if="company_id !== '' && order_incoterm !== 'FOB' && transport !== 'air'"
-        >
-          <v-col>
-            <cargo-select
-              v-model="selectedCargo"
-              :inOrders="true"
-            ></cargo-select>
-          </v-col>
-        </v-row>
         <v-row class="pb-5">
           <v-col>
             <v-btn
@@ -74,13 +64,11 @@
 import { mapGetters, mapActions } from 'vuex'
 import { requiredRule } from '../../constants/formRules'
 import incoterms from '../../constants/incoterms'
-import cargoSelect from '../cargoSelect'
 
 export default {
   name: 'OrderNewSettings',
   components: {
     confirmationDialog: () => import("../confirmationDialog"),
-    cargoSelect
   },
   data() {
     return {
@@ -90,7 +78,6 @@ export default {
       incoterms: incoterms,
       order_incoterm: this.$store.getters['cart/incoterm'],
       transport: this.$store.getters['cart/transport'],
-      selectedCargo: this.$store.getters['cart/cargo'].id ? this.$store.getters['cart/cargo'].id : '',
       requiredRule: requiredRule
     }
   },

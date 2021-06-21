@@ -27,6 +27,10 @@ const mixins = {
       const is_public = noAuth ? 'public/' : ''
       return url+is_public+task
     },
+    buildEndpoint: function(url, data) {
+      var regex = new RegExp(':(' + Object.keys(data).join('|') + ')', 'g')
+      return url.replace(regex, (m, $1) => data[$1] || m)
+    },
     ffunctions: function(task) {
       return functions_url+task
     },
@@ -40,12 +44,12 @@ const mixins = {
           count.push(parseInt(p.value))
           string += `<li><span class="font-weight-bold">${p.name}:</span> ${p.value}</li>`
         })
-        string += `<li><span class="font-weight-bold">${this.$t('components.products.total_units_carton')}:</span> ${count.reduce((a, b) => a * b, 1)}</li>`
+        //string += `<li><span class="font-weight-bold">${this.$t('components.products.total_units_carton')}:</span> ${count.reduce((a, b) => a * b, 1)}</li>`
       } else {
         string = `
           <li><span class="font-weight-bold">${option.inner_unit_text}:</span> ${option.inner_units}</li>
           <li><span class="font-weight-bold">${option.outer_unit_text}:</span> ${option.outer_units}</li>
-          <li><span class="font-weight-bold">${this.$t('components.products.total_units_carton')}:</span> ${option.inner_units*option.outer_units}</li>
+          <!--<li><span class="font-weight-bold">${this.$t('components.products.total_units_carton')}:</span> ${option.inner_units*option.outer_units}</li>-->
         `
       }
       return string
@@ -74,7 +78,7 @@ const mixins = {
       return string
     },
     //format price tiers as a list
-    mxPriceTiers(option, hightlight = false, inco = false) {
+    mxPriceTiers(option, hightlight = false, inco = false, onlyFirstTier = false) {
       var string = ''
       var highlighted = ''
       var vue = this
@@ -82,38 +86,54 @@ const mixins = {
       if(this.$route.name === 'OrdersNew') {
         thisIncoterm = this.cartIncoterm
       }
+
+      var packing_outer_description = option.is_tree === 1 ? option.packing_tree[option.packing_tree.length - 1].value + ' ' + option.packing_tree[option.packing_tree.length - 1].name : vue.$tc('components.products.carton',1)
+      var packing_inner_description = option.is_tree === 1 ? option.packing_tree[0].value + ' ' + option.packing_tree[0].name : vue.$tc('components.products.unit',1)
+
       if(thisIncoterm === 'REVOOLOOP' && option.tiers) {
-        option.tiers.map(function(t) {
-          highlighted = (vue.checkTier(t, option.quantity) && hightlight) ? 'highlight' : ''
-          if(t.to === 'onwards') {
-            string+= `
-              <li class="${highlighted}"> 
-                <div>From ${t.from} ${vue.$t('components.products.cartons_onwards')}</div>
-                <p>
-                  <span class="font-weight-bold">${vue.$store.getters.getCurrencyText}${t.cost_per_carton}</span> / ${vue.$tc('components.products.carton',1)} 
-                  <br> 
-                  ${vue.$store.getters.getCurrencyText}${t.cost_per_unit} / ${vue.$tc('components.products.unit',1)} 
-                </p>
-              </li>`
-          } else {
-            string+= `
-              <li class="${highlighted}"> 
-                <div>${t.from} to ${t.to} cartons</div>
-                <p>
-                  <span class="font-weight-bold">${vue.$store.getters.getCurrencyText}${t.cost_per_carton}</span> / ${vue.$tc('components.products.carton',1)} 
-                  <br> 
-                  ${vue.$store.getters.getCurrencyText}${t.cost_per_unit} / ${vue.$tc('components.products.unit',1)} 
-                </p>
-              </li>`
-          }
-        })
+        if(onlyFirstTier) {
+          string+= `
+            <li class="${highlighted}"> 
+              <div>${option.tiers[0].from} to ${option.tiers[0].to} cartons</div>
+              <p>
+                <span class="font-weight-bold">${vue.$store.getters.getCurrencyText}${option.tiers[0].cost_per_carton}</span> / ${packing_outer_description} 
+                <br> 
+                ${vue.$store.getters.getCurrencyText}${option.tiers[0].cost_per_unit} / ${packing_inner_description}  
+              </p>
+            </li>`
+        } else {
+          option.tiers.map(function(t) {
+            highlighted = (vue.checkTier(t, option.quantity) && hightlight) ? 'highlight' : ''
+            if(t.to === 'onwards') {
+              string+= `
+                <li class="${highlighted}"> 
+                  <div>From ${t.from} ${vue.$t('components.products.cartons_onwards')}</div>
+                  <p>
+                    <span class="font-weight-bold">${vue.$store.getters.getCurrencyText}${t.cost_per_carton}</span> / ${packing_outer_description} 
+                    <br> 
+                    ${vue.$store.getters.getCurrencyText}${t.cost_per_unit} / ${packing_inner_description} 
+                  </p>
+                </li>`
+            } else {
+              string+= `
+                <li class="${highlighted}"> 
+                  <div>${t.from} to ${t.to} cartons</div>
+                  <p>
+                    <span class="font-weight-bold">${vue.$store.getters.getCurrencyText}${t.cost_per_carton}</span> / ${packing_outer_description} 
+                    <br> 
+                    ${vue.$store.getters.getCurrencyText}${t.cost_per_unit} / ${packing_inner_description}  
+                  </p>
+                </li>`
+            }
+          })
+        }
       } else if(thisIncoterm === 'DDP') {
         string = `
           <li>
             <p>
-              <span class="font-weight-bold">${option.ddp_carton_sale_price_string}</span> / ${vue.$tc('components.products.carton',1)}
+              <span class="font-weight-bold">${option.ddp_carton_sale_price_string}</span> / ${packing_outer_description} 
               <br> 
-              ${option.ddp_unit_sale_price_string} / ${option.packing_base_unit_description === '' ? option.inner_unit_text : option.packing_base_unit_description} 
+              ${option.ddp_unit_sale_price_string} / ${packing_inner_description}  
             </p>
           </li>
         `
@@ -122,9 +142,9 @@ const mixins = {
         string = `
           <li>
             <p>
-              <span class="font-weight-bold">${option.carton_price_string}</span> / ${vue.$tc('components.products.carton',1)}
+              <span class="font-weight-bold">${option.carton_price_string}</span> / ${packing_outer_description} 
               <br> 
-              ${option.unit_price_string} / ${option.packing_base_unit_description === '' ? option.inner_unit_text : option.packing_base_unit_description} 
+              ${option.unit_price_string} / ${packing_inner_description}  
             </p>
           </li>
         `
@@ -163,7 +183,8 @@ const mixins = {
         attributes_data: attributes,
         tiers: option.tiers,
         cost_per_carton: this.cartIncoterm === 'DDP' ? option.ddp_carton_sale_price : option.carton_price,
-        image: image
+        image: image,
+        weight_per_carton: option.weight_per_carton
       }
     },
     checkTier(tier, quantity) {
@@ -221,15 +242,6 @@ const mixins = {
     round(n, decimals = 4) {
       var ceros = Math.pow(10, decimals)
       return Math.round((n + Number.EPSILON) * ceros) / ceros
-    },
-    cargoHasSpace(space, product, incoterm) {
-      if(incoterm === 'FOB') {
-        return true
-      }
-      if(space > (product.cbm_per_carton*product.quantity)) {
-        return true
-      }
-      return false
     },
     stageColor(stage, hex = false) {
       switch (stage) {
@@ -327,71 +339,76 @@ const mixins = {
       return ''
     },
     buildNotification(n) {
-      if(n.group_key == 'payments') {
-        //console.log(n)
-      }
-      const data = JSON.parse(n.data)
-      const d = n.raw_data
-      let text = ''
-      let order = ''
-      let link = ''
-      let details = ''
-      let by = (n.done_by !== null ? n.done_by.name : '') + ', ' + this.formatDate(n.system_date)
-      switch(n.type) {
-        case 'order_product_updated':
-          link = d[0] ? d[0].parent.model_id : ''
-          order = data['#3'].text
-          text = this.$t('notifications.order_product_updated_title', {product_name: data['#1'].text })
-          details = ''
+
+      var data = n.data
+      
+      var link = data.linked_model_id
+      var order = data.order_number ?? null
+      var text = ''
+      var details = ''
+      var by = data.by_name
+
+      switch(n.key_id) {
+        case 'order_created':
+          text = this.$t('notifications.order_created', { type: data.order_type })
           break
+        case 'order_artworks_confirmed':
+          return null //this has to be deleted when I handle this notification case and add BREAK below like the others
+        case 'order_documents_uploaded':
+          text = this.$t('notifications.order_documents_uploaded', { document: data.file_type })
+          break
+        case 'order_inspection_confirmed':
+          return null //this has to be deleted when I handle this notification case and add BREAK below like the others
+        case 'order_inspection_document_uploaded':
+          return null //this has to be deleted when I handle this notification case and add BREAK below like the others
         case 'order_product_created':
-          link = d[0] ? d[0].parent.model_id : ''
-          order = data['#3'].text
-          text = this.$t('notifications.order_product_created_title', {product_name: data['#1'].text })
-          details = ''
+          text = this.$t('notifications.order_product_created_title', { product_name: data.product_name ?? null })
           break
         case 'order_product_deleted':
-          link = d[0] ? d[0].parent.model_id : ''
-          order = data['#3'].text
-          text = this.$t('notifications.order_product_deleted_title', {product_name: data['#1'].text })
-          details = ''
+          text = this.$t('notifications.order_product_deleted_title', { product_name: data.product_name ?? null })
           break
-        case 'order_payment_created':
-          link = d[0].parent.model_id
-          order = d[0].parent.title
-          text = this.$t('notifications.order_payment_created')
-          details = ''
-          break
-        case 'order_payment_status_changed':
-          link = d[0].parent.model_id
-          order = d[0].parent.title
-          text = this.$t('notifications.order_payment_status_changed')
-          details = `${this.$t('notifications.from')} <strong>${this.paymentStatusString(d[0].original_value)}</strong> ${this.$t('notifications.to')} <strong>${this.paymentStatusString(d[0].new_value)}</strong>`
-          break
-        case 'order_created':
-          link = d[0].model.id
-          order = d[0].model.type === 'order' ? d[0].model.sku : d[0].model.id
-          text = this.$t('notifications.order_created', { type: d[0].model.type })
-          details = ``
+        case 'order_product_design_uploaded':
+          return null //this has to be deleted when I handle this notification case and add BREAK below like the others
+        case 'order_product_purchase_price_changed':
+          return null //this has to be deleted when I handle this notification case and add BREAK below like the others
+        case 'order_product_quantity_updated':
+          return null //this has to be deleted when I handle this notification case and add BREAK below like the others
+        case 'order_product_sale_price_changed':
+          return null //this has to be deleted when I handle this notification case and add BREAK below like the others
+        case 'order_product_updated':
+          text = this.$t('notifications.order_product_updated_title', { product_name: data.product_name ?? null })
           break
         case 'order_status_changed':
-          link = d[0].model.id
-          order = d[0].model.sku
           text = this.$t('notifications.order_status_changed')
-          details = `${this.$t('notifications.from')} <strong>${d[0].original_value}</strong> ${this.$t('notifications.to')} <strong>${d[0].new_value}</strong>`
+          details = `${this.$t('notifications.from')} <strong>${ data.stage_from ?? null }</strong> ${this.$t('notifications.to')} <strong>${ data.stage_to ?? null }</strong>`
           break
-        case 'order_documents_uploaded':
-          order = d[0].parent.title
-          text = this.$t('notifications.order_documents_uploaded', { document: d[0].model.key_id })
-          details = ``
+        case 'order_payment_status_changed':
+          text = this.$t('notifications.order_payment_status_changed')
+          var from = data.payment_status_from ?? null
+          var to = data.payment_status_to ?? null
+          details = `
+            ${this.$t('notifications.from')} <strong>${this.paymentStatusString(from)}</strong> 
+            ${this.$t('notifications.to')} <strong>${this.paymentStatusString(to)}</strong>
+          `
+          break
+        case 'order_payment_created':
+          text = this.$t('notifications.order_payment_created')
           break
         case 'product_created':
-          link = d[0].model_id
-          order = d[0].model_id
-          text = this.$t('notifications.product_created', { product_name: d[0].model.name.en })
-          details = ``
+          text = this.$t('notifications.product_created', { product_name: data.product_name })
           break
+        case 'product_price_updated':
+          text = this.$t('notifications.product_price_updated', { product_name: data.product_name })
+          break
+        case 'product_updated':
+          text = this.$t('notifications.product_updated', { product_name: data.product_name })
+          break
+        case 'production_time_updated':
+          return null //this has to be deleted when I handle this notification case and add BREAK below like the others
+        case 'supplier_updated_po':
+          return null //this has to be deleted when I handle this notification case and add BREAK below like the others
       }
+
       return {
         id: n.id,
         link: link,
@@ -400,6 +417,7 @@ const mixins = {
         details: details,
         by: by
       }
+
     }
   },
 }
