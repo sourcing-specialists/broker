@@ -102,7 +102,7 @@ export default {
     loadPayments() {
       this.$http.get(this.endpoint(`order/${this.order}/payments/list`))
       .then( resp => {
-        console.log(resp.data.data)
+        //console.log(resp.data.data)
         this.loading = false
         this.payments = resp.data.data
       }).catch( error => {

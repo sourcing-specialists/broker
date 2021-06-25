@@ -101,9 +101,9 @@ export default {
         }
       })
       .then(resp => {
-        console.log(resp)
+        //console.log(resp)
         if(resp.data.result) {
-          this.clientSecret = resp.data.data.client_secret
+          this.clientSecret = resp.data.data
           this.payByCardModal = true
         } else {
           this.$toasted.error(resp.data.response_message)

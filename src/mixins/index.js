@@ -27,9 +27,12 @@ const mixins = {
       const is_public = noAuth ? 'public/' : ''
       return url+is_public+task
     },
-    buildEndpoint: function(url, data) {
-      var regex = new RegExp(':(' + Object.keys(data).join('|') + ')', 'g')
-      return url.replace(regex, (m, $1) => data[$1] || m)
+    buildEndpoint: function(url, data = null) {
+      if(data !== null) {
+        var regex = new RegExp(':(' + Object.keys(data).join('|') + ')', 'g')
+        return url.replace(regex, (m, $1) => data[$1] || m)
+      }
+      return url
     },
     ffunctions: function(task) {
       return functions_url+task

@@ -57,7 +57,7 @@
                 {{ type === 'orders' ? item.orderNumber : item.id }}
               </v-btn>
             </template>
-            <v-card class="py-2" flat>
+            <v-card max-width="960" class="py-2" flat>
               <order-products-list
                 is-preview
                 :order="item"
@@ -67,12 +67,14 @@
           </v-tooltip>
         </td>
         <td>{{ formatDate(item.date) }}</td>
-        <td>{{ item.company }}</td>
+        <td>
+          <div class="font-weight-bold">{{ item.company }}</div>
+          <p class="mb-0">{{ item.incoterm }} - {{ item.transport_description }}</p>
+        </td>
         <td class="py-2">
-          <tr>
+          <tr v-if="item.cargos.length === 0">
             <td>
-              {{ item.incoterm }} - {{ item.transport_description }}
-              <div class="order-notes" v-if="item.cargos.length === 0"> {{ $t('orders.no_cargos_assigned')}}</div>
+              <div class="order-notes"> {{ $t('orders.no_cargos_assigned')}}</div>
             </td>
           </tr>
           <tr
@@ -86,7 +88,7 @@
               >
                 <template v-slot:activator="{ on, attrs }">
                   <v-chip
-                    x-small
+                    small
                     color="blue lighten-4"
                     v-bind="attrs"
                     v-on="on"

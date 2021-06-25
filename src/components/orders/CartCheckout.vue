@@ -136,6 +136,7 @@ export default {
       this.loading = true
       this.confirmOrder(type)
       .then( resp => {
+        //console.log(resp.data)
         if(updatePayment) {
           this.paymentModal = true
           this.order = resp.data.data.order

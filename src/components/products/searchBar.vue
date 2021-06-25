@@ -1,7 +1,13 @@
 <template>
-  <ais-instant-search :search-client="searchClient" index-name="products">
+  <ais-instant-search
+    index-name="products"
+    :search-client="searchClient"
+    :search-function="searchFunction"
+  >
+
     <ais-autocomplete>
       <div class="search" slot="default" slot-scope="{ currentRefinement, indices, refine }">
+
         <v-text-field
           type="search"
           :value="currentRefinement"
@@ -43,6 +49,7 @@
         </ais-hits>
       </div>
     </ais-autocomplete>
+
   </ais-instant-search>
 </template>
 
@@ -64,10 +71,17 @@ export default {
       search: '',
       currentActive: 0,
       qty: 0,
+      thisVue: this,
       searchClient: instantMeiliSearch(
         process.env.VUE_APP_MEILISEARCH_HOST,
         process.env.VUE_APP_MEILISEARCH_KEY
-      )
+      ),
+      searchFunction: (helper) => {
+        if(this.$store.getters.getIncoterm === 'REVOOLOOP') {
+          helper.addNumericRefinement('is_revooloop', '=', '1')
+        }
+        helper.search()
+      }
     }
   },
   computed: {

@@ -41,9 +41,6 @@ export default {
         { text: '', align: 'end', value: 'actions' }
       ]
     }
-  },
-  mounted() {
-    console.log(this.certifications)
   }
 }
 </script>
