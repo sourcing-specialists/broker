@@ -4,12 +4,19 @@
     <v-card-subtitle>
       <v-row>
         <v-col
-          lg="12"
+          lg="8"
           md="12"
         >
           <date-range-picker
             @change="rangeChange"
           ></date-range-picker>
+        </v-col>
+        <v-col
+          v-if="$store.getters.user.is_admin"
+          lg="4"
+          md="12"
+        >
+          <broker-selection v-model="broker"></broker-selection>
         </v-col>
       </v-row>
     </v-card-subtitle>
@@ -30,13 +37,15 @@
   import barChart from '../charts/barChart.vue'
   import loadingBox from '../loadingBox'
   import dateRangePicker from '../dateRangePicker'
+  import BrokerSelection from './brokerSelection.vue'
 
   export default {
     name: 'topClients',
     components: {
       barChart,
       loadingBox,
-      dateRangePicker
+      dateRangePicker,
+      BrokerSelection
     },
     data() {
       return {
@@ -55,6 +64,12 @@
           new Date(new Date().getFullYear(), 0, 2).toISOString().substr(0, 10),//first day of the year
           new Date().toISOString().substr(0, 10),//now
         ],
+        broker: 'all'
+      }
+    },
+    watch: {
+      broker() {
+        this.getData()
       }
     },
     methods: {
@@ -68,18 +83,20 @@
           params: {
             from: this.dates[0],
             to: this.dates[1],
-            currency: this.$store.getters.getCurrency
+            currency: this.$store.getters.getCurrency,
+            broker: this.broker
           }
         })
         .then( resp => {
           this.loading = false
-          const labels = resp.data.data.map( c => {
+          var data = resp.data.data.top_clients
+          const labels = data.map( c => {
             return c.company.name
           })
-          const confirmed = resp.data.data.map( c => {
+          const confirmed = data.map( c => {
             return c.total_purchases_confirmed
           })
-          const pending = resp.data.data.map( c => {
+          const pending = data.map( c => {
             return c.total_purchases_pending
           })
           this.chartData = {
@@ -88,12 +105,12 @@
               {
                 label: `${this.$t('charts.confirm_sales_in')} ${this.$store.getters.getCurrency}`,
                 data: confirmed,
-                backgroundColor: this.fillArray('#3F51B5', resp.data.data.length),
+                backgroundColor: this.fillArray('#3F51B5', data.length),
               },
               {
                 label: `${this.$t('charts.pending_sales_in')} ${this.$store.getters.getCurrency}`,
                 data: pending,
-                backgroundColor: this.fillArray('#B71C1C', resp.data.data.length),
+                backgroundColor: this.fillArray('#B71C1C', data.length),
               }
             ]
           }

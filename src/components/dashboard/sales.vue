@@ -7,7 +7,7 @@
     <v-card-subtitle>
       <v-row>
         <v-col
-          lg="8"
+          :lg="$store.getters.user.is_admin ? 6 : 8"
           md="12"
         >
           <date-range-picker
@@ -15,7 +15,14 @@
           ></date-range-picker>
         </v-col>
         <v-col
-          lg="4"
+          v-if="$store.getters.user.is_admin"
+          lg="3"
+          md="12"
+        >
+          <broker-selection v-model="broker"></broker-selection>
+        </v-col>
+        <v-col
+          :lg="$store.getters.user.is_admin ? 3 : 4"
           md="12"
         >
           <v-menu
@@ -23,6 +30,7 @@
             ref="clients"
             :return-value.sync="selectedClient"
             :close-on-content-click="false"
+            content-class="menu-bg"
           >
             <template v-slot:activator="{ on, attrs }">
               <v-btn
@@ -33,7 +41,7 @@
                 transition="scale-transition"
               ><v-icon class="mr-2" dense>mdi-account-group</v-icon> {{ selectedClient === 'all' ? $t('all') : selectedClient.name }}</v-btn>
             </template>
-            <v-list>
+            <v-list max-height="500px">
               <v-list-item>
                 <v-text-field
                   v-model="optionsSearch"
@@ -99,13 +107,15 @@
   import doughnutChart from '../charts/doughnutChart.vue'
   import dateRangePicker from '../dateRangePicker'
   import loadingBox from '../loadingBox'
+  import BrokerSelection from './brokerSelection.vue'
 
   export default {
     name: 'topClients',
     components: {
       doughnutChart,
       dateRangePicker,
-      loadingBox
+      loadingBox,
+      BrokerSelection
     },
     data() {
       return {
@@ -130,6 +140,12 @@
         totalSalesConfirmed: '',
         totalSalesPending: '',
         optionsSearch: '',
+        broker: 'all'
+      }
+    },
+    watch: {
+      broker() {
+        this.getData()
       }
     },
     methods: {
@@ -158,7 +174,8 @@
             to: this.dates[1],
             from: this.dates[0],
             currency: this.$store.getters.getCurrency,
-            company_id: this.selectedClient === '' ? this.selectedClient : this.selectedClient.id
+            company_id: this.selectedClient === '' ? this.selectedClient : this.selectedClient.id,
+            broker: this.broker
           }
         })
         .then( resp => {
@@ -197,3 +214,8 @@
     }
   }
 </script>
+<style scoped>
+.menu-bg {
+  background-color: #FFF;
+}
+</style>

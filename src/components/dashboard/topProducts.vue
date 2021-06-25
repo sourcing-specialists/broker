@@ -4,7 +4,7 @@
     <v-card-subtitle>
       <v-row>
         <v-col
-          lg="8"
+          :lg="$store.getters.user.is_admin ? 6 : 8"
           md="12"
         >
           <date-range-picker
@@ -12,7 +12,14 @@
           ></date-range-picker>
         </v-col>
         <v-col
-          lg="4"
+          v-if="$store.getters.user.is_admin"
+          lg="3"
+          md="12"
+        >
+          <broker-selection v-model="broker"></broker-selection>
+        </v-col>
+        <v-col
+          :lg="$store.getters.user.is_admin ? 3 : 4"
           md="12"
         >
           <v-menu
@@ -75,13 +82,15 @@
   import barChart from '../charts/barChart.vue'
   import loadingBox from '../loadingBox'
   import dateRangePicker from '../dateRangePicker'
+  import BrokerSelection from './brokerSelection.vue'
 
   export default {
     name: 'topClients',
     components: {
       barChart,
       loadingBox,
-      dateRangePicker
+      dateRangePicker,
+      BrokerSelection
     },
     data() {
       return {
@@ -105,6 +114,12 @@
         categories: [],
         categorySelection: false,
         optionsSearch: '',
+        broker: 'all'
+      }
+    },
+    watch: {
+      broker() {
+        this.getData()
       }
     },
     methods: {
@@ -133,7 +148,8 @@
             from: this.dates[0],
             to: this.dates[1],
             currency: this.$store.getters.getCurrency,
-            categories: JSON.stringify(this.categoriesSelected)
+            categories: JSON.stringify(this.categoriesSelected),
+            broker: this.broker
           }
         })
         .then( resp => {

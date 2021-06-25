@@ -28,28 +28,29 @@
           /*{ text: this.$t('charts.created_total_sales'), align: 'start', sortable: true, value: 'orders_numbers' },*/
         ]"
         :items="brokers"
+        @pagination="updPage"
       >
         <template v-slot:[`item.avatar`]="{ index }">
           <v-icon
-            v-if="index === 0"
+            v-if="index === 0 && page === 1"
             color="green"
             large
           >mdi-trophy</v-icon>
           <v-icon
-            v-if="index === 1"
+            v-if="index === 1 && page === 1"
             color="blue-grey"
           >mdi-medal</v-icon>
           <v-icon
-            v-if="index > 1"
+            v-if="index > 1 && page === 1"
             small
           >mdi-account</v-icon>
         </template>
         <template v-slot:[`item.name`]="{ item, index }">
           <div :class="[
-            { ['font-weight-black']: index === 0 },
-            { ['font-weight-bold']: index === 1 },
-            { ['text-h5']: index === 0 },
-            { ['text-h6']: index === 1 }
+            { ['font-weight-black']: index === 0 && page === 1 },
+            { ['font-weight-bold']: index === 1 && page === 1 },
+            { ['text-h5']: index === 0 && page === 1 },
+            { ['text-h6']: index === 1 && page === 1 }
           ]">{{ item.first_name }} {{ item.last_name }}</div>
         </template>
         <template v-slot:[`item.fellow_total_sales`]="{ item }">
@@ -86,6 +87,7 @@
     data() {
       return {
         loading: true,
+        page: 1,
         dates: [
           new Date(new Date().getFullYear(), 0, 2).toISOString().substr(0, 10),//first day of the year
           new Date().toISOString().substr(0, 10),//now
@@ -118,12 +120,14 @@
         })
         .then( resp => {
           this.loading = false
-          //console.log(resp.data.data)
           this.brokers = resp.data.data
         })
       },
       reload() {
         this.getData()
+      },
+      updPage(e) {
+        this.page = e.page
       }
     },
     mounted() {
