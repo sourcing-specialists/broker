@@ -91,8 +91,8 @@
       <v-list-item v-if="!isCheckout">
         <v-list-item-content>
           <ul class="cart_total">
-            <li></li>
             <li><span class="font-weight-bold">CBM: {{ round(cbm) }}</span></li>
+            <li><span class="font-weight-bold">{{ $t('components.products.weight') }}: {{ round(weight) }}</span></li>
             <li class="price"><span class="font-weight-bold">Subtotal: {{ numberToNiceString(subtotal, getCurrency) }}</span></li>
           </ul>
         </v-list-item-content>
@@ -125,7 +125,8 @@ export default {
       'subtotal',
       'cbm',
       'distribution',
-      'incoterm'
+      'incoterm',
+      'weight'
     ]),
     ...mapGetters([
       'getCurrencyText',

@@ -20,6 +20,9 @@
           ><strong>{{ attr.key }}:</strong> {{ attr.value }}</span>
         </div> 
       </template>
+      <template v-slot:[`item.files`]="{ item }">
+        {{ item.designs.length }}
+      </template>
       <template v-slot:[`item.quantity`]="{ item }">
         <h4>{{ item.quantity }} {{ $tc('carton', item.quantity) }}</h4>
         <p class="pa-0 mb-0">{{ item.total_units }} {{ unit(item) }}</p>
@@ -97,6 +100,7 @@ export default {
         headers: [
           { text: this.$t('ref'), align: 'start', sortable: true, value: 'ref' },
           { text: this.$t('product_name'), align: 'start', sortable: true, value: 'name' },
+          { text: this.$t('files_uploaded'), align: 'start', sortable: true, value: 'files' },
           { text: this.$t('quantity'), align: 'start', sortable: true, value: 'quantity' },
           { text: this.$t('cbm'), align: 'start', sortable: true, value: 'total_cbm' },
           { text: this.$t('price'), align: 'end', value: 'total_price_string' },
@@ -123,6 +127,9 @@ export default {
       this.editingProduct = prod
       this.productEditDialog = true
     }
+  },
+  mounted() {
+    console.log(this.products)
   }
 }
 </script>

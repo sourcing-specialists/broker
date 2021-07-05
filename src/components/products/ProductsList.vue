@@ -235,9 +235,11 @@ export default {
       this.loadProducts()
     },
     pageSize() {
+      this.page = 1
       this.loadProducts()
     },
     search() {
+      this.page = 1
       this.loadProducts()
     }
   },

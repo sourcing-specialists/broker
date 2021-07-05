@@ -48,7 +48,7 @@
           md="3"
           class="d-flex align-center"
         >
-          <ul class="pa-2" v-html="mxPriceTiers(option)"></ul>
+          <ul class="pa-2 price-tiers" v-html="mxPriceTiers(option)"></ul>
         </v-col>
         <v-col
           lg="1"
@@ -90,7 +90,7 @@ export default {
       position: relative;
       z-index: 1;
       margin: 0px;
-      background-color: #FFF;
+      background-color: #E3F2FD;
       transform: translateX(0px);
       transition: all ease-in-out 0.5s;
       &.swiped {

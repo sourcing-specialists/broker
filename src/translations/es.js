@@ -94,6 +94,8 @@ const messages = {
   customize: 'Personalizar',
   options: 'Opciones',
   search_categories: 'Buscar categorías',
+  name: 'Nombre',
+  files_uploaded: 'Documentos',
   charts: {
     top_clients_purchases: 'Compras mejores clientes',
     confirm_sales_in: 'Compras confirmadas en',
@@ -105,7 +107,13 @@ const messages = {
     top_product_sales: 'Mejores ventas por producto',
     total_confirmed: 'Total confirmadas',
     total_pending: 'Total Pendientes',
-    total_sales: 'Ventas totales'
+    total_sales: 'Ventas totales',
+    sales_by_broker: 'Ventas por broker',
+    companies_created: 'Compañías creadas',
+    assigned_total_sales: 'Ventas por asignación',
+    fellow_total_sales: 'Ventas representates',
+    created_total_sales: 'Ventas creadas',
+    cbm_sold: 'Cbm Vendidos'
   },
   dashboard: {
     coming_events: 'Próximos eventos',
@@ -171,7 +179,16 @@ const messages = {
     bl_number: 'Bill of landing',
     departure_date: 'Fecha de salida',
     transportation: 'Transporte',
-    notes: 'Notas'
+    notes: 'Notas',
+    add_product: 'Agregar producto',
+    search_your_product: 'Buscar producto',
+    product_added: 'Producto agregado',
+    deleting_confirmation_text: 'El producto se borrara de la orden, estas seguro de continuar?',
+    cargos: 'Cargos',
+    container_number: 'Número de contenedor',
+    on_the_way: 'En camino',
+    arrived: 'Llegado',
+    waiting_for_departure: 'Esperando por salida'
   },
   validation: {
     this_field_required: 'Este campo es obligatorio',

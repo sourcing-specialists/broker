@@ -94,9 +94,8 @@ const messages = {
   customize: 'Customize',
   options: 'Options',
   search_categories: 'Search categories',
-  //new
   name: 'Name',
-  //end new
+  files_uploaded: 'Files',
   charts: {
     top_clients_purchases: 'Top clients purchases',
     confirm_sales_in: 'Confirmed sales in',
@@ -109,14 +108,12 @@ const messages = {
     total_confirmed: 'Total confirmed',
     total_pending: 'Total Pending',
     total_sales: 'Total sales',
-    //new
     sales_by_broker: 'Brokers performance',
     companies_created: 'Companies created',
     assigned_total_sales: 'Sales assigned',
     fellow_total_sales: 'Sales brokers',
     created_total_sales: 'Sales created',
     cbm_sold: 'Cbm Sold'
-    //emd mew
   },
   dashboard: {
     coming_events: 'Coming events',
@@ -183,7 +180,6 @@ const messages = {
     departure_date: 'Departure date',
     transportation: 'Transportation',
     notes: 'Notes',
-    //new
     add_product: 'Add product',
     search_your_product: 'Search your product',
     product_added: 'Product has been added',
@@ -193,7 +189,6 @@ const messages = {
     on_the_way: 'On the way',
     arrived: 'Arrived',
     waiting_for_departure: 'Waiting for departure'
-    //end new
   },
   validation: {
     this_field_required: 'This field is required',

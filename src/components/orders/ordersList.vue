@@ -1,10 +1,13 @@
 <template>
   <v-data-table
     :loading="loading"
-    :search="table.search"
     :headers="table.headers"
     :items="table.orders"
-    :items-per-page="10"
+    :items-per-page="pageSize"
+    :page.sync="page"
+    :options.sync="options"
+    :server-items-length="pageCount"
+    hide-default-footer
     class="elevation-1 pa-8"
   >
     <template v-slot:top>
@@ -35,6 +38,9 @@
             append-icon="mdi-magnify"
             v-model="table.search"
             :label="$t('search')"
+            @keyup.enter="loadOrders"
+            @click:clear="loadOrders(true)"
+            clearable
           ></v-text-field>
         </v-col>
       </v-row>
@@ -179,6 +185,13 @@
         </td>
       </tr>
     </template>
+    <template v-slot:footer>
+      <v-pagination
+        class="mt-3"
+        v-model="page"
+        :length="pageCount"
+      ></v-pagination>
+    </template>
   </v-data-table>
 </template>
 
@@ -216,26 +229,46 @@ export default {
       orderStages: [],
       orderStage: '',
       show_expired: false,
-      ordersType: ''
+      ordersType: '',
+      pageSize: 15,
+      page: 1,
+      pageCount: 1,
+      totalRecords: 0, 
+      options: {}
     }
   },
+  watch: {
+    options: {
+      handler () {
+        this.loadOrders()
+      },
+      deep: true,
+    },
+  },
   methods: {
-    loadOrders() {
-      //console.log(this.orderStage)
+    loadOrders(clear = false) {
+      if(clear === true) {//has to be === true because clear get an event
+        this.table.search = ''
+      }
       this.loading = true
       this.$http.get(this.endpoint('order/get'), {
         params: {
           stage: this.orderStage,
           //client_id: '',
           //incoterm: '',
+          search: this.table.search,
           order_type: this.ordersType,
-          quotation: this.type === 'quotations' ? 1 : 0
+          quotation: this.type === 'quotations' ? 1 : 0,
+          pageSize: this.pageSize,
+          pageNumber: this.page,
         }
       })
       .then((resp) => {
         //console.log(resp.data.data)
-        this.table.orders = resp.data.data
+        this.table.orders = resp.data.data.records
         this.loading = false
+        this.pageCount = resp.data.data.pagination.totalPages
+        this.totalRecords = resp.data.data.pagination.itemsCount
       })
     },
     isExpired(date) {

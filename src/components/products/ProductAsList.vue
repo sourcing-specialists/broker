@@ -2,7 +2,7 @@
   <div
   >
     <div
-      :class="['product-row']"
+      :class="['product-row', { opened: showOptions }]"
       @click="select(productData.id)"
     >
       <v-row
@@ -255,6 +255,11 @@ export default {
     overflow: hidden;
     position: relative;
     transition: all ease-in-out 0.5s;
+    &.opened {
+      .row {
+        background-color: #E3F2FD !important;
+      }
+    }
     .options-trigger {
       position: absolute;
       top: 0px;
